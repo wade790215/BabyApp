@@ -18,6 +18,7 @@ Assets/
     AudioPlayer.cs               依序播放英文、中文發音；沒有聲音檔時播提示音
     UIFactory.cs                 用程式碼建 uGUI 元件（大按鈕、字型選擇）
     SwipeDetector.cs             左右滑動換卡
+    MatchGame.cs                 「聽聲音點圖」配對小遊戲
   Resources/
     Content/cards.json           ★ 內容來源：分類、字卡、中英文、AI 提示詞
     Cards/<id>.png               AI 產生的圖片（由 Tools 產生）
@@ -60,3 +61,5 @@ python generate_audio.py --lang en                # 只做英文
 - 選單：點分類大按鈕。
 - 字卡：顯示時自動唸英文再唸中文；點圖片再聽一次；左右滑動或按兩側大箭頭換卡。
 - 左上角小按鈕回選單（故意做小一點，減少小孩誤觸）。
+- 字卡右上角的「?」進入配對小遊戲：App 唸一個字，出現三張同分類的圖，點對的那張。
+  點錯不扣分，只會把那張淡掉；每答對 5 題出現星星慶祝畫面，點一下繼續。右上角「))」可以再聽一次。

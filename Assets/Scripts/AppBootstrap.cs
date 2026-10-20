@@ -20,6 +20,7 @@ namespace BabyApp
         Canvas canvas;
         RectTransform menuScreen;
         RectTransform cardScreen;
+        MatchGame game;
 
         // Flashcard screen state
         CardCategory currentCategory;
@@ -43,6 +44,8 @@ namespace BabyApp
             canvas = UIFactory.CreateCanvas();
             BuildMenuScreen();
             BuildCardScreen();
+            game = gameObject.AddComponent<MatchGame>();
+            game.Build(canvas.transform, Background);
             ShowMenu();
         }
 
@@ -139,12 +142,24 @@ namespace BabyApp
             var home = UIFactory.CreateButton(cardScreen, "Home", new Color(1, 1, 1, 0.6f), ShowMenu);
             UIFactory.Place(home.GetComponent<RectTransform>(), new Vector2(0f, 1f), new Vector2(30, -30), new Vector2(120, 120));
             UIFactory.CreateText(home.transform, "Icon", "X", 72, Ink).rectTransform.sizeDelta = new Vector2(120, 120);
+
+            // Starts the listen-and-tap game for the category being viewed.
+            var play = UIFactory.CreateButton(cardScreen, "Play", new Color(1, 1, 1, 0.85f), OpenGame);
+            UIFactory.Place(play.GetComponent<RectTransform>(), new Vector2(1f, 1f), new Vector2(-30, -30), new Vector2(160, 160));
+            UIFactory.CreateText(play.transform, "Icon", "?", 96, Ink).rectTransform.sizeDelta = new Vector2(160, 160);
         }
 
         void ShowMenu()
         {
+            game.Close();
             menuScreen.gameObject.SetActive(true);
             cardScreen.gameObject.SetActive(false);
+        }
+
+        void OpenGame()
+        {
+            cardScreen.gameObject.SetActive(false);
+            game.Open(currentCategory, cardBackground.color, () => OpenCategory(currentCategory));
         }
 
         void OpenCategory(CardCategory category)

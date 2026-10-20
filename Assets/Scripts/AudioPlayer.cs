@@ -11,6 +11,9 @@ namespace BabyApp
 
         AudioSource source;
         AudioClip chime;
+        AudioClip success;
+        AudioClip wrong;
+        AudioClip celebration;
         Coroutine current;
 
         void Awake()
@@ -18,7 +21,10 @@ namespace BabyApp
             Instance = this;
             source = gameObject.AddComponent<AudioSource>();
             source.playOnAwake = false;
-            chime = MakeChime();
+            chime = MakeTone("chime", 0.35f, 660f, 880f);
+            success = MakeTone("success", 0.5f, 523f, 659f, 784f);
+            wrong = MakeTone("wrong", 0.3f, 220f, 180f);
+            celebration = MakeTone("celebration", 1.2f, 523f, 659f, 784f, 1047f, 784f, 1047f);
         }
 
         public void PlayCard(CardItem card)
@@ -29,10 +35,10 @@ namespace BabyApp
             current = StartCoroutine(PlaySequence(en, zh));
         }
 
-        public void PlayChime()
-        {
-            source.PlayOneShot(chime, 0.5f);
-        }
+        public void PlayChime() => source.PlayOneShot(chime, 0.5f);
+        public void PlaySuccess() => source.PlayOneShot(success, 0.6f);
+        public void PlayWrong() => source.PlayOneShot(wrong, 0.4f);
+        public void PlayCelebration() => source.PlayOneShot(celebration, 0.6f);
 
         IEnumerator PlaySequence(params AudioClip[] clips)
         {
@@ -50,21 +56,23 @@ namespace BabyApp
             current = null;
         }
 
-        // A soft two-note chime synthesised at runtime, so no asset is needed.
-        static AudioClip MakeChime()
+        // Simple melodies synthesised at runtime, so no audio asset is needed.
+        // The notes are played one after another, each fading out, over `length` seconds.
+        static AudioClip MakeTone(string name, float length, params float[] notes)
         {
             const int rate = 44100;
-            const float length = 0.35f;
             int samples = (int)(rate * length);
+            float noteLength = length / notes.Length;
             var data = new float[samples];
             for (int i = 0; i < samples; i++)
             {
                 float t = (float)i / rate;
-                float freq = t < length / 2 ? 660f : 880f;
-                float envelope = 1f - t / length;
-                data[i] = Mathf.Sin(2 * Mathf.PI * freq * t) * envelope * 0.6f;
+                int note = Mathf.Min((int)(t / noteLength), notes.Length - 1);
+                float noteT = t - note * noteLength;
+                float envelope = 1f - noteT / noteLength;
+                data[i] = Mathf.Sin(2 * Mathf.PI * notes[note] * t) * envelope * 0.6f;
             }
-            var clip = AudioClip.Create("chime", samples, 1, rate, false);
+            var clip = AudioClip.Create(name, samples, 1, rate, false);
             clip.SetData(data, 0);
             return clip;
         }
