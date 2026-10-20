@@ -1,0 +1,69 @@
+{
+  "stylePrompt": "cute flat vector illustration for toddlers, simple rounded shapes, soft pastel colors, thick clean outlines, friendly smiling expression, single subject centered, plain white background, no text, no letters, no watermark",
+  "categories": [
+    {
+      "id": "animals",
+      "zh": "動物",
+      "en": "Animals",
+      "color": "#FFD166",
+      "cards": [
+        { "id": "cat", "zh": "貓", "en": "Cat", "prompt": "a cute orange cat sitting" },
+        { "id": "dog", "zh": "狗", "en": "Dog", "prompt": "a happy brown puppy" },
+        { "id": "rabbit", "zh": "兔子", "en": "Rabbit", "prompt": "a white rabbit with long ears" },
+        { "id": "elephant", "zh": "大象", "en": "Elephant", "prompt": "a friendly grey elephant" },
+        { "id": "lion", "zh": "獅子", "en": "Lion", "prompt": "a smiling lion with a fluffy mane" },
+        { "id": "duck", "zh": "鴨子", "en": "Duck", "prompt": "a yellow duck" },
+        { "id": "cow", "zh": "牛", "en": "Cow", "prompt": "a black and white cow" },
+        { "id": "pig", "zh": "豬", "en": "Pig", "prompt": "a pink pig" },
+        { "id": "fish", "zh": "魚", "en": "Fish", "prompt": "a blue fish" },
+        { "id": "bird", "zh": "鳥", "en": "Bird", "prompt": "a small blue bird" }
+      ]
+    },
+    {
+      "id": "fruits",
+      "zh": "水果",
+      "en": "Fruits",
+      "color": "#EF476F",
+      "cards": [
+        { "id": "apple", "zh": "蘋果", "en": "Apple", "prompt": "a red apple" },
+        { "id": "banana", "zh": "香蕉", "en": "Banana", "prompt": "a yellow banana" },
+        { "id": "orange", "zh": "橘子", "en": "Orange", "prompt": "an orange fruit" },
+        { "id": "grapes", "zh": "葡萄", "en": "Grapes", "prompt": "a bunch of purple grapes" },
+        { "id": "strawberry", "zh": "草莓", "en": "Strawberry", "prompt": "a red strawberry" },
+        { "id": "watermelon", "zh": "西瓜", "en": "Watermelon", "prompt": "a slice of watermelon" },
+        { "id": "pear", "zh": "梨子", "en": "Pear", "prompt": "a green pear" },
+        { "id": "peach", "zh": "桃子", "en": "Peach", "prompt": "a pink peach" }
+      ]
+    },
+    {
+      "id": "vehicles",
+      "zh": "交通工具",
+      "en": "Vehicles",
+      "color": "#118AB2",
+      "cards": [
+        { "id": "car", "zh": "汽車", "en": "Car", "prompt": "a red toy car" },
+        { "id": "bus", "zh": "公車", "en": "Bus", "prompt": "a yellow school bus" },
+        { "id": "train", "zh": "火車", "en": "Train", "prompt": "a blue steam train" },
+        { "id": "airplane", "zh": "飛機", "en": "Airplane", "prompt": "a white airplane flying" },
+        { "id": "boat", "zh": "船", "en": "Boat", "prompt": "a small sailing boat" },
+        { "id": "bicycle", "zh": "腳踏車", "en": "Bicycle", "prompt": "a green bicycle" },
+        { "id": "fire_truck", "zh": "消防車", "en": "Fire Truck", "prompt": "a red fire truck" },
+        { "id": "helicopter", "zh": "直升機", "en": "Helicopter", "prompt": "a blue helicopter" }
+      ]
+    },
+    {
+      "id": "colors",
+      "zh": "顏色",
+      "en": "Colors",
+      "color": "#06D6A0",
+      "cards": [
+        { "id": "red", "zh": "紅色", "en": "Red", "prompt": "a big red balloon" },
+        { "id": "blue", "zh": "藍色", "en": "Blue", "prompt": "a big blue balloon" },
+        { "id": "yellow", "zh": "黃色", "en": "Yellow", "prompt": "a big yellow balloon" },
+        { "id": "green", "zh": "綠色", "en": "Green", "prompt": "a big green balloon" },
+        { "id": "purple", "zh": "紫色", "en": "Purple", "prompt": "a big purple balloon" },
+        { "id": "orange_color", "zh": "橘色", "en": "Orange", "prompt": "a big orange balloon" }
+      ]
+    }
+  ]
+}
