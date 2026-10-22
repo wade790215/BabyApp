@@ -1,0 +1,37 @@
+﻿deckId,deckName,deckNameEn,sortOrder,themeColor,cardId,cardName,cardNameEn
+animals,動物,Animals,0,#FFB84D,animal_dog,狗狗,Dog
+animals,動物,Animals,0,#FFB84D,animal_cat,貓咪,Cat
+animals,動物,Animals,0,#FFB84D,animal_rabbit,兔子,Rabbit
+animals,動物,Animals,0,#FFB84D,animal_elephant,大象,Elephant
+animals,動物,Animals,0,#FFB84D,animal_lion,獅子,Lion
+animals,動物,Animals,0,#FFB84D,animal_monkey,猴子,Monkey
+animals,動物,Animals,0,#FFB84D,animal_bear,熊,Bear
+animals,動物,Animals,0,#FFB84D,animal_pig,豬,Pig
+animals,動物,Animals,0,#FFB84D,animal_duck,鴨子,Duck
+animals,動物,Animals,0,#FFB84D,animal_fish,魚,Fish
+animals,動物,Animals,0,#FFB84D,animal_bird,小鳥,Bird
+animals,動物,Animals,0,#FFB84D,animal_cow,牛,Cow
+fruits,水果,Fruits,1,#FF6F91,fruit_apple,蘋果,Apple
+fruits,水果,Fruits,1,#FF6F91,fruit_banana,香蕉,Banana
+fruits,水果,Fruits,1,#FF6F91,fruit_orange,橘子,Orange
+fruits,水果,Fruits,1,#FF6F91,fruit_grape,葡萄,Grapes
+fruits,水果,Fruits,1,#FF6F91,fruit_strawberry,草莓,Strawberry
+fruits,水果,Fruits,1,#FF6F91,fruit_watermelon,西瓜,Watermelon
+fruits,水果,Fruits,1,#FF6F91,fruit_pineapple,鳳梨,Pineapple
+fruits,水果,Fruits,1,#FF6F91,fruit_pear,梨子,Pear
+fruits,水果,Fruits,1,#FF6F91,fruit_peach,桃子,Peach
+fruits,水果,Fruits,1,#FF6F91,fruit_mango,芒果,Mango
+fruits,水果,Fruits,1,#FF6F91,fruit_lemon,檸檬,Lemon
+fruits,水果,Fruits,1,#FF6F91,fruit_tomato,番茄,Tomato
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_car,汽車,Car
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_bus,公車,Bus
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_truck,卡車,Truck
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_train,火車,Train
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_airplane,飛機,Airplane
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_boat,船,Boat
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_bicycle,腳踏車,Bicycle
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_motorcycle,機車,Scooter
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_firetruck,消防車,Fire Truck
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_ambulance,救護車,Ambulance
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_police,警車,Police Car
+vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_excavator,挖土機,Excavator

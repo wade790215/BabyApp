@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a777669fde13ff4ea83e5eca4a6fb67, type: 3}
+  m_Name: Deck_fruits
+  m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
+  deckId: fruits
+  displayName: "\u6C34\u679C"
+  cover: {fileID: 0}
+  themeColor: {r: 1, g: 0.43529412, b: 0.5686275, a: 1}
+  sortOrder: 1
+  cards:
+  - id: fruit_apple
+    displayName: "\u860B\u679C"
+    image: {fileID: 21300000, guid: cb76d9de65befac4b91164d5a8c1df3b, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_banana
+    displayName: "\u9999\u8549"
+    image: {fileID: 21300000, guid: ca0b7c36e05fa49488836428bada7b5d, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_orange
+    displayName: "\u6A58\u5B50"
+    image: {fileID: 21300000, guid: 93da40917ba7dff4eb80657dc42e071a, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_grape
+    displayName: "\u8461\u8404"
+    image: {fileID: 21300000, guid: 8a1c5100d1628ba41a413b41fb1c95bf, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_strawberry
+    displayName: "\u8349\u8393"
+    image: {fileID: 21300000, guid: ba225f6f30ca38e448a4e87c706e292b, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_watermelon
+    displayName: "\u897F\u74DC"
+    image: {fileID: 21300000, guid: e761d3d34d6232643a72277d91b7aed0, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_pineapple
+    displayName: "\u9CF3\u68A8"
+    image: {fileID: 21300000, guid: 145968bd2e5703b4da915e0f5eab996e, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_pear
+    displayName: "\u68A8\u5B50"
+    image: {fileID: 21300000, guid: 8b538c7d4322ac74b8d96fd383a62242, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_peach
+    displayName: "\u6843\u5B50"
+    image: {fileID: 21300000, guid: f063f581e033053488675401f34c583d, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_mango
+    displayName: "\u8292\u679C"
+    image: {fileID: 21300000, guid: 5867faca2c511204eaeaac1e8dd2a230, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_lemon
+    displayName: "\u6AB8\u6AAC"
+    image: {fileID: 21300000, guid: b2745407cf7f56345a9bb5b63bb09b06, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: fruit_tomato
+    displayName: "\u756A\u8304"
+    image: {fileID: 21300000, guid: ff51f06a3bc24e645826019384659faf, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}

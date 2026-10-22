@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a777669fde13ff4ea83e5eca4a6fb67, type: 3}
+  m_Name: Deck_animals
+  m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
+  deckId: animals
+  displayName: "\u52D5\u7269"
+  cover: {fileID: 0}
+  themeColor: {r: 1, g: 0.72156864, b: 0.3019608, a: 1}
+  sortOrder: 0
+  cards:
+  - id: animal_dog
+    displayName: "\u72D7\u72D7"
+    image: {fileID: 21300000, guid: c98adabbab2c94340b2ef1a0ab3b6219, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_cat
+    displayName: "\u8C93\u54AA"
+    image: {fileID: 21300000, guid: 4124582c787637e42992be81b023c48f, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_rabbit
+    displayName: "\u5154\u5B50"
+    image: {fileID: 21300000, guid: a8a71f84b2b64d848a96d1d9e837bbd5, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_elephant
+    displayName: "\u5927\u8C61"
+    image: {fileID: 21300000, guid: ff05e1683c17da842aa2c679592d27eb, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_lion
+    displayName: "\u7345\u5B50"
+    image: {fileID: 21300000, guid: dde3b05b82b641b46b441de8738eb7ef, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_monkey
+    displayName: "\u7334\u5B50"
+    image: {fileID: 21300000, guid: a7f5b1ee1e71eb9439df83a3724334cb, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_bear
+    displayName: "\u718A"
+    image: {fileID: 21300000, guid: eeffdef5bb6165e46b8ca20559a2f8b4, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_pig
+    displayName: "\u8C6C"
+    image: {fileID: 21300000, guid: 4b2e954ceb1c5274194da8e248877142, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_duck
+    displayName: "\u9D28\u5B50"
+    image: {fileID: 21300000, guid: f2bfa822fc1364c4b9b4260f6f6c8ce1, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_fish
+    displayName: "\u9B5A"
+    image: {fileID: 21300000, guid: 52e75882818a3cd499f1323acddadfe1, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_bird
+    displayName: "\u5C0F\u9CE5"
+    image: {fileID: 21300000, guid: c030bb56d2f5b0942aba60d437f57b18, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
+  - id: animal_cow
+    displayName: "\u725B"
+    image: {fileID: 21300000, guid: 72a35a41746fe604394613d156a992c0, type: 3}
+    voice: {fileID: 0}
+    sound: {fileID: 0}
