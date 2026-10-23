@@ -104,3 +104,6 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# BabyApp 一鍵出包的產出
+/Builds/

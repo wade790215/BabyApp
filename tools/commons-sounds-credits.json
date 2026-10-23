@@ -1,0 +1,202 @@
+[
+  {
+    "cardId": "animal_dog",
+    "file": "animal_dog_sound.ogg",
+    "title": "Barking of a dog.ogg",
+    "author": "Amada44",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Barking_of_a_dog.ogg"
+  },
+  {
+    "cardId": "animal_cat",
+    "file": "animal_cat_sound.ogg",
+    "title": "Meow of a pleading cat.oga",
+    "author": "Heismark",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Meow_of_a_pleading_cat.oga"
+  },
+  {
+    "cardId": "animal_elephant",
+    "file": "animal_elephant_sound.ogg",
+    "title": "Elephant voice - trumpeting.ogg",
+    "author": "தகவலுழவன்",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Elephant_voice_-_trumpeting.ogg"
+  },
+  {
+    "cardId": "animal_lion",
+    "file": "animal_lion_sound.ogg",
+    "title": "Lion Mad.ogg",
+    "author": "Bilberryerer",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Lion_Mad.ogg"
+  },
+  {
+    "cardId": "animal_monkey",
+    "file": "animal_monkey_sound.ogg",
+    "title": "Pant-hoot call made by a male chimpanzee.ogg",
+    "author": "Pawel Fedurek et al.",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pant-hoot_call_made_by_a_male_chimpanzee.ogg"
+  },
+  {
+    "cardId": "animal_bear",
+    "file": "animal_bear_sound.ogg",
+    "title": "Bear growl.ogg",
+    "author": "Shizhao",
+    "license": "CC BY 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bear_growl.ogg"
+  },
+  {
+    "cardId": "animal_pig",
+    "file": "animal_pig_sound.ogg",
+    "title": "Mudchute pig 1.ogg",
+    "author": "Secretlondon",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mudchute_pig_1.ogg"
+  },
+  {
+    "cardId": "animal_duck",
+    "file": "animal_duck_sound.ogg",
+    "title": "Pekin duck & mallard.ogg",
+    "author": "WaderClub",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pekin_duck_%26_mallard.ogg"
+  },
+  {
+    "cardId": "animal_fish",
+    "file": "animal_fish_sound.ogg",
+    "title": "Bubble 01 nevit.ogg",
+    "author": "Nevit Dilmen (talk)",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bubble_01_nevit.ogg"
+  },
+  {
+    "cardId": "animal_bird",
+    "file": "animal_bird_sound.ogg",
+    "title": "House Sparrows chirping.ogg",
+    "author": "QWerk",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:House_Sparrows_chirping.ogg"
+  },
+  {
+    "cardId": "animal_cow",
+    "file": "animal_cow_sound.ogg",
+    "title": "Single Cow Moo.ogg",
+    "author": "MichaeltheFox8621",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Single_Cow_Moo.ogg"
+  },
+  {
+    "cardId": "fruits",
+    "file": "fruits_sound.wav",
+    "title": "Crunch (Gravity Sound).wav",
+    "author": "Gravity Sound",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Crunch_(Gravity_Sound).wav"
+  },
+  {
+    "cardId": "vehicle_car",
+    "file": "vehicle_car_sound.wav",
+    "title": "Car Horn.wav",
+    "author": "15HPanska_Ruttner_Jan",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Car_Horn.wav"
+  },
+  {
+    "cardId": "vehicle_bus",
+    "file": "vehicle_bus_sound.ogg",
+    "title": "WWS CityBusMANSG220horn.ogg",
+    "author": "Work With Sounds / Technical Museum of Slovenia",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:WWS_CityBusMANSG220horn.ogg"
+  },
+  {
+    "cardId": "vehicle_truck",
+    "file": "vehicle_truck_sound.ogg",
+    "title": "WWS FSRTarpan239Dvanstarting.ogg",
+    "author": "Work With Sounds / Museum of Municipal Engineering",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:WWS_FSRTarpan239Dvanstarting.ogg"
+  },
+  {
+    "cardId": "vehicle_train",
+    "file": "vehicle_train_sound.ogg",
+    "title": "WWS SteamWhistle.ogg",
+    "author": "Work With Sounds / Konrad Gutkowski",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:WWS_SteamWhistle.ogg"
+  },
+  {
+    "cardId": "vehicle_airplane",
+    "file": "vehicle_airplane_sound.ogg",
+    "title": "WWS SaabJ35DDraken8211passingtwotimes.ogg",
+    "author": "Work With Sounds / Torsten Nilsson",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:WWS_SaabJ35DDraken8211passingtwotimes.ogg"
+  },
+  {
+    "cardId": "vehicle_boat",
+    "file": "vehicle_boat_sound.ogg",
+    "title": "Cruise ship Albatros ship horn.ogg",
+    "author": "Tvabutzku1234",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cruise_ship_Albatros_ship_horn.ogg"
+  },
+  {
+    "cardId": "vehicle_bicycle",
+    "file": "vehicle_bicycle_sound.ogg",
+    "title": "Ding Dong Bicycle Bell A.ogg",
+    "author": "TeWeBs",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Ding_Dong_Bicycle_Bell_A.ogg"
+  },
+  {
+    "cardId": "vehicle_motorcycle",
+    "file": "vehicle_motorcycle_sound.ogg",
+    "title": "Kawasaki ER-5.oga",
+    "author": "OllemanW",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Kawasaki_ER-5.oga"
+  },
+  {
+    "cardId": "vehicle_firetruck",
+    "file": "vehicle_firetruck_sound.ogg",
+    "title": "WWS Firedepartmentbell.ogg",
+    "author": "Work With Sounds / Konrad Gutkowski",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:WWS_Firedepartmentbell.ogg"
+  },
+  {
+    "cardId": "vehicle_ambulance",
+    "file": "vehicle_ambulance_sound.wav",
+    "title": "AmbulanceSound1.wav",
+    "author": "Demircimehmed",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:AmbulanceSound1.wav"
+  },
+  {
+    "cardId": "vehicle_police",
+    "file": "vehicle_police_sound.ogg",
+    "title": "American police siren i.ogg",
+    "author": "lezer",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:American_police_siren_i.ogg"
+  },
+  {
+    "cardId": "construction",
+    "file": "construction_sound.ogg",
+    "title": "WWS FSRTarpan239Dvanstarting.ogg",
+    "author": "Work With Sounds / Museum of Municipal Engineering",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:WWS_FSRTarpan239Dvanstarting.ogg"
+  },
+  {
+    "cardId": "construction_forklift",
+    "file": "construction_forklift_sound.ogg",
+    "title": "WWS Forklifttruck.ogg",
+    "author": "Work With Sounds / Werstas",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:WWS_Forklifttruck.ogg"
+  }
+]

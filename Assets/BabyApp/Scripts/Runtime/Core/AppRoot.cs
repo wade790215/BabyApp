@@ -12,6 +12,8 @@ namespace BabyApp.Core
     {
         [SerializeField] private HomeScreen homeScreen;
         [SerializeField] private DeckScreen deckScreen;
+        [SerializeField] private FindScreen findScreen;
+        [SerializeField] private CountScreen countScreen;
         [SerializeField] private PaintScreen paintScreen;
         [SerializeField] private SettingsScreen settingsScreen;
 
@@ -24,10 +26,14 @@ namespace BabyApp.Core
             if (homeScreen != null)
             {
                 homeScreen.DeckChosen += OpenDeck;
+                homeScreen.FindChosen += () => ShowOnly(findScreen);
+                homeScreen.CountChosen += () => ShowOnly(countScreen);
                 homeScreen.PaintChosen += () => ShowOnly(paintScreen);
                 homeScreen.SettingsChosen += () => ShowOnly(settingsScreen);
             }
             if (deckScreen != null) deckScreen.HomeRequested += GoHome;
+            if (findScreen != null) findScreen.HomeRequested += GoHome;
+            if (countScreen != null) countScreen.HomeRequested += GoHome;
             if (paintScreen != null) paintScreen.HomeRequested += GoHome;
             if (settingsScreen != null) settingsScreen.CloseRequested += GoHome;
         }
@@ -48,6 +54,8 @@ namespace BabyApp.Core
             if (screen == null) return;
             Toggle(homeScreen, screen);
             Toggle(deckScreen, screen);
+            Toggle(findScreen, screen);
+            Toggle(countScreen, screen);
             Toggle(paintScreen, screen);
             Toggle(settingsScreen, screen);
         }

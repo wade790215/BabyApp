@@ -9,7 +9,7 @@ PlayerSettings:
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
   defaultScreenOrientation: 4
-  targetDevice: 2
+  targetDevice: 1
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Yile
@@ -171,7 +171,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.yile.babyapp
     Standalone: com.Unity-Technologies.com.unity.template.urp-blank
-    iPhone: com.Unity-Technologies.com.unity.template.urp-blank
+    iPhone: com.yile.babyapp
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -255,7 +255,7 @@ PlayerSettings:
   iOSManualSigningProvisioningProfileType: 0
   tvOSManualSigningProvisioningProfileType: 0
   VisionOSManualSigningProvisioningProfileType: 0
-  appleEnableAutomaticSigning: 0
+  appleEnableAutomaticSigning: 1
   iOSRequireARKit: 0
   iOSAutomaticallyDetectAndAddCapabilities: 1
   appleEnableProMotion: 0
@@ -830,6 +830,7 @@ PlayerSettings:
   webWasm2023: 1
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
+    Android: SENTIS_ANALYTICS_ENABLED;APP_UI_EDITOR_ONLY
     Standalone: SENTIS_ANALYTICS_ENABLED;APP_UI_EDITOR_ONLY
   additionalCompilerArguments: {}
   platformArchitecture: {}

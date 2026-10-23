@@ -20,7 +20,7 @@ namespace BabyApp.EditorTools
     /// 而且之後想改版面重跑一次就好。
     ///
     /// 視覺風格是「軟圓淡色」的幼兒 App：淡粉彩背景（可在設定換）、白色圓角邊、柔和陰影、
-    /// 正方形格子按鈕、圓形按鈕。沒有粗黑線、沒有工地。
+    /// 正方形格子按鈕、圓形圖示按鈕（不用文字，2～3 歲不認字）、每個畫面角落一隻蜂蜜小熊。
     ///
     /// 版面全部用錨點百分比，不用固定像素，iPad 和各種平板都不會有東西跑到畫面外。
     /// </summary>
@@ -31,10 +31,12 @@ namespace BabyApp.EditorTools
 
         private static readonly Color Ink = new Color32(0x3A, 0x3A, 0x5A, 0xFF);        // 柔和的深藍灰，所有文字與圖示
         private static readonly Color Frame = Color.white;                                // 白色圓角邊
-        private static readonly Color Peach = new Color32(0xFF, 0x9F, 0x68, 0xFF);       // 長按進度環
+        private static readonly Color Peach = new Color32(0xFF, 0x9F, 0x68, 0xFF);       // 長按進度環、錄音
         private static readonly Color CoverYellow = new Color32(0xFF, 0xE8, 0xA3, 0xFF); // 「？」蓋子
-        private static readonly Color Lavender = new Color32(0xA5, 0x8C, 0xFF, 0xFF);    // 畫畫按鈕
+        private static readonly Color Lavender = new Color32(0xA5, 0x8C, 0xFF, 0xFF);    // 畫畫
         private static readonly Color Mint = new Color32(0x7E, 0xD9, 0xA8, 0xFF);        // 一般按鈕的面
+        private static readonly Color Sky = new Color32(0x6F, 0xCB, 0xFF, 0xFF);         // 找一找
+        private static readonly Color Sun = new Color32(0xFF, 0xD1, 0x66, 0xFF);         // 數數
         private static readonly Color ShadowColor = new Color(0f, 0f, 0f, 0.16f);
 
         // 白邊寬度，卡片與按鈕共用，整體才像同一套
@@ -43,7 +45,7 @@ namespace BabyApp.EditorTools
         private static Font _font;
         private static Sprite _rounded;
         private static Sprite _circle;
-        private static Sprite _arrow;
+        private static readonly Dictionary<string, Sprite> Icons = new Dictionary<string, Sprite>();
         private static AudioClip _tapSfx;
         private static AudioClip _pageSfx;
         private static AudioClip _doorSfx;
@@ -63,10 +65,16 @@ namespace BabyApp.EditorTools
             }
 
             _font = BabyAppFontSetup.EnsureFont();
-            _arrow = BabyAppUiSprites.EnsureArrow();
+            Icons.Clear();
+            foreach (var name in new[] { "arrow", "house", "mic", "eraser", "picture", "gear", "magnifier", "count", "play" })
+            {
+                Icons[name] = BabyAppUiSprites.EnsureIcon(name);
+            }
             (_tapSfx, _pageSfx, _doorSfx, _sparkleSfx) = BabyAppSfxGenerator.EnsureAll();
-            _rounded = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+            // 大圓角底圖（程式畫的，九宮格），所有方塊共用；圓形用內建的 Knob
+            _rounded = BabyAppUiSprites.EnsureRoundRect();
             _circle = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
+            BabyAppUiSprites.EnsureMascotPlaceholders();
 
             Directory.CreateDirectory(BabyAppPaths.Scenes);
             Directory.CreateDirectory(BabyAppPaths.Prefabs);
@@ -80,15 +88,19 @@ namespace BabyApp.EditorTools
             var safeRoot = CreateSafeRoot(canvas.transform);
             var home = CreateHomeScreen(safeRoot);
             var deck = CreateDeckScreen(safeRoot);
+            var find = CreateFindScreen(safeRoot);
+            var count = CreateCountScreen(safeRoot);
             var paint = CreatePaintScreen(safeRoot);
             var settings = CreateSettingsScreen(safeRoot);
 
             var deckButton = BuildDeckButtonPrefab();
             Wire(home, ("buttonPrefab", deckButton));
 
-            CreateAppRoot(home, deck, paint, settings);
+            CreateAppRoot(home, deck, find, count, paint, settings);
 
             deck.gameObject.SetActive(false);
+            find.gameObject.SetActive(false);
+            count.gameObject.SetActive(false);
             paint.gameObject.SetActive(false);
             settings.gameObject.SetActive(false);
 
@@ -111,6 +123,8 @@ namespace BabyApp.EditorTools
             cam.orthographic = true;
             cam.cullingMask = 0; // 畫面全是 UI Overlay，相機不用畫任何東西
             go.AddComponent<UniversalAdditionalCameraData>();
+            // 用選單建相機會自動附耳朵，用程式建不會；沒有 AudioListener 整個 App 都是無聲的
+            go.AddComponent<AudioListener>();
             go.tag = "MainCamera";
         }
 
@@ -143,7 +157,8 @@ namespace BabyApp.EditorTools
             return canvas;
         }
 
-        private static void CreateAppRoot(HomeScreen home, DeckScreen deck, PaintScreen paint, SettingsScreen settings)
+        private static void CreateAppRoot(HomeScreen home, DeckScreen deck, FindScreen find, CountScreen count,
+            PaintScreen paint, SettingsScreen settings)
         {
             var go = new GameObject("AppRoot");
             var voiceSource = go.AddComponent<AudioSource>();
@@ -161,12 +176,39 @@ namespace BabyApp.EditorTools
                 ("doorSfx", _doorSfx),
                 ("sparkleSfx", _sparkleSfx));
 
+            go.AddComponent<VoiceRecorder>();
+
+            // 小熊說的話：從 Audio/Prompts 接上，缺的就是 null（那句會被跳過）
+            var prompts = go.AddComponent<PromptLibrary>();
+            Wire(prompts,
+                ("whereZh", Prompt("prompt_where")),
+                ("whoseSoundZh", Prompt("prompt_whose_sound")),
+                ("correctZh", Prompt("prompt_correct")),
+                ("tryAgainZh", Prompt("prompt_try_again")),
+                ("allCountedZh", Prompt("prompt_all_counted")),
+                ("whereEn", Prompt("prompt_where_en")),
+                ("whoseSoundEn", Prompt("prompt_whose_sound_en")),
+                ("correctEn", Prompt("prompt_correct_en")),
+                ("tryAgainEn", Prompt("prompt_try_again_en")),
+                ("allCountedEn", Prompt("prompt_all_counted_en")));
+            WireArray(prompts, "numbersZh", Prompt("num_1"), Prompt("num_2"), Prompt("num_3"), Prompt("num_4"), Prompt("num_5"));
+            WireArray(prompts, "numbersEn", Prompt("num_1_en"), Prompt("num_2_en"), Prompt("num_3_en"), Prompt("num_4_en"), Prompt("num_5_en"));
+
             var root = go.AddComponent<AppRoot>();
             Wire(root,
                 ("homeScreen", home),
                 ("deckScreen", deck),
+                ("findScreen", find),
+                ("countScreen", count),
                 ("paintScreen", paint),
                 ("settingsScreen", settings));
+        }
+
+        private static AudioClip Prompt(string name)
+        {
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(BabyAppPaths.PromptAudio + "/" + name + ".wav");
+            if (clip == null) Debug.LogWarning("[BabyApp] 找不到提示語音 " + name + ".wav，請跑 tools/make-prompts.ps1。");
+            return clip;
         }
 
         // ---------- 首頁 ----------
@@ -176,24 +218,28 @@ namespace BabyApp.EditorTools
             var screen = CreateScreen("HomeScreen", parent);
             var home = screen.gameObject.AddComponent<HomeScreen>();
 
-            var title = CreateText("Title", screen, Strings.Get("title"), 88, Ink, shadowed: true);
-            Anchor(title.rectTransform, new Vector2(0.15f, 0.85f), new Vector2(0.85f, 0.98f));
-            Localize(title, "title");
-
-            // 正方形格子：幾顆按鈕就自動排 2×2 或 3×2，大小由 ResponsiveGrid 算
+            // 首頁不放標題：小孩不認字，空間留給格子
+            // 正方形格子：幾顆按鈕就自動排 2×2、3×2 或 4×2，大小由 ResponsiveGrid 算
             var grid = CreateChild("DeckGrid", screen);
-            Anchor(grid, new Vector2(0.06f, 0.05f), new Vector2(0.94f, 0.82f));
+            Anchor(grid, new Vector2(0.06f, 0.05f), new Vector2(0.94f, 0.9f));
             grid.gameObject.AddComponent<GridLayoutGroup>();
             grid.gameObject.AddComponent<ResponsiveGrid>();
 
+            var findButton = CreateFeatureTile("FindButton", grid, "magnifier", "find", Sky);
+            var countButton = CreateFeatureTile("CountButton", grid, "count", "count", Sun);
             var paintButton = CreatePaintButton(grid);
-            var (settingsButton, _) = CreateHoldButton("SettingsButton", screen, "set", Mint,
+
+            var (settingsButton, _) = CreateHoldButton("SettingsButton", screen, "gear", Mint,
                 new Vector2(1f, 1f), new Vector2(-90f, -90f), 130f);
+            var (mascot, _) = CreateMascot(screen, new Vector2(0f, 1f), new Vector2(130f, -100f), 190f);
 
             Wire(home,
                 ("buttonContainer", grid),
+                ("findButton", findButton),
+                ("countButton", countButton),
                 ("paintButton", paintButton),
-                ("settingsButton", settingsButton));
+                ("settingsButton", settingsButton),
+                ("mascot", mascot));
             return home;
         }
 
@@ -228,7 +274,26 @@ namespace BabyApp.EditorTools
             return prefab.GetComponent<DeckButton>();
         }
 
-        /// <summary>首頁最後一格「畫畫」：薰衣草紫，上面三顆顏料點。</summary>
+        /// <summary>首頁的功能格（找一找、數數）：一個大圖示加名稱。</summary>
+        private static Button CreateFeatureTile(string name, Transform parent, string iconName, string labelKey, Color color)
+        {
+            var (root, _, fill) = CreateTile(name, parent, new Vector2(400f, 400f), color);
+
+            var button = root.gameObject.AddComponent<Button>();
+            button.targetGraphic = fill;
+            button.transition = Selectable.Transition.None;
+            root.gameObject.AddComponent<Pulse>();
+
+            var icon = CreateImage("Icon", root, Icon(iconName), Ink);
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            Anchor(icon.rectTransform, new Vector2(0.25f, 0.36f), new Vector2(0.75f, 0.88f));
+
+            Localize(CreateTileLabel(root, Strings.Get(labelKey)), labelKey);
+            return button;
+        }
+
+        /// <summary>首頁的「畫畫」格：薰衣草紫，上面三顆顏料點。</summary>
         private static Button CreatePaintButton(Transform parent)
         {
             var (root, _, fill) = CreateTile("PaintButton", parent, new Vector2(400f, 400f), Lavender);
@@ -238,7 +303,7 @@ namespace BabyApp.EditorTools
             button.transition = Selectable.Transition.None;
             root.gameObject.AddComponent<Pulse>();
 
-            var dots = new[] { PaintScreen.DefaultPalette[0], PaintScreen.DefaultPalette[2], PaintScreen.DefaultPalette[4] };
+            var dots = new[] { PaintScreen.DefaultPalette[0], PaintScreen.DefaultPalette[5], PaintScreen.DefaultPalette[12] };
             for (int i = 0; i < dots.Length; i++)
             {
                 float x = 0.22f + 0.28f * i;
@@ -284,13 +349,22 @@ namespace BabyApp.EditorTools
             var (previous, previousFace) = CreateArrowButton("PreviousButton", screen, left: true);
             var (next, nextFace) = CreateArrowButton("NextButton", screen, left: false);
             var (homeButton, homeFace) = CreateHomeButton(screen);
+            var record = CreateRecordButton(screen);
+            var (autoplay, autoplayFace, _) = CreateRoundButtonBase("AutoplayButton", screen, Mint,
+                new Vector2(0f, 0f), new Vector2(250f, 100f), 120f);
+            AddIcon(autoplay.transform, "play", 0.5f);
+            var (mascot, _) = CreateMascot(screen, new Vector2(0f, 1f), new Vector2(130f, -100f), 190f);
 
             Wire(deck,
                 ("cardView", cardView),
                 ("dragger", dragger),
                 ("previousButton", previous),
                 ("nextButton", next),
-                ("homeButton", homeButton));
+                ("homeButton", homeButton),
+                ("recordButton", record),
+                ("autoplayButton", autoplay),
+                ("autoplayFace", autoplayFace),
+                ("mascot", mascot));
             WireArray(deck, "themedAccents", previousFace, nextFace, homeFace);
 
             return deck;
@@ -378,11 +452,7 @@ namespace BabyApp.EditorTools
             var (button, face, rt) = CreateRoundButtonBase(name, parent, Mint, anchor,
                 new Vector2(left ? 110f : -110f, 0f), 170f);
 
-            var arrow = CreateImage("Arrow", rt, _arrow, Ink);
-            arrow.preserveAspect = true;
-            arrow.raycastTarget = false;
-            Place(arrow.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                Vector2.zero, new Vector2(76f, 76f));
+            var arrow = AddIcon(rt, "arrow", 0.45f);
             if (left) arrow.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 180f);
 
             return (button, face);
@@ -390,12 +460,12 @@ namespace BabyApp.EditorTools
 
         private static (HoldButton, Image) CreateHomeButton(Transform parent)
         {
-            return CreateHoldButton("HomeButton", parent, "home", Mint,
+            return CreateHoldButton("HomeButton", parent, "house", Mint,
                 new Vector2(1f, 1f), new Vector2(-100f, -100f), 150f);
         }
 
-        /// <summary>要按住才觸發的圓形按鈕：外圈桃色進度環、白邊、彩色面、一個字（labelKey 對應 Strings）。</summary>
-        private static (HoldButton, Image) CreateHoldButton(string name, Transform parent, string labelKey,
+        /// <summary>要按住才觸發的圓形按鈕：外圈桃色進度環、白邊、彩色面、一個圖示。</summary>
+        private static (HoldButton, Image) CreateHoldButton(string name, Transform parent, string iconName,
             Color faceColor, Vector2 anchor, Vector2 position, float size)
         {
             var rt = CreateChild(name, parent);
@@ -430,26 +500,18 @@ namespace BabyApp.EditorTools
             Place(face.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
                 Vector2.zero, new Vector2(inner - Border * 2f, inner - Border * 2f));
 
-            var label = CreateText("Label", rt, Strings.Get(labelKey), Mathf.RoundToInt(size * 0.42f), Ink);
-            Place(label.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                Vector2.zero, new Vector2(inner, inner));
-            FitText(label, 20);
-            Localize(label, labelKey);
+            AddIcon(rt, iconName, 0.42f);
 
             Wire(hold, ("progressRing", ring));
             return (hold, face);
         }
 
-        /// <summary>普通一點就觸發的圓形按鈕，中間一個字（labelKey 對應 Strings）。</summary>
-        private static Button CreateRoundButton(string name, Transform parent, string labelKey, Color faceColor,
+        /// <summary>普通一點就觸發的圓形按鈕，中間一個圖示。</summary>
+        private static Button CreateRoundButton(string name, Transform parent, string iconName, Color faceColor,
             Vector2 anchor, Vector2 position, float size)
         {
             var (button, _, rt) = CreateRoundButtonBase(name, parent, faceColor, anchor, position, size);
-            var label = CreateText("Label", rt, Strings.Get(labelKey), Mathf.RoundToInt(size * 0.42f), Ink);
-            Place(label.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                Vector2.zero, new Vector2(size - Border * 2f, size));
-            FitText(label, 20);
-            Localize(label, labelKey);
+            AddIcon(rt, iconName, 0.46f);
             return button;
         }
 
@@ -476,6 +538,126 @@ namespace BabyApp.EditorTools
                 Vector2.zero, new Vector2(size - Border * 2f, size - Border * 2f));
 
             return (button, face, rt);
+        }
+
+        /// <summary>左下角的錄音鈕：按住錄、放開存。外圈跟著錄音長度長出來，錄的時候面變紅。</summary>
+        private static RecordButton CreateRecordButton(Transform parent)
+        {
+            const float size = 150f;
+            var rt = CreateChild("RecordButton", parent);
+            Place(rt, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(100f, 100f), new Vector2(size, size));
+
+            var hitArea = rt.gameObject.AddComponent<Image>();
+            hitArea.color = new Color(0f, 0f, 0f, 0f);
+
+            var record = rt.gameObject.AddComponent<RecordButton>();
+
+            var ring = CreateImage("Ring", rt, _circle, new Color32(0xFF, 0x3B, 0x30, 0xFF));
+            ring.type = Image.Type.Filled;
+            ring.fillMethod = Image.FillMethod.Radial360;
+            ring.fillOrigin = (int)Image.Origin360.Top;
+            ring.fillClockwise = true;
+            ring.fillAmount = 0f;
+            ring.raycastTarget = false;
+            Place(ring.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(size, size));
+
+            float inner = size - 22f;
+            var border = CreateImage("Border", rt, _circle, Frame);
+            border.raycastTarget = false;
+            AddShadow(border.gameObject);
+            Place(border.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(inner, inner));
+
+            var face = CreateImage("Face", rt, _circle, Peach);
+            face.raycastTarget = false;
+            Place(face.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(inner - Border * 2f, inner - Border * 2f));
+
+            AddIcon(rt, "mic", 0.42f);
+
+            Wire(record, ("progressRing", ring), ("face", face));
+            return record;
+        }
+
+        // ---------- 找一找 ----------
+
+        private static FindScreen CreateFindScreen(Transform parent)
+        {
+            var screen = CreateScreen("FindScreen", parent);
+            var find = screen.gameObject.AddComponent<FindScreen>();
+
+            var tiles = new RectTransform[2];
+            var images = new Image[2];
+            var fills = new Image[2];
+            var buttons = new Button[2];
+            var pulses = new Pulse[2];
+            for (int i = 0; i < 2; i++)
+            {
+                var (root, _, fill) = CreateTile("Choice" + i, screen, Vector2.zero, Color.white);
+                Anchor(root, new Vector2(i == 0 ? 0.07f : 0.53f, 0.24f), new Vector2(i == 0 ? 0.47f : 0.93f, 0.9f));
+
+                var button = root.gameObject.AddComponent<Button>();
+                button.targetGraphic = fill;
+                button.transition = Selectable.Transition.None;
+                var pulse = root.gameObject.AddComponent<Pulse>();
+
+                var thumb = CreateImage("Thumb", root, null, Color.white);
+                thumb.preserveAspect = true;
+                thumb.raycastTarget = false;
+                Inset(thumb.rectTransform, 34f);
+
+                tiles[i] = root; images[i] = thumb; fills[i] = fill; buttons[i] = button; pulses[i] = pulse;
+            }
+
+            var (home, _) = CreateHomeButton(screen);
+            var (mascot, mascotHandle) = CreateMascot(screen, new Vector2(0.5f, 0f), new Vector2(0f, 100f), 190f);
+
+            Wire(find, ("mascot", mascot), ("mascotHandle", mascotHandle), ("homeButton", home));
+            WireArray(find, "choiceTiles", tiles);
+            WireArray(find, "choiceImages", images);
+            WireArray(find, "choiceFills", fills);
+            WireArray(find, "choiceButtons", buttons);
+            WireArray(find, "choicePulses", pulses);
+            return find;
+        }
+
+        // ---------- 數數 ----------
+
+        private static CountScreen CreateCountScreen(Transform parent)
+        {
+            var screen = CreateScreen("CountScreen", parent);
+            var count = screen.gameObject.AddComponent<CountScreen>();
+
+            var number = CreateText("NumberLabel", screen, "", 170, Ink, shadowed: true);
+            Anchor(number.rectTransform, new Vector2(0.3f, 0.8f), new Vector2(0.7f, 0.98f));
+
+            var field = CreateChild("Field", screen);
+            Anchor(field, new Vector2(0.06f, 0.26f), new Vector2(0.94f, 0.8f));
+
+            // 樣板：白色格、一張圖，關著；CountScreen 每一題複製幾個出來
+            var (cell, _, cellFill) = CreateTile("ItemTemplate", field, new Vector2(200f, 200f), Color.white);
+            var cellButton = cell.gameObject.AddComponent<Button>();
+            cellButton.targetGraphic = cellFill;
+            cellButton.transition = Selectable.Transition.None;
+            cell.gameObject.AddComponent<Pulse>();
+            var thumb = CreateImage("Thumb", cell, null, Color.white);
+            thumb.preserveAspect = true;
+            thumb.raycastTarget = false;
+            Inset(thumb.rectTransform, 18f);
+            cell.gameObject.SetActive(false);
+
+            var (home, _) = CreateHomeButton(screen);
+            var (mascot, mascotHandle) = CreateMascot(screen, new Vector2(0.5f, 0f), new Vector2(0f, 100f), 190f);
+
+            Wire(count,
+                ("mascot", mascot),
+                ("mascotHandle", mascotHandle),
+                ("homeButton", home),
+                ("field", field),
+                ("itemTemplate", cellButton),
+                ("numberLabel", number));
+            return count;
         }
 
         // ---------- 著色畫面 ----------
@@ -512,7 +694,7 @@ namespace BabyApp.EditorTools
             column.anchoredPosition = new Vector2(-15f, 0f);
             column.gameObject.AddComponent<EvenStrip>().Configure(isHorizontal: false, min: 12f, max: 70f);
 
-            var (home, _) = CreateHoldButton("HomeButton", column, "home", Mint, center, Vector2.zero, 150f);
+            var (home, _) = CreateHoldButton("HomeButton", column, "house", Mint, center, Vector2.zero, 150f);
 
             // 顯示目前顏色的圓鈕，點開色盤
             var palette = PaintScreen.DefaultPalette;
@@ -529,8 +711,8 @@ namespace BabyApp.EditorTools
                 sizeRings[i] = ring;
             }
 
-            var pick = CreateRoundButton("PickButton", column, "pic", Mint, center, Vector2.zero, 120f);
-            var (clear, _) = CreateHoldButton("ClearButton", column, "clear", Peach, center, Vector2.zero, 130f);
+            var pick = CreateRoundButton("PickButton", column, "picture", Mint, center, Vector2.zero, 120f);
+            var (clear, _) = CreateHoldButton("ClearButton", column, "eraser", Peach, center, Vector2.zero, 130f);
 
             var (colorPicker, colorButtons, colorRings) = CreateColorPicker(screen, palette);
             var (picturePicker, pickerContent, cellTemplate) = CreatePicturePicker(screen);
@@ -715,31 +897,38 @@ namespace BabyApp.EditorTools
 
             // 面板用百分比，上面留標題、下面留「回首頁」，矮螢幕上三者也不會疊
             var (panel, _, _) = CreateTile("Panel", screen, Vector2.zero, Color.white);
-            Anchor(panel, new Vector2(0.1f, 0.22f), new Vector2(0.9f, 0.84f));
+            Anchor(panel, new Vector2(0.08f, 0.22f), new Vector2(0.92f, 0.84f));
 
             // 每一列用面板高度的百分比定位，面板矮一點列就靠近一點，不會疊
-            var sfx = CreateToggleRow(panel, "sfx", 0.86f);
-            var voice = CreateToggleRow(panel, "voice", 0.68f);
-            var music = CreateToggleRow(panel, "music", 0.5f);
+            var sfx = CreateToggleRow(panel, "sfx", 0.88f);
+            var voice = CreateToggleRow(panel, "voice", 0.72f);
+            var music = CreateToggleRow(panel, "music", 0.56f);
 
-            CreateRowLabel(panel, "language", 0.32f);
+            CreateRowLabel(panel, "language", 0.40f);
             var (languageButton, languageName) = CreateTextButton("LanguageButton", panel, "language_name", Mint,
-                new Vector2(0.78f, 0.32f), Vector2.zero, new Vector2(240f, 96f));
+                new Vector2(0.78f, 0.40f), Vector2.zero, new Vector2(240f, 96f));
 
-            CreateRowLabel(panel, "background", 0.13f);
+            CreateRowLabel(panel, "background", 0.22f);
             var options = AppSettings.Backgrounds;
             var swatchButtons = new Button[options.Length];
             var swatchRings = new Image[options.Length];
             for (int i = 0; i < options.Length; i++)
             {
                 var (button, ring) = CreateColorButton("Background" + i, panel, options[i].Color,
-                    new Vector2(0.46f + 0.08f * i, 0.13f), Vector2.zero);
+                    new Vector2(0.42f + 0.085f * i, 0.22f), Vector2.zero);
                 swatchButtons[i] = button;
                 swatchRings[i] = ring;
             }
 
+            // 給家長看的一行小統計
+            var stats = CreateText("Stats", panel, "", 32, Ink);
+            Anchor(stats.rectTransform, new Vector2(0.04f, 0.02f), new Vector2(0.96f, 0.1f));
+            FitText(stats, 18);
+
             var (close, _) = CreateTextButton("CloseButton", screen, "back_home", Mint,
                 new Vector2(0.5f, 0.11f), Vector2.zero, new Vector2(300f, 96f));
+            var (clearRecordings, _) = CreateTextButton("ClearRecordingsButton", screen, "clear_recordings", Peach,
+                new Vector2(0.2f, 0.11f), Vector2.zero, new Vector2(340f, 96f));
 
             Wire(settings,
                 ("closeButton", close),
@@ -747,7 +936,9 @@ namespace BabyApp.EditorTools
                 ("voiceToggle", voice),
                 ("musicToggle", music),
                 ("languageButton", languageButton),
-                ("languageLabel", languageName));
+                ("languageLabel", languageName),
+                ("clearRecordingsButton", clearRecordings),
+                ("statsLabel", stats));
             WireArray(settings, "backgroundButtons", swatchButtons);
             WireArray(settings, "backgroundRings", swatchRings);
 
@@ -807,19 +998,46 @@ namespace BabyApp.EditorTools
             return (button, label);
         }
 
-        /// <summary>文字跟著語言設定走。</summary>
-        private static void Localize(Text text, string key)
-        {
-            text.gameObject.AddComponent<LocalizedText>().SetKey(key);
-        }
+        // ---------- 吉祥物 ----------
 
-        /// <summary>英文比中文長，字放不下就自動縮小。</summary>
-        private static void FitText(Text text, int minSize)
+        /// <summary>
+        /// 蜂蜜小熊。五張表情從 Art/Mascot 接（程式畫的佔位或 AI 圖），缺的用待機圖。
+        /// 整隻可以拖到別處（擋到畫面就拖走，位置記住），點一下不算拖，發 Tapped（找一找、數數用來再聽一次題目）。
+        /// </summary>
+        private static (Mascot, DraggableWidget) CreateMascot(Transform parent, Vector2 anchor, Vector2 position, float size)
         {
-            text.resizeTextForBestFit = true;
-            text.resizeTextMinSize = minSize;
-            text.resizeTextMaxSize = text.fontSize;
-            text.horizontalOverflow = HorizontalWrapMode.Wrap;
+            var rt = CreateChild("Mascot", parent);
+            Place(rt, anchor, anchor, position, new Vector2(size, size));
+
+            var image = rt.gameObject.AddComponent<Image>();
+            image.preserveAspect = true;
+            image.raycastTarget = true;
+
+            var sprites = new Sprite[BabyAppPaths.MascotPoses.Length];
+            Sprite fallback = AssetDatabase.LoadAssetAtPath<Sprite>(BabyAppPaths.CardArt + "/Animals/animal_bear.png");
+            for (int i = 0; i < sprites.Length; i++)
+            {
+                sprites[i] = AssetDatabase.LoadAssetAtPath<Sprite>(BabyAppPaths.MascotArt + "/" + BabyAppPaths.MascotPoses[i] + ".png");
+            }
+            if (sprites[0] == null)
+            {
+                sprites[0] = fallback;
+                Debug.LogWarning("[BabyApp] 還沒有吉祥物的圖（Art/Mascot/mascot_idle.png），先用動物卡的熊頂著。生圖方式見 docs/AI圖片生成指南.md。");
+            }
+            image.sprite = sprites[0];
+            image.enabled = sprites[0] != null;
+
+            var mascot = rt.gameObject.AddComponent<Mascot>();
+            Wire(mascot,
+                ("image", image),
+                ("idle", sprites[0]),
+                ("happy", sprites[1]),
+                ("surprised", sprites[2]),
+                ("think", sprites[3]),
+                ("sleep", sprites[4]));
+
+            var handle = rt.gameObject.AddComponent<DraggableWidget>();
+            return (mascot, handle);
         }
 
         // ---------- 軟圓風格的積木 ----------
@@ -883,6 +1101,22 @@ namespace BabyApp.EditorTools
             shadow.useGraphicAlpha = true;
         }
 
+        private static Sprite Icon(string name)
+        {
+            return Icons.TryGetValue(name, out var sprite) ? sprite : BabyAppUiSprites.EnsureIcon(name);
+        }
+
+        /// <summary>在圓形按鈕中間放一個深色圖示，大小是按鈕的 fraction。</summary>
+        private static Image AddIcon(Transform button, string iconName, float fraction)
+        {
+            var icon = CreateImage("Icon", button, Icon(iconName), Ink);
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            float half = 0.5f - fraction * 0.5f;
+            Anchor(icon.rectTransform, new Vector2(half, half), new Vector2(1f - half, 1f - half));
+            return icon;
+        }
+
         // ---------- 小工具 ----------
 
         private static RectTransform CreateChild(string name, Transform parent)
@@ -931,12 +1165,27 @@ namespace BabyApp.EditorTools
 
             if (shadowed)
             {
-                // 標題在淡色底上加一道白色的柔邊，像貼紙
+                // 標題在淡色底上加一道白色的柔邊，像貼紙；在夜間深色底上也還看得清楚
                 var outline = rt.gameObject.AddComponent<Outline>();
                 outline.effectColor = new Color(1f, 1f, 1f, 0.9f);
                 outline.effectDistance = new Vector2(3f, -3f);
             }
             return text;
+        }
+
+        /// <summary>文字跟著語言設定走。</summary>
+        private static void Localize(Text text, string key)
+        {
+            text.gameObject.AddComponent<LocalizedText>().SetKey(key);
+        }
+
+        /// <summary>英文比中文長，字放不下就自動縮小。</summary>
+        private static void FitText(Text text, int minSize)
+        {
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = minSize;
+            text.resizeTextMaxSize = text.fontSize;
+            text.horizontalOverflow = HorizontalWrapMode.Wrap;
         }
 
         private static void Stretch(RectTransform rt)

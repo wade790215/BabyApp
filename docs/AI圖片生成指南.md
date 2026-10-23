@@ -113,6 +113,46 @@ shadows, no photorealism. Square 1:1 composition, 1024x1024, sturdy toy-block st
 
 之後想替換哪張就生哪張，同名覆蓋即可，不用一次換完。
 
+## 3.5 吉祥物：蜂蜜小熊（5 張）
+
+每個畫面角落都有牠，會換表情、會跳。存到 `Assets/BabyApp/Art/Mascot/`，缺的表情會自動退回待機圖，所以可以先只生 `mascot_idle.png`。
+
+小熊維尼是迪士尼的設計，不要直接畫一樣的；我們要的是那個**氣質**：圓、黃、慢、暖、愛蜂蜜。**不要紅色上衣**，那是最容易被認成維尼的特徵。
+
+五張用同一個對話連續生，先貼這段當角色設定：
+
+```
+Character sheet reference: a chubby golden-yellow honey bear cub, very round body and
+head, small round ears, big friendly black eyes, tiny smile, soft cream belly patch,
+no clothes, holding a small blue honey pot. Flat vector style, thick clean dark outlines,
+bold saturated colors, simple flat shading, plain pure white background, no text,
+square 1:1, 1024x1024, for a toddler app mascot. Keep this exact character in every image.
+```
+
+然後每一張只換動作：
+
+| 檔名 | 動作 |
+|---|---|
+| `mascot_idle.png` | standing, relaxed, looking at the viewer, gentle smile, hugging the honey pot |
+| `mascot_happy.png` | jumping with both arms up, eyes closed in a big happy smile, honey pot on the ground beside |
+| `mascot_surprised.png` | eyes wide open, mouth a small "o", one paw raised, leaning back slightly |
+| `mascot_think.png` | one paw on chin, looking up to the side, thinking, a small question mark floating above |
+| `mascot_sleep.png` | sitting, eyes closed, head tilted, a small "z" above, hugging the honey pot |
+
+**規格**：1024×1024、PNG。生成時用純白底就好，存進專案後跑一次去背：
+
+```bash
+python tools/knockout-white.py Assets/BabyApp/Art/Mascot/mascot_*.png
+```
+
+它從四邊往內把白色淹掉、邊緣做半透明，不會動到圖中間的白色（眼睛反光、肚子）。卡片圖也可以用同一支去白底。
+
+**現況**：五張已經用 Google Gemini 生好、去背、放進 `Art/Mascot/` 了（2026-10-23）。想重生某一張，同名覆蓋再跑去背即可。
+
+## 3.6 介面圖示（可選）
+
+按鈕上的房子、麥克風、橡皮擦、圖片、齒輪、放大鏡、數數、播放目前是程式畫的白色剪影，風格一致、夠用。想換成手繪感的話，存到 `Assets/BabyApp/Art/UI/`，檔名 `icon_house.png`、`icon_mic.png`、`icon_eraser.png`、`icon_picture.png`、`icon_gear.png`、`icon_magnifier.png`、`icon_count.png`、`icon_play.png`、`icon_arrow.png`（朝右），**白色剪影、透明底、256×256**，程式會用深色把它染上去。
+
 ## 4. 生完圖之後
 
 1. 把檔案存到上面指定的資料夾，**檔名照表格**。

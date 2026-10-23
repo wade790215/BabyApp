@@ -44,6 +44,8 @@ namespace BabyApp.EditorTools
             PlayerSettings.iOS.requiresFullScreen = true;
             PlayerSettings.statusBarHidden = true;
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
+            // 錄音功能要跟 iOS 說明為什麼要用麥克風，不然一按錄音 App 會被系統關掉
+            PlayerSettings.iOS.microphoneUsageDescription = "錄下你的聲音，念出卡片的名稱給自己聽。";
 
             // 這支 App 只有 UI，不需要為了 3D 吃掉平板的電
             QualitySettings.vSyncCount = 1;

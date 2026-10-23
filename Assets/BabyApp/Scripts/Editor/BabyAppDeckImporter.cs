@@ -70,6 +70,8 @@ namespace BabyApp.EditorTools
 
                 sprites.TryGetValue("cover_" + first.DeckId, out var cover);
                 deck.cover = cover;
+                clips.TryGetValue(first.DeckId + "_sound", out var fallbackSound);
+                deck.fallbackSound = fallbackSound;
 
                 deck.cards.Clear();
                 int groupWithImage = 0;

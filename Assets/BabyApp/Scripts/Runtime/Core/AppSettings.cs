@@ -28,7 +28,8 @@ namespace BabyApp.Core
             new BackgroundOption("薄荷", new Color32(0xC9, 0xF2, 0xD9, 0xFF)),
             new BackgroundOption("奶油", new Color32(0xFF, 0xF3, 0xB0, 0xFF)),
             new BackgroundOption("櫻花", new Color32(0xFF, 0xD6, 0xE7, 0xFF)),
-            new BackgroundOption("薰衣草", new Color32(0xE3, 0xD7, 0xFF, 0xFF))
+            new BackgroundOption("薰衣草", new Color32(0xE3, 0xD7, 0xFF, 0xFF)),
+            new BackgroundOption("夜間", new Color32(0x2B, 0x3A, 0x52, 0xFF)) // 睡前用，暗房間裡不刺眼
         };
 
         private const string SfxKey = "babyapp.sfx";

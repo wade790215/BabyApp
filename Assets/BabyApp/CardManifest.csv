@@ -34,4 +34,19 @@ vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_motorcycle,機車,Scooter
 vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_firetruck,消防車,Fire Truck
 vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_ambulance,救護車,Ambulance
 vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_police,警車,Police Car
-vehicles,交通工具,Vehicles,2,#4FB3FF,vehicle_excavator,挖土機,Excavator
+colors,顏色,Colors,4,#C77DFF,color_red,紅色,Red
+colors,顏色,Colors,4,#C77DFF,color_orange,橘色,Orange
+colors,顏色,Colors,4,#C77DFF,color_yellow,黃色,Yellow
+colors,顏色,Colors,4,#C77DFF,color_green,綠色,Green
+colors,顏色,Colors,4,#C77DFF,color_blue,藍色,Blue
+colors,顏色,Colors,4,#C77DFF,color_purple,紫色,Purple
+colors,顏色,Colors,4,#C77DFF,color_pink,粉紅色,Pink
+colors,顏色,Colors,4,#C77DFF,color_black,黑色,Black
+construction,工程車,Construction,3,#FFB347,construction_excavator,挖土機,Excavator
+construction,工程車,Construction,3,#FFB347,construction_bulldozer,推土機,Bulldozer
+construction,工程車,Construction,3,#FFB347,construction_crane,吊車,Crane
+construction,工程車,Construction,3,#FFB347,construction_mixer,水泥攪拌車,Cement Mixer
+construction,工程車,Construction,3,#FFB347,construction_dump,砂石車,Dump Truck
+construction,工程車,Construction,3,#FFB347,construction_roller,壓路機,Road Roller
+construction,工程車,Construction,3,#FFB347,construction_forklift,堆高機,Forklift
+construction,工程車,Construction,3,#FFB347,construction_loader,鏟裝機,Wheel Loader

@@ -1,0 +1,21 @@
+﻿file,lang,text
+prompt_where,zh,在哪裡？
+prompt_whose_sound,zh,這是誰的聲音？
+prompt_correct,zh,答對了！
+prompt_try_again,zh,再試試看
+prompt_all_counted,zh,全部數完了！
+num_1,zh,一
+num_2,zh,二
+num_3,zh,三
+num_4,zh,四
+num_5,zh,五
+prompt_where_en,en,Where is the
+prompt_whose_sound_en,en,Whose sound is this?
+prompt_correct_en,en,Yes! That's right!
+prompt_try_again_en,en,Try again
+prompt_all_counted_en,en,All counted!
+num_1_en,en,one
+num_2_en,en,two
+num_3_en,en,three
+num_4_en,en,four
+num_5_en,en,five

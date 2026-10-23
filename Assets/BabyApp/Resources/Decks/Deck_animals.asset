@@ -14,67 +14,93 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
   deckId: animals
   displayName: "\u52D5\u7269"
-  cover: {fileID: 0}
+  displayNameEn: Animals
+  cover: {fileID: 21300000, guid: 519727ec08c7f0c4bb5cd8b95d93f006, type: 3}
+  fallbackSound: {fileID: 0}
   themeColor: {r: 1, g: 0.72156864, b: 0.3019608, a: 1}
   sortOrder: 0
   cards:
   - id: animal_dog
     displayName: "\u72D7\u72D7"
+    displayNameEn: Dog
     image: {fileID: 21300000, guid: c98adabbab2c94340b2ef1a0ab3b6219, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: fcd44e9b8a72eff4d9a326db16c1631d, type: 3}
+    voiceEn: {fileID: 8300000, guid: 2b32de7dc8c4a234db23a32c03d40956, type: 3}
+    sound: {fileID: 8300000, guid: 0939f53468ebb1246aadbbd8299e35ae, type: 3}
   - id: animal_cat
     displayName: "\u8C93\u54AA"
+    displayNameEn: Cat
     image: {fileID: 21300000, guid: 4124582c787637e42992be81b023c48f, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 2f67e97c26bde6a4ba4f80ed7beb7a27, type: 3}
+    voiceEn: {fileID: 8300000, guid: 66d7c2235a6209a4da522affd20584a8, type: 3}
+    sound: {fileID: 8300000, guid: 6ae49d56332a95a44a10af977dd0fc71, type: 3}
   - id: animal_rabbit
     displayName: "\u5154\u5B50"
+    displayNameEn: Rabbit
     image: {fileID: 21300000, guid: a8a71f84b2b64d848a96d1d9e837bbd5, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 688ef40f777fb634f8a7332cc2d9779c, type: 3}
+    voiceEn: {fileID: 8300000, guid: 017498c0420a5784abed4689001530c7, type: 3}
     sound: {fileID: 0}
   - id: animal_elephant
     displayName: "\u5927\u8C61"
+    displayNameEn: Elephant
     image: {fileID: 21300000, guid: ff05e1683c17da842aa2c679592d27eb, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 2bc4072774173924db4f1055bcba9d14, type: 3}
+    voiceEn: {fileID: 8300000, guid: 2655a05b3547ae64592d4e0f69bd9e50, type: 3}
+    sound: {fileID: 8300000, guid: 78c8e7f263ad8724a9bfd77354c789e6, type: 3}
   - id: animal_lion
     displayName: "\u7345\u5B50"
+    displayNameEn: Lion
     image: {fileID: 21300000, guid: dde3b05b82b641b46b441de8738eb7ef, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 12eb70293928ca14386329d304d50871, type: 3}
+    voiceEn: {fileID: 8300000, guid: d1fafe2db30f32b40b4f9965c7084a45, type: 3}
+    sound: {fileID: 8300000, guid: c44d56a73237e834294b4b436d0c0c0a, type: 3}
   - id: animal_monkey
     displayName: "\u7334\u5B50"
+    displayNameEn: Monkey
     image: {fileID: 21300000, guid: a7f5b1ee1e71eb9439df83a3724334cb, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: bc402a12cbbe3f746a7226801916d8de, type: 3}
+    voiceEn: {fileID: 8300000, guid: 4c5d46435886f704586b38773059ac3e, type: 3}
+    sound: {fileID: 8300000, guid: 370d7fda3bf45364aac52d6ca7d853b6, type: 3}
   - id: animal_bear
     displayName: "\u718A"
+    displayNameEn: Bear
     image: {fileID: 21300000, guid: eeffdef5bb6165e46b8ca20559a2f8b4, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 829270a78241b3d4cafded961409ff2e, type: 3}
+    voiceEn: {fileID: 8300000, guid: 3283c881faf3ca448b8890c368016a17, type: 3}
+    sound: {fileID: 8300000, guid: 56feaed4625e31449b5e8cf89cd420f7, type: 3}
   - id: animal_pig
     displayName: "\u8C6C"
+    displayNameEn: Pig
     image: {fileID: 21300000, guid: 4b2e954ceb1c5274194da8e248877142, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 62d27c02b71a7b94f9a443f8a291e142, type: 3}
+    voiceEn: {fileID: 8300000, guid: 703c237659d00444d95625fc5729174e, type: 3}
+    sound: {fileID: 8300000, guid: ff3a40de5a33a454e8aa11e2c62221bb, type: 3}
   - id: animal_duck
     displayName: "\u9D28\u5B50"
+    displayNameEn: Duck
     image: {fileID: 21300000, guid: f2bfa822fc1364c4b9b4260f6f6c8ce1, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 40c639f89ad65814ba945b1f22da1907, type: 3}
+    voiceEn: {fileID: 8300000, guid: 55ba241521b053545b2ce1c054e4240a, type: 3}
+    sound: {fileID: 8300000, guid: 49fe71e6f9eb7cb498e0635f02599e7b, type: 3}
   - id: animal_fish
     displayName: "\u9B5A"
+    displayNameEn: Fish
     image: {fileID: 21300000, guid: 52e75882818a3cd499f1323acddadfe1, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 7b148a76193341f449acfb075804af1d, type: 3}
+    voiceEn: {fileID: 8300000, guid: 07ccc4185dc1dfe4183efbcfa1a8232d, type: 3}
+    sound: {fileID: 8300000, guid: d0ddf3f8b8837b743a8eff0b2f5a9133, type: 3}
   - id: animal_bird
     displayName: "\u5C0F\u9CE5"
+    displayNameEn: Bird
     image: {fileID: 21300000, guid: c030bb56d2f5b0942aba60d437f57b18, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 426d36074640fde4a89836eb7c329849, type: 3}
+    voiceEn: {fileID: 8300000, guid: 3e18bc9a8ba2b2843ae96b6121fbdb33, type: 3}
+    sound: {fileID: 8300000, guid: fc61ef39a499f4c40bb0be83b667a599, type: 3}
   - id: animal_cow
     displayName: "\u725B"
+    displayNameEn: Cow
     image: {fileID: 21300000, guid: 72a35a41746fe604394613d156a992c0, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: e7692cb1da7bbf9459a21d282af541ac, type: 3}
+    voiceEn: {fileID: 8300000, guid: 90f71e19ae3c9ed44a7ce34f663877ce, type: 3}
+    sound: {fileID: 8300000, guid: 9ddb14eb35ce21c4dab5529dfaa9244c, type: 3}

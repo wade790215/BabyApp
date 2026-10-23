@@ -8,18 +8,23 @@ using UnityEngine.UI;
 namespace BabyApp.UI
 {
     /// <summary>
-    /// 首頁：把 Resources/Decks 裡的每個卡片組排成一排大按鈕，最後再接一顆「畫畫」。
-    /// 角落一顆要長按的「設」給家長進設定。
+    /// 首頁：每個卡片組一格，後面接「找一找」「數數」「畫畫」三格，排成正方形格子。
+    /// 角落一顆要長按的「設」給家長進設定，小熊在旁邊陪著。
     /// 新增主題不用改這支程式，也不用改場景。
     /// </summary>
     public class HomeScreen : MonoBehaviour
     {
         [SerializeField] private Transform buttonContainer;
         [SerializeField] private DeckButton buttonPrefab;
+        [SerializeField] private Button findButton;
+        [SerializeField] private Button countButton;
         [SerializeField] private Button paintButton;
         [SerializeField] private HoldButton settingsButton;
+        [SerializeField] private Mascot mascot;
 
         public event Action<CardDeck> DeckChosen;
+        public event Action FindChosen;
+        public event Action CountChosen;
         public event Action PaintChosen;
         public event Action SettingsChosen;
 
@@ -28,13 +33,26 @@ namespace BabyApp.UI
 
         private void Awake()
         {
-            if (paintButton != null) paintButton.onClick.AddListener(() => PaintChosen?.Invoke());
+            Hook(findButton, () => FindChosen?.Invoke());
+            Hook(countButton, () => CountChosen?.Invoke());
+            Hook(paintButton, () => PaintChosen?.Invoke());
             if (settingsButton != null) settingsButton.Triggered += () => SettingsChosen?.Invoke();
         }
 
         private void OnEnable()
         {
             if (!_built) Build();
+        }
+
+        private void Hook(Button button, Action action)
+        {
+            if (button == null) return;
+            button.onClick.AddListener(() =>
+            {
+                if (VoiceService.Instance != null) VoiceService.Instance.PlayTap();
+                if (mascot != null) mascot.React(Mascot.Pose.Happy, 0.8f);
+                action();
+            });
         }
 
         private void Build()
@@ -56,11 +74,17 @@ namespace BabyApp.UI
                 var button = Instantiate(buttonPrefab, buttonContainer);
                 button.gameObject.SetActive(true);
                 button.name = $"DeckButton_{deck.deckId}";
-                button.Setup(deck, d => DeckChosen?.Invoke(d));
+                button.Setup(deck, d =>
+                {
+                    if (mascot != null) mascot.React(Mascot.Pose.Happy, 0.8f);
+                    DeckChosen?.Invoke(d);
+                });
                 _spawned.Add(button);
             }
 
-            // 畫畫按鈕固定排最後
+            // 固定的三格排在卡片組後面
+            if (findButton != null) findButton.transform.SetAsLastSibling();
+            if (countButton != null) countButton.transform.SetAsLastSibling();
             if (paintButton != null) paintButton.transform.SetAsLastSibling();
 
             _built = true;

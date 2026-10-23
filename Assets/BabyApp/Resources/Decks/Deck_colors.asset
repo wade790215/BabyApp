@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a777669fde13ff4ea83e5eca4a6fb67, type: 3}
+  m_Name: Deck_colors
+  m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
+  deckId: colors
+  displayName: "\u984F\u8272"
+  displayNameEn: Colors
+  cover: {fileID: 0}
+  fallbackSound: {fileID: 0}
+  themeColor: {r: 0.78039217, g: 0.49019608, b: 1, a: 1}
+  sortOrder: 4
+  cards:
+  - id: color_red
+    displayName: "\u7D05\u8272"
+    displayNameEn: Red
+    image: {fileID: 21300000, guid: 0ce9c2681664d9b46bcbb4965c94ba1b, type: 3}
+    voice: {fileID: 8300000, guid: 5267b307b57d13246b84c03ca208f8d3, type: 3}
+    voiceEn: {fileID: 8300000, guid: 6ce301bb68323fd43b375a1025d99b54, type: 3}
+    sound: {fileID: 0}
+  - id: color_orange
+    displayName: "\u6A58\u8272"
+    displayNameEn: Orange
+    image: {fileID: 21300000, guid: 782b3bd3b78be68438f74bd96175c15b, type: 3}
+    voice: {fileID: 8300000, guid: 6104236243a25b64894a89f793d27275, type: 3}
+    voiceEn: {fileID: 8300000, guid: 2ce96d99beb9e644ba10a69188fbea15, type: 3}
+    sound: {fileID: 0}
+  - id: color_yellow
+    displayName: "\u9EC3\u8272"
+    displayNameEn: Yellow
+    image: {fileID: 21300000, guid: 15576568858447f43a801e0045f0c3c3, type: 3}
+    voice: {fileID: 8300000, guid: 57f84e9fb63b8d846a2ba5aecf150cea, type: 3}
+    voiceEn: {fileID: 8300000, guid: 23b022f1a45ee9c4e9d3c4f8bd40ba84, type: 3}
+    sound: {fileID: 0}
+  - id: color_green
+    displayName: "\u7DA0\u8272"
+    displayNameEn: Green
+    image: {fileID: 21300000, guid: f02ecc5b6aa9d7747b176d576f652877, type: 3}
+    voice: {fileID: 8300000, guid: 56eb503aff5b8c4489274183193a004a, type: 3}
+    voiceEn: {fileID: 8300000, guid: 1d20260e858fb8c489d6c63820105ac7, type: 3}
+    sound: {fileID: 0}
+  - id: color_blue
+    displayName: "\u85CD\u8272"
+    displayNameEn: Blue
+    image: {fileID: 21300000, guid: 947f1e6aea2811f448f77f46da9bce05, type: 3}
+    voice: {fileID: 8300000, guid: 8e89e02f3ae830f4db8cf03034d7b47a, type: 3}
+    voiceEn: {fileID: 8300000, guid: a229f49321f0b2b48b2abe7ad67711be, type: 3}
+    sound: {fileID: 0}
+  - id: color_purple
+    displayName: "\u7D2B\u8272"
+    displayNameEn: Purple
+    image: {fileID: 21300000, guid: af9bfc85e2ee6de4b8c7cf7436f77cb4, type: 3}
+    voice: {fileID: 8300000, guid: 78c19762748310c4ba6095d5f6e8fd3e, type: 3}
+    voiceEn: {fileID: 8300000, guid: 23d48eff1e550f34ba408853ef055a6c, type: 3}
+    sound: {fileID: 0}
+  - id: color_pink
+    displayName: "\u7C89\u7D05\u8272"
+    displayNameEn: Pink
+    image: {fileID: 21300000, guid: f6ac02eedf7c70a478d9372df012a36d, type: 3}
+    voice: {fileID: 8300000, guid: 49dfd966176b5ad4d947bdb06a873248, type: 3}
+    voiceEn: {fileID: 8300000, guid: b02b3ec6946674b4292eacf945d27733, type: 3}
+    sound: {fileID: 0}
+  - id: color_black
+    displayName: "\u9ED1\u8272"
+    displayNameEn: Black
+    image: {fileID: 21300000, guid: 05d1bb979556ecf448c2d9c5cbbfeed1, type: 3}
+    voice: {fileID: 8300000, guid: 469f5405ce92e5d40994f70676cc60bb, type: 3}
+    voiceEn: {fileID: 8300000, guid: 29fd222fb5a605342aa555bbb3d9ccf0, type: 3}
+    sound: {fileID: 0}

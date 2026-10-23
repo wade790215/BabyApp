@@ -26,6 +26,9 @@ namespace BabyApp.Data
         [Tooltip("首頁大按鈕上的封面圖")]
         public Sprite cover;
 
+        [Tooltip("這組卡片共用的叫聲（卡片自己沒有叫聲時用），例如水果都用咬一口的咔滋聲。檔名 {deckId}_sound")]
+        public AudioClip fallbackSound;
+
         [Tooltip("這個主題的主題色，用在背景與按鈕")]
         public Color themeColor = new Color(1f, 0.85f, 0.4f);
 

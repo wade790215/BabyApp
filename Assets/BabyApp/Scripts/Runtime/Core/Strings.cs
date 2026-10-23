@@ -27,7 +27,14 @@ namespace BabyApp.Core
                 ["set"] = ("設", "Set"),
                 ["clear"] = ("擦", "Clear"),
                 ["pic"] = ("圖", "Pic"),
-                ["blank"] = ("空", "Blank")
+                ["blank"] = ("空", "Blank"),
+                ["record"] = ("錄", "Rec"),
+                ["clear_recordings"] = ("清除錄音", "Clear recordings"),
+                ["find"] = ("找一找", "Find It"),
+                ["count"] = ("數數", "Count"),
+                ["stats"] = ("今天翻了 {0} 張　最愛：{1}　錄了 {2} 段　找對 {3} 次　數了 {4} 回",
+                             "Today: {0} cards · Favourite: {1} · {2} recordings · {3} found · {4} counted"),
+                ["none"] = ("還沒有", "none")
             };
 
         public static string Get(string key)

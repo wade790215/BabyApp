@@ -14,13 +14,18 @@ namespace BabyApp.EditorTools
         public static void InitialiseEverything()
         {
             BabyAppFontSetup.EnsureFont();
-            BabyAppDeckImporter.Import();
+            ImportCards();
             BabyAppPlayerSetup.Apply();
             BabyAppSceneBuilder.BuildScene();
         }
 
         [MenuItem("BabyApp/2. 匯入卡片素材", priority = 20)]
-        public static void ImportCards() => BabyAppDeckImporter.Import();
+        public static void ImportCards()
+        {
+            // 顏色卡片組的圖是程式畫的，先確定它們在，匯入才接得上
+            BabyAppUiSprites.EnsureColorCards();
+            BabyAppDeckImporter.Import();
+        }
 
         [MenuItem("BabyApp/3. 重建場景", priority = 30)]
         public static void RebuildScene() => BabyAppSceneBuilder.BuildScene();

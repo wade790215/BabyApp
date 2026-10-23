@@ -25,6 +25,13 @@ namespace BabyApp.EditorTools
             // 條紋要能平鋪，所以介面圖統一用 Repeat
             bool isUiIcon = assetPath.StartsWith(BabyAppPaths.UiArt);
             importer.wrapMode = isUiIcon ? TextureWrapMode.Repeat : TextureWrapMode.Clamp;
+
+            // 大圓角底圖要九宮格切，四邊各留圓角半徑，拉成任何大小角都不變形
+            if (assetPath.EndsWith("/roundrect.png"))
+            {
+                float r = BabyAppUiSprites.RoundRectRadius;
+                importer.spriteBorder = new Vector4(r, r, r, r);
+            }
             importer.maxTextureSize = isUiIcon ? 256 : 1024;
             importer.textureCompression = isUiIcon
                 ? TextureImporterCompression.Uncompressed

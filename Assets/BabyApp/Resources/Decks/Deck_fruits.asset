@@ -14,67 +14,93 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
   deckId: fruits
   displayName: "\u6C34\u679C"
-  cover: {fileID: 0}
+  displayNameEn: Fruits
+  cover: {fileID: 21300000, guid: 9db37b9853a093e47864c5962d483626, type: 3}
+  fallbackSound: {fileID: 8300000, guid: f9d79d66d6c4e6c4cb6e41cd6eccecf9, type: 3}
   themeColor: {r: 1, g: 0.43529412, b: 0.5686275, a: 1}
   sortOrder: 1
   cards:
   - id: fruit_apple
     displayName: "\u860B\u679C"
+    displayNameEn: Apple
     image: {fileID: 21300000, guid: cb76d9de65befac4b91164d5a8c1df3b, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 34f3fa95bb301a7499a049a05206d173, type: 3}
+    voiceEn: {fileID: 8300000, guid: 58b8c170292721a46b33dd1be52916a5, type: 3}
     sound: {fileID: 0}
   - id: fruit_banana
     displayName: "\u9999\u8549"
+    displayNameEn: Banana
     image: {fileID: 21300000, guid: ca0b7c36e05fa49488836428bada7b5d, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 6ef5b2c7476f0d744bf1bb13219f616f, type: 3}
+    voiceEn: {fileID: 8300000, guid: e70e778562115314caefd2be93e8b5c7, type: 3}
     sound: {fileID: 0}
   - id: fruit_orange
     displayName: "\u6A58\u5B50"
+    displayNameEn: Orange
     image: {fileID: 21300000, guid: 93da40917ba7dff4eb80657dc42e071a, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: d231185e91f7d444fb56619b216135c6, type: 3}
+    voiceEn: {fileID: 8300000, guid: b44b8e22b30ffee499039e8d6f6b79b7, type: 3}
     sound: {fileID: 0}
   - id: fruit_grape
     displayName: "\u8461\u8404"
+    displayNameEn: Grapes
     image: {fileID: 21300000, guid: 8a1c5100d1628ba41a413b41fb1c95bf, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: c44e8cd56bc4efe4e82ede946a945971, type: 3}
+    voiceEn: {fileID: 8300000, guid: 839daa8da66b6ef4d8428b5da9fe4663, type: 3}
     sound: {fileID: 0}
   - id: fruit_strawberry
     displayName: "\u8349\u8393"
+    displayNameEn: Strawberry
     image: {fileID: 21300000, guid: ba225f6f30ca38e448a4e87c706e292b, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: f69c0d202289ab947bc93e6e881a5f2c, type: 3}
+    voiceEn: {fileID: 8300000, guid: 0331ccbe489ea0946a8c1951ba309fa0, type: 3}
     sound: {fileID: 0}
   - id: fruit_watermelon
     displayName: "\u897F\u74DC"
+    displayNameEn: Watermelon
     image: {fileID: 21300000, guid: e761d3d34d6232643a72277d91b7aed0, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 0325eb5223080fc4ba8fd593ec0b67ff, type: 3}
+    voiceEn: {fileID: 8300000, guid: cde59f4228e23374d8ea6fbf213ddc52, type: 3}
     sound: {fileID: 0}
   - id: fruit_pineapple
     displayName: "\u9CF3\u68A8"
+    displayNameEn: Pineapple
     image: {fileID: 21300000, guid: 145968bd2e5703b4da915e0f5eab996e, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: ffb0dab64fd43434792f0ee8a6b40dd4, type: 3}
+    voiceEn: {fileID: 8300000, guid: 7eb9e6abb8cf81d40934e7b0872b78f1, type: 3}
     sound: {fileID: 0}
   - id: fruit_pear
     displayName: "\u68A8\u5B50"
+    displayNameEn: Pear
     image: {fileID: 21300000, guid: 8b538c7d4322ac74b8d96fd383a62242, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 4d63d46003b1cc24f8715e64a3446fa5, type: 3}
+    voiceEn: {fileID: 8300000, guid: c2c7b372597b3cb4d8f0d58ed396f0ca, type: 3}
     sound: {fileID: 0}
   - id: fruit_peach
     displayName: "\u6843\u5B50"
+    displayNameEn: Peach
     image: {fileID: 21300000, guid: f063f581e033053488675401f34c583d, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: da206f1b4f57be54ea0c490d6ee41722, type: 3}
+    voiceEn: {fileID: 8300000, guid: 88763781751dbae4faeb15163c7d1b69, type: 3}
     sound: {fileID: 0}
   - id: fruit_mango
     displayName: "\u8292\u679C"
+    displayNameEn: Mango
     image: {fileID: 21300000, guid: 5867faca2c511204eaeaac1e8dd2a230, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: 55b610fd4126b62489c58bc1588a7793, type: 3}
+    voiceEn: {fileID: 8300000, guid: e3a1233e6516c404eac93e29cd95fdf8, type: 3}
     sound: {fileID: 0}
   - id: fruit_lemon
     displayName: "\u6AB8\u6AAC"
+    displayNameEn: Lemon
     image: {fileID: 21300000, guid: b2745407cf7f56345a9bb5b63bb09b06, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: c135fa21f5db8a74ebb98de753b40296, type: 3}
+    voiceEn: {fileID: 8300000, guid: dafa83286c078964c9db4a3c6c07bae9, type: 3}
     sound: {fileID: 0}
   - id: fruit_tomato
     displayName: "\u756A\u8304"
+    displayNameEn: Tomato
     image: {fileID: 21300000, guid: ff51f06a3bc24e645826019384659faf, type: 3}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: e8bd682bf1883fa42930dd1a2aa26e41, type: 3}
+    voiceEn: {fileID: 8300000, guid: 4296c6358d79c414a9514714ff905e43, type: 3}
     sound: {fileID: 0}

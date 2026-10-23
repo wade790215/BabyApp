@@ -23,6 +23,9 @@ namespace BabyApp.UI
         [Tooltip("每拖 1 單位傾斜幾度")]
         [SerializeField] private float tiltPerUnit = 0.02f;
 
+        /// <summary>卡片開始飛出去的那一刻（用來馬上把聲音停掉）。</summary>
+        public event Action FlipStarted;
+
         /// <summary>卡片已經飛出去，該把下一張（或上一張）綁上來了。</summary>
         public event Action SwipedToNext;
         public event Action SwipedToPrevious;
@@ -98,6 +101,7 @@ namespace BabyApp.UI
         private IEnumerator FlipRoutine(int direction)
         {
             IsAnimating = true;
+            FlipStarted?.Invoke();
 
             // 飛出去：越飛越斜
             var target = _home + new Vector2(direction * flyDistance, 0f);

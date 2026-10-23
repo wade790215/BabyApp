@@ -14,67 +14,86 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
   deckId: vehicles
   displayName: "\u4EA4\u901A\u5DE5\u5177"
-  cover: {fileID: 0}
+  displayNameEn: Vehicles
+  cover: {fileID: 21300000, guid: 9d3d0b5627e8fa746960c0b5c62c0e59, type: 3}
+  fallbackSound: {fileID: 0}
   themeColor: {r: 0.30980393, g: 0.7019608, b: 1, a: 1}
   sortOrder: 2
   cards:
   - id: vehicle_car
     displayName: "\u6C7D\u8ECA"
+    displayNameEn: Car
     image: {fileID: 21300000, guid: f7a753ec877daaf409f711833957bf65, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 5ba0cf07be6c2324db72b71c7aee8d30, type: 3}
+    voiceEn: {fileID: 8300000, guid: 1b401742f32096b4cbf5aedcc58c6c3e, type: 3}
+    sound: {fileID: 8300000, guid: 037c5463a50db784ea83be6417005c4c, type: 3}
   - id: vehicle_bus
     displayName: "\u516C\u8ECA"
+    displayNameEn: Bus
     image: {fileID: 21300000, guid: cf503426f62b59040a9da1059f3bfe50, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 6d40c1b4cf5f721458b617418f778970, type: 3}
+    voiceEn: {fileID: 8300000, guid: 5a1f38f2117608e4da14c413d1e99bdb, type: 3}
+    sound: {fileID: 8300000, guid: 67853c2a9dcdf154f9aeec76b39a7191, type: 3}
   - id: vehicle_truck
     displayName: "\u5361\u8ECA"
+    displayNameEn: Truck
     image: {fileID: 21300000, guid: d2e57e279ce2cc24cb6006b36dcf367e, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 06a877df834a70c42aaf6a1aa1d7eb6e, type: 3}
+    voiceEn: {fileID: 8300000, guid: e8a4d5890a56c604ebccf4cd2b64f0e1, type: 3}
+    sound: {fileID: 8300000, guid: 71205b6aa590e17438637cc0d730fc37, type: 3}
   - id: vehicle_train
     displayName: "\u706B\u8ECA"
+    displayNameEn: Train
     image: {fileID: 21300000, guid: 4c5fbc418f09df0419137e4f3e91a4ba, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 883b2b659cf001b48a72a0b39e89ffb1, type: 3}
+    voiceEn: {fileID: 8300000, guid: 60da7f0d00c570b4a9c0fd6b3b33ff56, type: 3}
+    sound: {fileID: 8300000, guid: 7cce104d75acbcc4396155359dadc4c1, type: 3}
   - id: vehicle_airplane
     displayName: "\u98DB\u6A5F"
+    displayNameEn: Airplane
     image: {fileID: 21300000, guid: 655fd00d752cd3e4882970c463c0205b, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 1ae3080974f75664785aa684426f7dd3, type: 3}
+    voiceEn: {fileID: 8300000, guid: 8811cc75663144d4aaeb4912adc1685f, type: 3}
+    sound: {fileID: 8300000, guid: 119e350363eb5a24da14dcc7f24f3824, type: 3}
   - id: vehicle_boat
     displayName: "\u8239"
+    displayNameEn: Boat
     image: {fileID: 21300000, guid: 39aca05ae30dbbd4db1886707f1e06f2, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: e990cba3b2bef0142bdd1d16437659bd, type: 3}
+    voiceEn: {fileID: 8300000, guid: ef2667faf4db4e24cbbe4be4c92795f1, type: 3}
+    sound: {fileID: 8300000, guid: 4ed1cc1697bee044ca4249bfb800e077, type: 3}
   - id: vehicle_bicycle
     displayName: "\u8173\u8E0F\u8ECA"
+    displayNameEn: Bicycle
     image: {fileID: 21300000, guid: 0322958e12b17f946be470a77b33e475, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 13c444119c979cc4e8a3a0dba99f833a, type: 3}
+    voiceEn: {fileID: 8300000, guid: 442e5982a031e7346b00ed3a3a7896c9, type: 3}
+    sound: {fileID: 8300000, guid: 32b96bcb1f0389e4daaad6c8fe7a7f9c, type: 3}
   - id: vehicle_motorcycle
     displayName: "\u6A5F\u8ECA"
+    displayNameEn: Scooter
     image: {fileID: 21300000, guid: 57428016c170ca6469036b1a8b1fd73a, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 03444f90a838c2545a897ef9ff224f0a, type: 3}
+    voiceEn: {fileID: 8300000, guid: 0a5701eab5eb78240b6124437ea960a1, type: 3}
+    sound: {fileID: 8300000, guid: b3837279307211e429b0d00121ae846a, type: 3}
   - id: vehicle_firetruck
     displayName: "\u6D88\u9632\u8ECA"
+    displayNameEn: Fire Truck
     image: {fileID: 21300000, guid: b2040814d9a1c2d4990a199962ded037, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: 24d008886223b94489d7b39b236eb489, type: 3}
+    voiceEn: {fileID: 8300000, guid: 00e15f9e02c157f4881c7b98dae27c89, type: 3}
+    sound: {fileID: 8300000, guid: 5a162eaf1fd6c84418561d2827e2bff8, type: 3}
   - id: vehicle_ambulance
     displayName: "\u6551\u8B77\u8ECA"
+    displayNameEn: Ambulance
     image: {fileID: 21300000, guid: bf950ccb3e96b484c98f650209cd93b1, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
+    voice: {fileID: 8300000, guid: fd0ae1da2bbd4f842acca23c1812a6dc, type: 3}
+    voiceEn: {fileID: 8300000, guid: ba58e0b2acca4414bb8f3af2737cceea, type: 3}
+    sound: {fileID: 8300000, guid: b7d932151f86f1c4983f6218a8d71ebd, type: 3}
   - id: vehicle_police
     displayName: "\u8B66\u8ECA"
+    displayNameEn: Police Car
     image: {fileID: 21300000, guid: b4182fc95ef0b2a46aa543132c8624b2, type: 3}
-    voice: {fileID: 0}
-    sound: {fileID: 0}
-  - id: vehicle_excavator
-    displayName: "\u6316\u571F\u6A5F"
-    image: {fileID: 0}
-    voice: {fileID: 0}
+    voice: {fileID: 8300000, guid: fcd97ea511a2c1a4aa1033e10ff5004c, type: 3}
+    voiceEn: {fileID: 8300000, guid: e332ad1b580697345ba322a7b5637863, type: 3}
     sound: {fileID: 0}

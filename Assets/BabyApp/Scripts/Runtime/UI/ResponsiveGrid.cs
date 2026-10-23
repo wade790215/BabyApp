@@ -40,8 +40,12 @@ namespace BabyApp.UI
             }
             if (count == 0) return;
 
-            int columns = count <= 4 ? Mathf.Min(count, 2) : Mathf.CeilToInt(Mathf.Sqrt(count));
-            if (count == 3) columns = 3;
+            // 1～2 顆一排、3 顆一排、4 顆 2×2、5～6 顆 3×2、7～8 顆 4×2
+            int columns;
+            if (count <= 3) columns = count;
+            else if (count == 4) columns = 2;
+            else if (count <= 6) columns = 3;
+            else columns = 4;
             int rows = Mathf.CeilToInt((float)count / columns);
 
             var size = _rt.rect.size;

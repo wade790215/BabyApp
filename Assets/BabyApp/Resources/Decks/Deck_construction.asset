@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a777669fde13ff4ea83e5eca4a6fb67, type: 3}
+  m_Name: Deck_construction
+  m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
+  deckId: construction
+  displayName: "\u5DE5\u7A0B\u8ECA"
+  displayNameEn: Construction
+  cover: {fileID: 21300000, guid: c38cfc89b22dadf4783bf2a1fbb6bca4, type: 3}
+  fallbackSound: {fileID: 8300000, guid: d194cd007c36b3c43ba898291846ca65, type: 3}
+  themeColor: {r: 1, g: 0.7019608, b: 0.2784314, a: 1}
+  sortOrder: 3
+  cards:
+  - id: construction_excavator
+    displayName: "\u6316\u571F\u6A5F"
+    displayNameEn: Excavator
+    image: {fileID: 21300000, guid: 0f6fca86b4089464aa8fe4b8359cf823, type: 3}
+    voice: {fileID: 8300000, guid: f407440345ce3f3419b76765e6632494, type: 3}
+    voiceEn: {fileID: 8300000, guid: 7cf3aee05cb645046b1e0ca8881ad6ec, type: 3}
+    sound: {fileID: 0}
+  - id: construction_bulldozer
+    displayName: "\u63A8\u571F\u6A5F"
+    displayNameEn: Bulldozer
+    image: {fileID: 21300000, guid: 4040fa9220f34244ba12ff9be51b81a2, type: 3}
+    voice: {fileID: 8300000, guid: 65fe76441adc3b742b0a8cbee8b85f09, type: 3}
+    voiceEn: {fileID: 8300000, guid: 7106e667d5feefa4ba2d57ac290e62b1, type: 3}
+    sound: {fileID: 0}
+  - id: construction_crane
+    displayName: "\u540A\u8ECA"
+    displayNameEn: Crane
+    image: {fileID: 21300000, guid: 9480922c886220c499cc1dcbc106d02e, type: 3}
+    voice: {fileID: 8300000, guid: edce619d6ded42746b656bb4f5463400, type: 3}
+    voiceEn: {fileID: 8300000, guid: f5be2906776bcb648ab6db56f73d47c4, type: 3}
+    sound: {fileID: 0}
+  - id: construction_mixer
+    displayName: "\u6C34\u6CE5\u652A\u62CC\u8ECA"
+    displayNameEn: Cement Mixer
+    image: {fileID: 21300000, guid: e80256f6da86a3644a875facf963ca85, type: 3}
+    voice: {fileID: 8300000, guid: 8b2efc9ccc299cd4095cdd520ade7c88, type: 3}
+    voiceEn: {fileID: 8300000, guid: 77b87ab17a6a2b4478b91618d05d4426, type: 3}
+    sound: {fileID: 0}
+  - id: construction_dump
+    displayName: "\u7802\u77F3\u8ECA"
+    displayNameEn: Dump Truck
+    image: {fileID: 21300000, guid: e77b5ae7fae50eb4fbbf19fff6036c35, type: 3}
+    voice: {fileID: 8300000, guid: 4df1d4e94613f844187f2f70cc0052c3, type: 3}
+    voiceEn: {fileID: 8300000, guid: 969aa2deea5766f47bed594c3ddfb354, type: 3}
+    sound: {fileID: 0}
+  - id: construction_roller
+    displayName: "\u58D3\u8DEF\u6A5F"
+    displayNameEn: Road Roller
+    image: {fileID: 21300000, guid: e2b190a390358a649aef3e66065730e3, type: 3}
+    voice: {fileID: 8300000, guid: 0089d59049a480c4b8451d819e38b36b, type: 3}
+    voiceEn: {fileID: 8300000, guid: 8307d75087a009e4ab651fb9b2a1256e, type: 3}
+    sound: {fileID: 0}
+  - id: construction_forklift
+    displayName: "\u5806\u9AD8\u6A5F"
+    displayNameEn: Forklift
+    image: {fileID: 21300000, guid: 0e3f7d6fdda724142b7405170a6d335d, type: 3}
+    voice: {fileID: 8300000, guid: 3455b951dffbb9741b74a92db3a3f48a, type: 3}
+    voiceEn: {fileID: 8300000, guid: 80f22f5f93c197c4e9d34272b996d4c6, type: 3}
+    sound: {fileID: 8300000, guid: c93679d6e940f4b4ab230cfced0eb6b2, type: 3}
+  - id: construction_loader
+    displayName: "\u93DF\u88DD\u6A5F"
+    displayNameEn: Wheel Loader
+    image: {fileID: 21300000, guid: 090feb4885c47314abbb80d7f2c20e65, type: 3}
+    voice: {fileID: 8300000, guid: 8774152492a79194c8868752d4bf05da, type: 3}
+    voiceEn: {fileID: 8300000, guid: 744bb89d2f49a4d4e9fea28a97349502, type: 3}
+    sound: {fileID: 0}
