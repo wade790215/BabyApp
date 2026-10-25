@@ -11,9 +11,13 @@ namespace BabyApp.Core
     public class AppRoot : MonoBehaviour
     {
         [SerializeField] private HomeScreen homeScreen;
+        [SerializeField] private DeckPickScreen deckPickScreen;
         [SerializeField] private DeckScreen deckScreen;
+        [SerializeField] private TouchScreen touchScreen;
         [SerializeField] private FindScreen findScreen;
         [SerializeField] private CountScreen countScreen;
+        [SerializeField] private MatchScreen matchScreen;
+        [SerializeField] private PuzzleScreen puzzleScreen;
         [SerializeField] private PaintScreen paintScreen;
         [SerializeField] private SettingsScreen settingsScreen;
 
@@ -25,15 +29,26 @@ namespace BabyApp.Core
 
             if (homeScreen != null)
             {
-                homeScreen.DeckChosen += OpenDeck;
+                homeScreen.CardsChosen += () => ShowOnly(deckPickScreen);
+                homeScreen.TouchChosen += () => ShowOnly(touchScreen);
                 homeScreen.FindChosen += () => ShowOnly(findScreen);
                 homeScreen.CountChosen += () => ShowOnly(countScreen);
+                homeScreen.MatchChosen += () => ShowOnly(matchScreen);
+                homeScreen.PuzzleChosen += () => ShowOnly(puzzleScreen);
                 homeScreen.PaintChosen += () => ShowOnly(paintScreen);
                 homeScreen.SettingsChosen += () => ShowOnly(settingsScreen);
             }
+            if (deckPickScreen != null)
+            {
+                deckPickScreen.DeckChosen += OpenDeck;
+                deckPickScreen.HomeRequested += GoHome;
+            }
             if (deckScreen != null) deckScreen.HomeRequested += GoHome;
+            if (touchScreen != null) touchScreen.HomeRequested += GoHome;
             if (findScreen != null) findScreen.HomeRequested += GoHome;
             if (countScreen != null) countScreen.HomeRequested += GoHome;
+            if (matchScreen != null) matchScreen.HomeRequested += GoHome;
+            if (puzzleScreen != null) puzzleScreen.HomeRequested += GoHome;
             if (paintScreen != null) paintScreen.HomeRequested += GoHome;
             if (settingsScreen != null) settingsScreen.CloseRequested += GoHome;
         }
@@ -53,9 +68,13 @@ namespace BabyApp.Core
         {
             if (screen == null) return;
             Toggle(homeScreen, screen);
+            Toggle(deckPickScreen, screen);
             Toggle(deckScreen, screen);
+            Toggle(touchScreen, screen);
             Toggle(findScreen, screen);
             Toggle(countScreen, screen);
+            Toggle(matchScreen, screen);
+            Toggle(puzzleScreen, screen);
             Toggle(paintScreen, screen);
             Toggle(settingsScreen, screen);
         }

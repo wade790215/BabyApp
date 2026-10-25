@@ -105,6 +105,55 @@ shadows, no photorealism. Square 1:1 composition, 1024x1024, sturdy toy-block st
 
 > 封面是唯一允許多個主體的圖，所以貼風格段落時要把 `Single subject only` 那句改成 `A small group of objects`。
 
+### 生活用品（10 張）— 存到 `Assets/BabyApp/Art/Cards/Daily/`
+
+比獅子更貼近 2 歲半的每一天。CSV 已經加好、名稱語音已經合成，**只缺圖**；整組還沒圖之前這個主題會自動藏起來，不會出現純文字卡。
+
+| 檔名 | 中文名 | Subject |
+|---|---|---|
+| `daily_cup.png` | 杯子 | a small sippy cup for a toddler, light blue with two handles, front view |
+| `daily_spoon.png` | 湯匙 | a short chunky toddler spoon, green handle, standing upright |
+| `daily_bowl.png` | 碗 | a round yellow bowl, slight top-down view, empty |
+| `daily_shoes.png` | 鞋子 | a pair of small red toddler sneakers, side by side |
+| `daily_hat.png` | 帽子 | a soft yellow bucket hat, front view |
+| `daily_toothbrush.png` | 牙刷 | a toddler toothbrush with a pink handle and white bristles, standing upright |
+| `daily_toilet.png` | 馬桶 | a simple white toilet with the lid up, front three-quarter view |
+| `daily_bed.png` | 床 | a small toddler bed with a blue blanket and a white pillow, side view |
+| `daily_chair.png` | 椅子 | a small wooden toddler chair, front three-quarter view |
+| `daily_ball.png` | 球 | a round rubber ball with red and blue stripes |
+
+### 身體（8 張）— 存到 `Assets/BabyApp/Art/Cards/Body/`
+
+配合找一找「鼻子在哪裡？」。這組畫的是**部位本身**（不是整個人），所以主體要大、要簡單。
+
+| 檔名 | 中文名 | Subject |
+|---|---|---|
+| `body_eyes.png` | 眼睛 | a pair of big round friendly cartoon eyes with lashes, nothing else |
+| `body_nose.png` | 鼻子 | a simple round cartoon nose on a patch of skin-toned face, nothing else |
+| `body_mouth.png` | 嘴巴 | a big smiling cartoon mouth with a pink tongue, nothing else |
+| `body_ears.png` | 耳朵 | a single cartoon ear, skin tone, side view, nothing else |
+| `body_hands.png` | 手 | two open cartoon hands, palms facing the viewer, fingers spread |
+| `body_feet.png` | 腳 | a pair of bare cartoon feet, toes up, front view |
+| `body_hair.png` | 頭髮 | the top of a child's head with short dark hair, no face visible |
+| `body_tummy.png` | 肚子 | a round cartoon tummy with a belly button, nothing else |
+
+### 首頁功能格的小圖（7 張，可選）
+
+首頁七格目前是程式畫的深色剪影（卡片、腳掌、放大鏡、三顆圓、配對、拼圖片、顏料點），夠用但偏抽象。
+想換成有「小熊在做這件事」的彩色小圖，存到 `Assets/BabyApp/Art/UI/`，**檔名** `tile_cards.png`、`tile_touch.png`、`tile_find.png`、`tile_count.png`、`tile_match.png`、`tile_puzzle.png`、`tile_paint.png`，透明底、正方形。有檔程式就直接用、不染色；沒有就用剪影。放好後跑「3. 重建場景」。
+
+| 檔名 | Subject |
+|---|---|
+| `tile_cards.png` | the honey bear mascot holding up a flashcard with a puppy on it |
+| `tile_touch.png` | the honey bear mascot gently patting a small puppy on the head |
+| `tile_find.png` | the honey bear mascot looking through a big magnifying glass |
+| `tile_count.png` | three red apples in a row |
+| `tile_match.png` | two identical yellow ducks side by side |
+| `tile_puzzle.png` | the honey bear mascot holding one big colourful jigsaw puzzle piece |
+| `tile_paint.png` | the honey bear mascot holding a paintbrush with colourful paint splashes |
+
+> 小熊的長相要跟 3.5 節一致，貼 prompt 時把那段「蜂蜜小熊」的描述也帶進去。
+
 ---
 
 ### 先從哪張開始

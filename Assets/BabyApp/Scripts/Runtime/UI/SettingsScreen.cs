@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace BabyApp.UI
 {
     /// <summary>
-    /// 家長用的設定頁：三個開關（音效、語音、音樂）、語言切換、六個背景色塊、清除錄音，
+    /// 家長用的設定頁：四個開關（音效、語音、音樂、顯示文字）、語言切換、六個背景色塊、清除錄音，
     /// 還有一行小統計（今天翻了幾張、最愛哪張、錄了幾段、找對幾次、數了幾回）。
     /// 改了就立刻存起來，不需要「儲存」按鈕。
     /// </summary>
@@ -17,6 +17,7 @@ namespace BabyApp.UI
         [SerializeField] private ToggleRow sfxToggle;
         [SerializeField] private ToggleRow voiceToggle;
         [SerializeField] private ToggleRow musicToggle;
+        [SerializeField] private ToggleRow labelsToggle;
         [SerializeField] private Button languageButton;
         [SerializeField] private Text languageLabel;
         [SerializeField] private Button clearRecordingsButton;
@@ -33,6 +34,7 @@ namespace BabyApp.UI
             if (sfxToggle != null) sfxToggle.Changed += v => { AppSettings.SfxEnabled = v; Tap(); };
             if (voiceToggle != null) voiceToggle.Changed += v => { AppSettings.VoiceEnabled = v; Tap(); };
             if (musicToggle != null) musicToggle.Changed += v => { AppSettings.MusicEnabled = v; Tap(); };
+            if (labelsToggle != null) labelsToggle.Changed += v => { AppSettings.ShowLabels = v; Tap(); };
 
             if (languageButton != null)
             {
@@ -83,6 +85,7 @@ namespace BabyApp.UI
             if (sfxToggle != null) sfxToggle.Set(AppSettings.SfxEnabled, notify: false);
             if (voiceToggle != null) voiceToggle.Set(AppSettings.VoiceEnabled, notify: false);
             if (musicToggle != null) musicToggle.Set(AppSettings.MusicEnabled, notify: false);
+            if (labelsToggle != null) labelsToggle.Set(AppSettings.ShowLabels, notify: false);
             if (languageLabel != null) languageLabel.text = Strings.Get("language_name");
 
             if (backgroundRings != null)

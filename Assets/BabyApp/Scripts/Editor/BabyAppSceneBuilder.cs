@@ -37,6 +37,7 @@ namespace BabyApp.EditorTools
         private static readonly Color Mint = new Color32(0x7E, 0xD9, 0xA8, 0xFF);        // 一般按鈕的面
         private static readonly Color Sky = new Color32(0x6F, 0xCB, 0xFF, 0xFF);         // 找一找
         private static readonly Color Sun = new Color32(0xFF, 0xD1, 0x66, 0xFF);         // 數數
+        private static readonly Color Rose = new Color32(0xFF, 0x9E, 0xC4, 0xFF);        // 摸一摸
         private static readonly Color ShadowColor = new Color(0f, 0f, 0f, 0.16f);
 
         // 白邊寬度，卡片與按鈕共用，整體才像同一套
@@ -50,6 +51,7 @@ namespace BabyApp.EditorTools
         private static AudioClip _pageSfx;
         private static AudioClip _doorSfx;
         private static AudioClip _sparkleSfx;
+        private static AudioClip _chewSfx;
 
         public static void BuildScene()
         {
@@ -66,11 +68,11 @@ namespace BabyApp.EditorTools
 
             _font = BabyAppFontSetup.EnsureFont();
             Icons.Clear();
-            foreach (var name in new[] { "arrow", "house", "mic", "eraser", "picture", "gear", "magnifier", "count", "play" })
+            foreach (var name in new[] { "arrow", "house", "mic", "eraser", "picture", "gear", "magnifier", "count", "play", "cards", "paw", "match", "puzzle" })
             {
                 Icons[name] = BabyAppUiSprites.EnsureIcon(name);
             }
-            (_tapSfx, _pageSfx, _doorSfx, _sparkleSfx) = BabyAppSfxGenerator.EnsureAll();
+            (_tapSfx, _pageSfx, _doorSfx, _sparkleSfx, _chewSfx) = BabyAppSfxGenerator.EnsureAll();
             // 大圓角底圖（程式畫的，九宮格），所有方塊共用；圓形用內建的 Knob
             _rounded = BabyAppUiSprites.EnsureRoundRect();
             _circle = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
@@ -87,20 +89,28 @@ namespace BabyApp.EditorTools
             var canvas = CreateCanvas();
             var safeRoot = CreateSafeRoot(canvas.transform);
             var home = CreateHomeScreen(safeRoot);
+            var deckPick = CreateDeckPickScreen(safeRoot);
             var deck = CreateDeckScreen(safeRoot);
+            var touch = CreateTouchScreen(safeRoot);
             var find = CreateFindScreen(safeRoot);
             var count = CreateCountScreen(safeRoot);
+            var match = CreateMatchScreen(safeRoot);
+            var puzzle = CreatePuzzleScreen(safeRoot);
             var paint = CreatePaintScreen(safeRoot);
             var settings = CreateSettingsScreen(safeRoot);
 
             var deckButton = BuildDeckButtonPrefab();
-            Wire(home, ("buttonPrefab", deckButton));
+            Wire(deckPick, ("buttonPrefab", deckButton));
 
-            CreateAppRoot(home, deck, find, count, paint, settings);
+            CreateAppRoot(home, deckPick, deck, touch, find, count, match, puzzle, paint, settings);
 
+            deckPick.gameObject.SetActive(false);
             deck.gameObject.SetActive(false);
+            touch.gameObject.SetActive(false);
             find.gameObject.SetActive(false);
             count.gameObject.SetActive(false);
+            match.gameObject.SetActive(false);
+            puzzle.gameObject.SetActive(false);
             paint.gameObject.SetActive(false);
             settings.gameObject.SetActive(false);
 
@@ -157,8 +167,8 @@ namespace BabyApp.EditorTools
             return canvas;
         }
 
-        private static void CreateAppRoot(HomeScreen home, DeckScreen deck, FindScreen find, CountScreen count,
-            PaintScreen paint, SettingsScreen settings)
+        private static void CreateAppRoot(HomeScreen home, DeckPickScreen deckPick, DeckScreen deck, TouchScreen touch,
+            FindScreen find, CountScreen count, MatchScreen match, PuzzleScreen puzzle, PaintScreen paint, SettingsScreen settings)
         {
             var go = new GameObject("AppRoot");
             var voiceSource = go.AddComponent<AudioSource>();
@@ -174,7 +184,8 @@ namespace BabyApp.EditorTools
                 ("tapSfx", _tapSfx),
                 ("pageSfx", _pageSfx),
                 ("doorSfx", _doorSfx),
-                ("sparkleSfx", _sparkleSfx));
+                ("sparkleSfx", _sparkleSfx),
+                ("chewSfx", _chewSfx));
 
             go.AddComponent<VoiceRecorder>();
 
@@ -186,28 +197,48 @@ namespace BabyApp.EditorTools
                 ("correctZh", Prompt("prompt_correct")),
                 ("tryAgainZh", Prompt("prompt_try_again")),
                 ("allCountedZh", Prompt("prompt_all_counted")),
+                ("hereZh", Prompt("prompt_here")),
+                ("yummyZh", Prompt("prompt_yummy")),
+                ("sameZh", Prompt("prompt_same")),
+                ("comeOnZh", Prompt("prompt_come_on")),
+                ("doneZh", Prompt("prompt_done")),
                 ("whereEn", Prompt("prompt_where_en")),
                 ("whoseSoundEn", Prompt("prompt_whose_sound_en")),
                 ("correctEn", Prompt("prompt_correct_en")),
                 ("tryAgainEn", Prompt("prompt_try_again_en")),
-                ("allCountedEn", Prompt("prompt_all_counted_en")));
+                ("allCountedEn", Prompt("prompt_all_counted_en")),
+                ("hereEn", Prompt("prompt_here_en")),
+                ("yummyEn", Prompt("prompt_yummy_en")),
+                ("sameEn", Prompt("prompt_same_en")),
+                ("comeOnEn", Prompt("prompt_come_on_en")),
+                ("doneEn", Prompt("prompt_done_en")));
             WireArray(prompts, "numbersZh", Prompt("num_1"), Prompt("num_2"), Prompt("num_3"), Prompt("num_4"), Prompt("num_5"));
             WireArray(prompts, "numbersEn", Prompt("num_1_en"), Prompt("num_2_en"), Prompt("num_3_en"), Prompt("num_4_en"), Prompt("num_5_en"));
 
             var root = go.AddComponent<AppRoot>();
             Wire(root,
                 ("homeScreen", home),
+                ("deckPickScreen", deckPick),
                 ("deckScreen", deck),
+                ("touchScreen", touch),
                 ("findScreen", find),
                 ("countScreen", count),
+                ("matchScreen", match),
+                ("puzzleScreen", puzzle),
                 ("paintScreen", paint),
                 ("settingsScreen", settings));
         }
 
         private static AudioClip Prompt(string name)
         {
-            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(BabyAppPaths.PromptAudio + "/" + name + ".wav");
-            if (clip == null) Debug.LogWarning("[BabyApp] 找不到提示語音 " + name + ".wav，請跑 tools/make-prompts.ps1。");
+            // edge-tts 出的是 mp3、SAPI 出的是 wav，兩種都接受
+            AudioClip clip = null;
+            foreach (var ext in new[] { ".wav", ".mp3", ".ogg" })
+            {
+                clip = AssetDatabase.LoadAssetAtPath<AudioClip>(BabyAppPaths.PromptAudio + "/" + name + ext);
+                if (clip != null) break;
+            }
+            if (clip == null) Debug.LogWarning("[BabyApp] 找不到提示語音 " + name + "，請跑 python tools/make-voices-edge.py --prompts。");
             return clip;
         }
 
@@ -219,14 +250,18 @@ namespace BabyApp.EditorTools
             var home = screen.gameObject.AddComponent<HomeScreen>();
 
             // 首頁不放標題：小孩不認字，空間留給格子
-            // 正方形格子：幾顆按鈕就自動排 2×2、3×2 或 4×2，大小由 ResponsiveGrid 算
-            var grid = CreateChild("DeckGrid", screen);
+            // 七個大格自動排 4×2：卡片、摸一摸、找一找、數數、配對、拼圖、畫畫。主題選擇在「卡片」裡面
+            var grid = CreateChild("TileGrid", screen);
             Anchor(grid, new Vector2(0.06f, 0.05f), new Vector2(0.94f, 0.9f));
             grid.gameObject.AddComponent<GridLayoutGroup>();
             grid.gameObject.AddComponent<ResponsiveGrid>();
 
+            var cardsButton = CreateFeatureTile("CardsButton", grid, "cards", "cards", Peach);
+            var touchButton = CreateFeatureTile("TouchButton", grid, "paw", "touch", Rose);
             var findButton = CreateFeatureTile("FindButton", grid, "magnifier", "find", Sky);
             var countButton = CreateFeatureTile("CountButton", grid, "count", "count", Sun);
+            var matchButton = CreateFeatureTile("MatchButton", grid, "match", "match", Mint);
+            var puzzleButton = CreateFeatureTile("PuzzleButton", grid, "puzzle", "puzzle", CoverYellow);
             var paintButton = CreatePaintButton(grid);
 
             var (settingsButton, _) = CreateHoldButton("SettingsButton", screen, "gear", Mint,
@@ -234,13 +269,38 @@ namespace BabyApp.EditorTools
             var (mascot, _) = CreateMascot(screen, new Vector2(0f, 1f), new Vector2(130f, -100f), 190f);
 
             Wire(home,
-                ("buttonContainer", grid),
+                ("cardsButton", cardsButton),
+                ("touchButton", touchButton),
                 ("findButton", findButton),
                 ("countButton", countButton),
+                ("matchButton", matchButton),
+                ("puzzleButton", puzzleButton),
                 ("paintButton", paintButton),
                 ("settingsButton", settingsButton),
                 ("mascot", mascot));
             return home;
+        }
+
+        // ---------- 選主題 ----------
+
+        private static DeckPickScreen CreateDeckPickScreen(Transform parent)
+        {
+            var screen = CreateScreen("DeckPickScreen", parent);
+            var pick = screen.gameObject.AddComponent<DeckPickScreen>();
+
+            var grid = CreateChild("DeckGrid", screen);
+            Anchor(grid, new Vector2(0.06f, 0.05f), new Vector2(0.94f, 0.9f));
+            grid.gameObject.AddComponent<GridLayoutGroup>();
+            grid.gameObject.AddComponent<ResponsiveGrid>();
+
+            var (home, _) = CreateHomeButton(screen);
+            var (mascot, _) = CreateMascot(screen, new Vector2(0f, 1f), new Vector2(130f, -100f), 190f);
+
+            Wire(pick,
+                ("buttonContainer", grid),
+                ("homeButton", home),
+                ("mascot", mascot));
+            return pick;
         }
 
         private static DeckButton BuildDeckButtonPrefab()
@@ -259,7 +319,10 @@ namespace BabyApp.EditorTools
             cover.preserveAspect = true;
             Anchor(cover.rectTransform, new Vector2(0.14f, 0.3f), new Vector2(0.86f, 0.92f));
 
-            var label = CreateTileLabel(root, "主題");
+            var (label, labelGroup) = CreateTileLabel(root, "主題");
+            AddLabelToggle(root, labelGroup, cover.rectTransform,
+                new Vector2(0.14f, 0.3f), new Vector2(0.86f, 0.92f),
+                new Vector2(0.1f, 0.1f), new Vector2(0.9f, 0.9f));
 
             Wire(deckButton,
                 ("cover", cover),
@@ -274,7 +337,10 @@ namespace BabyApp.EditorTools
             return prefab.GetComponent<DeckButton>();
         }
 
-        /// <summary>首頁的功能格（找一找、數數）：一個大圖示加名稱。</summary>
+        /// <summary>
+        /// 首頁的功能格：一個大圖示加名稱（名稱預設藏起來，設定裡打開才顯示）。
+        /// 有 Art/UI/tile_{name}.png（AI 畫的彩色小圖，例如拿放大鏡的小熊）就用它、不染色；沒有就用程式畫的深色剪影。
+        /// </summary>
         private static Button CreateFeatureTile(string name, Transform parent, string iconName, string labelKey, Color color)
         {
             var (root, _, fill) = CreateTile(name, parent, new Vector2(400f, 400f), color);
@@ -284,12 +350,19 @@ namespace BabyApp.EditorTools
             button.transition = Selectable.Transition.None;
             root.gameObject.AddComponent<Pulse>();
 
-            var icon = CreateImage("Icon", root, Icon(iconName), Ink);
+            var art = AssetDatabase.LoadAssetAtPath<Sprite>(BabyAppPaths.UiArt + "/tile_" + labelKey + ".png");
+            var icon = CreateImage("Icon", root, art != null ? art : Icon(iconName), art != null ? Color.white : Ink);
             icon.preserveAspect = true;
             icon.raycastTarget = false;
-            Anchor(icon.rectTransform, new Vector2(0.25f, 0.36f), new Vector2(0.75f, 0.88f));
+            var withMin = new Vector2(0.25f, 0.36f);
+            var withMax = new Vector2(0.75f, 0.88f);
+            Anchor(icon.rectTransform, withMin, withMax);
 
-            Localize(CreateTileLabel(root, Strings.Get(labelKey)), labelKey);
+            var (label, labelGroup) = CreateTileLabel(root, Strings.Get(labelKey));
+            Localize(label, labelKey);
+            AddLabelToggle(root, labelGroup, icon.rectTransform, withMin, withMax,
+                art != null ? new Vector2(0.1f, 0.1f) : new Vector2(0.2f, 0.2f),
+                art != null ? new Vector2(0.9f, 0.9f) : new Vector2(0.8f, 0.8f));
             return button;
         }
 
@@ -303,39 +376,63 @@ namespace BabyApp.EditorTools
             button.transition = Selectable.Transition.None;
             root.gameObject.AddComponent<Pulse>();
 
+            // 三顆點放在一個容器裡，文字藏起來時整個容器往中間移
+            var dotsRt = CreateChild("Dots", root);
+            var withMin = new Vector2(0f, 0.3f);
+            var withMax = new Vector2(1f, 0.92f);
+            Anchor(dotsRt, withMin, withMax);
+
             var dots = new[] { PaintScreen.DefaultPalette[0], PaintScreen.DefaultPalette[5], PaintScreen.DefaultPalette[12] };
             for (int i = 0; i < dots.Length; i++)
             {
                 float x = 0.22f + 0.28f * i;
-                var ring = CreateImage("DotRing" + i, root, _circle, Frame);
+                var ring = CreateImage("DotRing" + i, dotsRt, _circle, Frame);
                 ring.raycastTarget = false;
                 ring.preserveAspect = true;
-                Anchor(ring.rectTransform, new Vector2(x - 0.12f, 0.5f), new Vector2(x + 0.12f, 0.74f));
+                Anchor(ring.rectTransform, new Vector2(x - 0.12f, 0.3f), new Vector2(x + 0.12f, 0.7f));
 
-                var dot = CreateImage("Dot" + i, root, _circle, dots[i]);
+                var dot = CreateImage("Dot" + i, dotsRt, _circle, dots[i]);
                 dot.raycastTarget = false;
                 dot.preserveAspect = true;
-                Anchor(dot.rectTransform, new Vector2(x - 0.1f, 0.52f), new Vector2(x + 0.1f, 0.72f));
+                Anchor(dot.rectTransform, new Vector2(x - 0.1f, 0.33f), new Vector2(x + 0.1f, 0.67f));
             }
 
-            Localize(CreateTileLabel(root, Strings.Get("paint")), "paint");
+            var (label, labelGroup) = CreateTileLabel(root, Strings.Get("paint"));
+            Localize(label, "paint");
+            AddLabelToggle(root, labelGroup, dotsRt, withMin, withMax, new Vector2(0f, 0.1f), new Vector2(1f, 0.9f));
             return button;
         }
 
-        /// <summary>格子下方的名稱：白色小圓角底、深色字，字會依格子大小自動縮放。</summary>
-        private static Text CreateTileLabel(Transform tile, string text)
+        /// <summary>
+        /// 格子下方的名稱：白色小圓角底、深色字，字會依格子大小自動縮放。
+        /// 兩個都包在一個 LabelGroup 裡，方便整塊藏起來。回傳 (文字, 整塊)。
+        /// </summary>
+        private static (Text, GameObject) CreateTileLabel(Transform tile, string text)
         {
-            var pill = CreateImage("LabelPill", tile, _rounded, new Color(1f, 1f, 1f, 0.85f));
+            var group = CreateChild("LabelGroup", tile);
+            Stretch(group);
+
+            var pill = CreateImage("LabelPill", group, _rounded, new Color(1f, 1f, 1f, 0.85f));
             pill.type = Image.Type.Sliced;
             pill.raycastTarget = false;
             Anchor(pill.rectTransform, new Vector2(0.1f, 0.06f), new Vector2(0.9f, 0.26f));
 
-            var label = CreateText("Label", tile, text, 64, Ink);
+            var label = CreateText("Label", group, text, 64, Ink);
             Anchor(label.rectTransform, new Vector2(0.12f, 0.07f), new Vector2(0.88f, 0.25f));
             label.resizeTextForBestFit = true;
             label.resizeTextMinSize = 24;
             label.resizeTextMaxSize = 64;
-            return label;
+            return (label, group.gameObject);
+        }
+
+        /// <summary>文字只給家長看：接上 TileLabelToggle，設定關著時整塊藏起來、圖長滿格子。</summary>
+        private static void AddLabelToggle(RectTransform tile, GameObject labelGroup, RectTransform content,
+            Vector2 withMin, Vector2 withMax, Vector2 noMin, Vector2 noMax)
+        {
+            var toggle = tile.gameObject.AddComponent<TileLabelToggle>();
+            toggle.Configure(labelGroup, content, withMin, withMax, noMin, noMax);
+            // Configure 只是改記憶體裡的值，要寫回序列化欄位場景才存得住
+            EditorUtility.SetDirty(toggle);
         }
 
         // ---------- 卡片畫面 ----------
@@ -412,6 +509,7 @@ namespace BabyApp.EditorTools
 
             Wire(cardView,
                 ("image", image),
+                ("fill", fill),
                 ("nameLabel", label),
                 ("tapTarget", tap),
                 ("door", door),
@@ -580,6 +678,42 @@ namespace BabyApp.EditorTools
             return record;
         }
 
+        // ---------- 摸一摸 ----------
+
+        private static TouchScreen CreateTouchScreen(Transform parent)
+        {
+            var screen = CreateScreen("TouchScreen", parent);
+            var touch = screen.gameObject.AddComponent<TouchScreen>();
+
+            // 六格正方形自動排 3×2，底下留一條給小熊
+            var field = CreateChild("Field", screen);
+            Anchor(field, new Vector2(0.05f, 0.24f), new Vector2(0.95f, 0.96f));
+            field.gameObject.AddComponent<GridLayoutGroup>();
+            field.gameObject.AddComponent<ResponsiveGrid>();
+
+            var (cell, _, cellFill) = CreateTile("ItemTemplate", field, new Vector2(300f, 300f), Color.white);
+            var cellButton = cell.gameObject.AddComponent<Button>();
+            cellButton.targetGraphic = cellFill;
+            cellButton.transition = Selectable.Transition.None;
+            cell.gameObject.AddComponent<Pulse>();
+            var thumb = CreateImage("Thumb", cell, null, Color.white);
+            thumb.preserveAspect = true;
+            thumb.raycastTarget = false;
+            Inset(thumb.rectTransform, 24f);
+            cell.gameObject.SetActive(false);
+
+            var (home, _) = CreateHomeButton(screen);
+            var (mascot, mascotHandle) = CreateMascot(screen, new Vector2(0.5f, 0f), new Vector2(0f, 100f), 190f);
+
+            Wire(touch,
+                ("mascot", mascot),
+                ("mascotHandle", mascotHandle),
+                ("homeButton", home),
+                ("field", field),
+                ("itemTemplate", cellButton));
+            return touch;
+        }
+
         // ---------- 找一找 ----------
 
         private static FindScreen CreateFindScreen(Transform parent)
@@ -658,6 +792,133 @@ namespace BabyApp.EditorTools
                 ("itemTemplate", cellButton),
                 ("numberLabel", number));
             return count;
+        }
+
+        // ---------- 配對 ----------
+
+        private static MatchScreen CreateMatchScreen(Transform parent)
+        {
+            var screen = CreateScreen("MatchScreen", parent);
+            var match = screen.gameObject.AddComponent<MatchScreen>();
+
+            // 左邊一張大的「樣子」，右邊三張一排選一樣的
+            var (sample, _, _) = CreateTile("Sample", screen, Vector2.zero, CoverYellow);
+            Anchor(sample, new Vector2(0.05f, 0.3f), new Vector2(0.37f, 0.94f));
+            var sampleImage = CreateImage("Thumb", sample, null, Color.white);
+            sampleImage.preserveAspect = true;
+            sampleImage.raycastTarget = false;
+            Inset(sampleImage.rectTransform, 34f);
+
+            const int slots = 3;
+            var tiles = new RectTransform[slots];
+            var images = new Image[slots];
+            var fills = new Image[slots];
+            var buttons = new Button[slots];
+            var pulses = new Pulse[slots];
+            for (int i = 0; i < slots; i++)
+            {
+                float x0 = 0.42f + 0.18f * i;
+                var (root, _, fill) = CreateTile("Choice" + i, screen, Vector2.zero, Color.white);
+                Anchor(root, new Vector2(x0, 0.42f), new Vector2(x0 + 0.165f, 0.82f));
+
+                var button = root.gameObject.AddComponent<Button>();
+                button.targetGraphic = fill;
+                button.transition = Selectable.Transition.None;
+                var pulse = root.gameObject.AddComponent<Pulse>();
+                root.gameObject.AddComponent<CanvasGroup>();
+
+                var thumb = CreateImage("Thumb", root, null, Color.white);
+                thumb.preserveAspect = true;
+                thumb.raycastTarget = false;
+                Inset(thumb.rectTransform, 26f);
+
+                tiles[i] = root; images[i] = thumb; fills[i] = fill; buttons[i] = button; pulses[i] = pulse;
+            }
+
+            var (home, _) = CreateHomeButton(screen);
+            var (mascot, mascotHandle) = CreateMascot(screen, new Vector2(0.5f, 0f), new Vector2(0f, 100f), 190f);
+
+            Wire(match,
+                ("mascot", mascot),
+                ("mascotHandle", mascotHandle),
+                ("homeButton", home),
+                ("sampleImage", sampleImage),
+                ("sampleTile", sample));
+            WireArray(match, "choiceTiles", tiles);
+            WireArray(match, "choiceImages", images);
+            WireArray(match, "choiceFills", fills);
+            WireArray(match, "choiceButtons", buttons);
+            WireArray(match, "choicePulses", pulses);
+            return match;
+        }
+
+        // ---------- 拼圖 ----------
+
+        private static PuzzleScreen CreatePuzzleScreen(Transform parent)
+        {
+            var screen = CreateScreen("PuzzleScreen", parent);
+            var puzzle = screen.gameObject.AddComponent<PuzzleScreen>();
+
+            // 底盤：正方形、高度跟著螢幕走；裡面淡淡一張完整的圖當提示
+            var (board, _, boardFill) = CreateTile("Board", screen, Vector2.zero, Color.white);
+            board.anchorMin = new Vector2(0.5f, 0.3f);
+            board.anchorMax = new Vector2(0.5f, 0.97f);
+            board.pivot = new Vector2(0.5f, 0.5f);
+            board.sizeDelta = new Vector2(600f, 0f);
+            board.anchoredPosition = Vector2.zero;
+            boardFill.color = new Color(1f, 1f, 1f, 1f);
+
+            var inner = CreateChild("Inner", board);
+            Inset(inner, Border + 6f);
+            var ghost = CreateImage("Ghost", inner, null, new Color(1f, 1f, 1f, 0.28f));
+            ghost.preserveAspect = false;
+            ghost.raycastTarget = false;
+            Stretch(ghost.rectTransform);
+
+            // 托盤：底下一條，散放拼圖片
+            var tray = CreateChild("Tray", screen);
+            Anchor(tray, new Vector2(0.08f, 0.03f), new Vector2(0.92f, 0.27f));
+
+            // 拼圖片的父層：鋪滿整個畫面，片才能從托盤拖到底盤
+            var pieces = CreateChild("Pieces", screen);
+            Stretch(pieces);
+
+            // 樣板：白邊 + 遮罩 + 裡面整張圖
+            var pieceRt = CreateChild("PieceTemplate", pieces);
+            Size(pieceRt, new Vector2(200f, 200f));
+            var frame = pieceRt.gameObject.AddComponent<Image>();
+            frame.sprite = _rounded;
+            frame.type = Image.Type.Sliced;
+            frame.color = Frame;
+            AddShadow(pieceRt.gameObject);
+
+            var mask = CreateChild("Mask", pieceRt);
+            Inset(mask, Border * 0.6f);
+            mask.gameObject.AddComponent<RectMask2D>();
+            var maskImage = mask.gameObject.AddComponent<Image>();
+            maskImage.color = new Color(1f, 1f, 1f, 0f);
+            maskImage.raycastTarget = false;
+
+            var pic = CreateImage("Pic", mask, null, Color.white);
+            pic.raycastTarget = false;
+
+            var piece = pieceRt.gameObject.AddComponent<PuzzlePiece>();
+            Wire(piece, ("frame", pieceRt), ("picture", pic.rectTransform));
+            pieceRt.gameObject.SetActive(false);
+
+            var (home, _) = CreateHomeButton(screen);
+            var (mascot, mascotHandle) = CreateMascot(screen, new Vector2(0f, 1f), new Vector2(130f, -100f), 190f);
+
+            Wire(puzzle,
+                ("mascot", mascot),
+                ("mascotHandle", mascotHandle),
+                ("homeButton", home),
+                ("board", board),
+                ("boardInner", inner),
+                ("ghost", ghost),
+                ("tray", tray),
+                ("pieceTemplate", piece));
+            return puzzle;
         }
 
         // ---------- 著色畫面 ----------
@@ -897,44 +1158,46 @@ namespace BabyApp.EditorTools
 
             // 面板用百分比，上面留標題、下面留「回首頁」，矮螢幕上三者也不會疊
             var (panel, _, _) = CreateTile("Panel", screen, Vector2.zero, Color.white);
-            Anchor(panel, new Vector2(0.08f, 0.22f), new Vector2(0.92f, 0.84f));
+            Anchor(panel, new Vector2(0.08f, 0.17f), new Vector2(0.92f, 0.84f));
 
             // 每一列用面板高度的百分比定位，面板矮一點列就靠近一點，不會疊
-            var sfx = CreateToggleRow(panel, "sfx", 0.88f);
-            var voice = CreateToggleRow(panel, "voice", 0.72f);
-            var music = CreateToggleRow(panel, "music", 0.56f);
+            var sfx = CreateToggleRow(panel, "sfx", 0.90f);
+            var voice = CreateToggleRow(panel, "voice", 0.77f);
+            var music = CreateToggleRow(panel, "music", 0.64f);
+            var labels = CreateToggleRow(panel, "labels", 0.51f);
 
-            CreateRowLabel(panel, "language", 0.40f);
+            CreateRowLabel(panel, "language", 0.37f);
             var (languageButton, languageName) = CreateTextButton("LanguageButton", panel, "language_name", Mint,
-                new Vector2(0.78f, 0.40f), Vector2.zero, new Vector2(240f, 96f));
+                new Vector2(0.78f, 0.37f), Vector2.zero, new Vector2(240f, 80f));
 
-            CreateRowLabel(panel, "background", 0.22f);
+            CreateRowLabel(panel, "background", 0.21f);
             var options = AppSettings.Backgrounds;
             var swatchButtons = new Button[options.Length];
             var swatchRings = new Image[options.Length];
             for (int i = 0; i < options.Length; i++)
             {
                 var (button, ring) = CreateColorButton("Background" + i, panel, options[i].Color,
-                    new Vector2(0.42f + 0.085f * i, 0.22f), Vector2.zero);
+                    new Vector2(0.42f + 0.085f * i, 0.21f), Vector2.zero);
                 swatchButtons[i] = button;
                 swatchRings[i] = ring;
             }
 
             // 給家長看的一行小統計
             var stats = CreateText("Stats", panel, "", 32, Ink);
-            Anchor(stats.rectTransform, new Vector2(0.04f, 0.02f), new Vector2(0.96f, 0.1f));
+            Anchor(stats.rectTransform, new Vector2(0.04f, 0.02f), new Vector2(0.96f, 0.09f));
             FitText(stats, 18);
 
             var (close, _) = CreateTextButton("CloseButton", screen, "back_home", Mint,
-                new Vector2(0.5f, 0.11f), Vector2.zero, new Vector2(300f, 96f));
+                new Vector2(0.5f, 0.085f), Vector2.zero, new Vector2(300f, 96f));
             var (clearRecordings, _) = CreateTextButton("ClearRecordingsButton", screen, "clear_recordings", Peach,
-                new Vector2(0.2f, 0.11f), Vector2.zero, new Vector2(340f, 96f));
+                new Vector2(0.2f, 0.085f), Vector2.zero, new Vector2(340f, 96f));
 
             Wire(settings,
                 ("closeButton", close),
                 ("sfxToggle", sfx),
                 ("voiceToggle", voice),
                 ("musicToggle", music),
+                ("labelsToggle", labels),
                 ("languageButton", languageButton),
                 ("languageLabel", languageName),
                 ("clearRecordingsButton", clearRecordings),
@@ -950,7 +1213,7 @@ namespace BabyApp.EditorTools
         {
             var label = CreateText(key + "Label", parent, Strings.Get(key), 56, Ink);
             Place(label.rectTransform, new Vector2(0.22f, y), new Vector2(0.22f, y),
-                Vector2.zero, new Vector2(320f, 90f));
+                Vector2.zero, new Vector2(320f, 76f));
             FitText(label, 24);
             Localize(label, key);
             return label;
@@ -961,8 +1224,8 @@ namespace BabyApp.EditorTools
         {
             CreateRowLabel(parent, key, y);
 
-            var (root, _, fill) = CreateTile(key + "Toggle", parent, new Vector2(200f, 96f), Color.gray);
-            Place(root, new Vector2(0.78f, y), new Vector2(0.78f, y), Vector2.zero, new Vector2(200f, 96f));
+            var (root, _, fill) = CreateTile(key + "Toggle", parent, new Vector2(200f, 80f), Color.gray);
+            Place(root, new Vector2(0.78f, y), new Vector2(0.78f, y), Vector2.zero, new Vector2(200f, 80f));
 
             var button = root.gameObject.AddComponent<Button>();
             button.targetGraphic = fill;

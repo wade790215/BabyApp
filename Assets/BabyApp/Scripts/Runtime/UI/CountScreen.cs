@@ -8,8 +8,9 @@ using UnityEngine.UI;
 namespace BabyApp.UI
 {
     /// <summary>
-    /// 數數：畫面上排 1～5 個一樣的東西，點一個念一個數（一、二、三…），點完全部小熊慶祝。
-    /// 「點一下念一個數」是 2～3 歲最自然的數數方式；點過的不會重複算。
+    /// 數數：畫面上排 1～5 個一樣的東西，點一個念一個數（一、二、三…），那個東西就飛進小熊嘴裡，
+    /// 咔滋一聲；點完全部小熊說「全部數完了！」。
+    /// 「點一下念一個數」是 2～3 歲最自然的數數方式；點過的飛走了，看得出「這個算過了」。
     /// 點小熊可以再聽一次這是什麼。
     /// </summary>
     public class CountScreen : MonoBehaviour
@@ -23,6 +24,8 @@ namespace BabyApp.UI
 
         [SerializeField] private int maxCount = 5;
         [SerializeField] private float nextRoundDelay = 2.2f;
+        [Tooltip("東西飛進小熊嘴裡要幾秒")]
+        [SerializeField] private float flySeconds = 0.45f;
 
         public event System.Action HomeRequested;
 
@@ -150,13 +153,8 @@ namespace BabyApp.UI
             var pulse = _items[index].GetComponent<Pulse>();
             if (pulse != null) pulse.Play();
 
-            // 數過的縮小一點點、變淡一點點，看得出「這個算過了」
-            var rt = (RectTransform)_items[index].transform;
-            rt.localScale = Vector3.one * 0.9f;
-            foreach (var img in _items[index].GetComponentsInChildren<Image>())
-            {
-                var c = img.color; c.a = 0.75f; img.color = c;
-            }
+            // 飛進小熊嘴裡：餵牠，不是只是「算過了」
+            StartCoroutine(FeedBear((RectTransform)_items[index].transform));
 
             if (numberLabel != null) numberLabel.text = _done.ToString();
 
@@ -169,6 +167,7 @@ namespace BabyApp.UI
                 {
                     _busy = true;
                     VoiceService.Instance.PlaySequence(number,
+                        PromptLibrary.Instance != null ? PromptLibrary.Instance.Yummy : null,
                         PromptLibrary.Instance != null ? PromptLibrary.Instance.AllCounted : null);
                     if (mascot != null) mascot.React(Mascot.Pose.Happy, nextRoundDelay);
                     UsageStats.CountRoundFinished();
@@ -177,9 +176,44 @@ namespace BabyApp.UI
                 else
                 {
                     VoiceService.Instance.PlaySequence(number);
-                    if (mascot != null) mascot.Jump();
                 }
             }
+        }
+
+        /// <summary>東西縮小著飛到小熊那裡，到了就咔滋一聲、小熊開心一下，東西消失。</summary>
+        private IEnumerator FeedBear(RectTransform item)
+        {
+            if (item == null) yield break;
+            item.SetAsLastSibling();
+            var button = item.GetComponent<Button>();
+            if (button != null) button.interactable = false;
+
+            var from = item.anchoredPosition;
+            var fromScale = item.localScale;
+            // 小熊可能被拖到別處，每次都重新算牠在欄位裡的位置
+            Vector2 to = from + Vector2.down * 300f;
+            if (mascot != null && field != null)
+            {
+                var local = field.InverseTransformPoint(mascot.transform.position);
+                to = new Vector2(local.x, local.y);
+            }
+
+            float t = 0f;
+            while (t < flySeconds && item != null)
+            {
+                t += Time.unscaledDeltaTime;
+                float p = Mathf.Clamp01(t / flySeconds);
+                float eased = p * p;
+                // 弧線：先往上拋一點再落到嘴邊
+                var pos = Vector2.Lerp(from, to, eased) + Vector2.up * (Mathf.Sin(p * Mathf.PI) * 80f);
+                item.anchoredPosition = pos;
+                item.localScale = fromScale * Mathf.Lerp(1f, 0.15f, eased);
+                yield return null;
+            }
+
+            if (item != null) item.gameObject.SetActive(false);
+            if (VoiceService.Instance != null) VoiceService.Instance.PlayChew();
+            if (mascot != null && !_busy) mascot.React(Mascot.Pose.Happy, 0.7f);
         }
     }
 }

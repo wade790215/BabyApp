@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a777669fde13ff4ea83e5eca4a6fb67, type: 3}
+  m_Name: Deck_daily
+  m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
+  deckId: daily
+  displayName: "\u751F\u6D3B\u7528\u54C1"
+  displayNameEn: Daily Things
+  cover: {fileID: 0}
+  fallbackSound: {fileID: 0}
+  themeColor: {r: 0.49411765, g: 0.8509804, b: 0.65882355, a: 1}
+  sortOrder: 5
+  cards:
+  - id: daily_cup
+    displayName: "\u676F\u5B50"
+    displayNameEn: Cup
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: 10baff5ecbfa4664b9fe3945659ee1b5, type: 3}
+    voiceEn: {fileID: 8300000, guid: 4eeb1949a66089245bea947e03ad2a63, type: 3}
+    sound: {fileID: 0}
+  - id: daily_spoon
+    displayName: "\u6E6F\u5319"
+    displayNameEn: Spoon
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: a276bedf190dfa44d9350c6d7cb37f77, type: 3}
+    voiceEn: {fileID: 8300000, guid: 19d09cace5e5bf04481116422870850d, type: 3}
+    sound: {fileID: 0}
+  - id: daily_bowl
+    displayName: "\u7897"
+    displayNameEn: Bowl
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: 9fbc0af1ea359cd4b81f6a0b9697a337, type: 3}
+    voiceEn: {fileID: 8300000, guid: 1120e5305e69e0e44af7d550cb0cde54, type: 3}
+    sound: {fileID: 0}
+  - id: daily_shoes
+    displayName: "\u978B\u5B50"
+    displayNameEn: Shoes
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: 2d948bde166a9bc49b6de58078a34194, type: 3}
+    voiceEn: {fileID: 8300000, guid: 085f57e6a1b889b4698223f61feade76, type: 3}
+    sound: {fileID: 0}
+  - id: daily_hat
+    displayName: "\u5E3D\u5B50"
+    displayNameEn: Hat
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: f343ef4222b52464b990745201261533, type: 3}
+    voiceEn: {fileID: 8300000, guid: f06258434817e974b8904c4158705f9c, type: 3}
+    sound: {fileID: 0}
+  - id: daily_toothbrush
+    displayName: "\u7259\u5237"
+    displayNameEn: Toothbrush
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: 32124359f4bffa840ad53d7035875c36, type: 3}
+    voiceEn: {fileID: 8300000, guid: 73e26fe0a46473f4f8ffbf79fcfd2dee, type: 3}
+    sound: {fileID: 0}
+  - id: daily_toilet
+    displayName: "\u99AC\u6876"
+    displayNameEn: Toilet
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: b3cf0c896f267ce418b0a2ca4f9e2ebc, type: 3}
+    voiceEn: {fileID: 8300000, guid: bae714abd8aabe243b8d3bf315f29771, type: 3}
+    sound: {fileID: 0}
+  - id: daily_bed
+    displayName: "\u5E8A"
+    displayNameEn: Bed
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: 41003031438b0a147bae3db4caef8333, type: 3}
+    voiceEn: {fileID: 8300000, guid: abd03f0c961a5a9479842acd2be31121, type: 3}
+    sound: {fileID: 0}
+  - id: daily_chair
+    displayName: "\u6905\u5B50"
+    displayNameEn: Chair
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: 64af7cae60fa23342b5e6133e395c17b, type: 3}
+    voiceEn: {fileID: 8300000, guid: 4b4234ef1b2309748bfa4508e67b29e1, type: 3}
+    sound: {fileID: 0}
+  - id: daily_ball
+    displayName: "\u7403"
+    displayNameEn: Ball
+    image: {fileID: 0}
+    voice: {fileID: 8300000, guid: 154f79ebafbb7804a9ec0014c660fae5, type: 3}
+    voiceEn: {fileID: 8300000, guid: 508fae7f1f0612146a3a0e76cc370eb3, type: 3}
+    sound: {fileID: 0}

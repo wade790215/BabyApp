@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BabyApp.EditorTools
 {
     /// <summary>
-    /// 介面用的圖示用程式畫出來存成 PNG：箭頭、房子、麥克風、橡皮擦、圖片、齒輪、放大鏡、數數、播放。
+    /// 介面用的圖示用程式畫出來存成 PNG：箭頭、房子、麥克風、橡皮擦、圖片、齒輪、放大鏡、數數、播放、卡片、腳掌、配對。
     /// 全部是白色剪影，放到 Image 上用顏色染；風格一致、不用等 AI 生圖也不用找素材包。
     /// 另外也畫顏色卡片組的色球。
     /// </summary>
@@ -169,24 +169,14 @@ namespace BabyApp.EditorTools
         /// <summary>顏色卡片組的八顆色球，存到 Art/Cards/Colors，檔名就是卡片代號。</summary>
         public static void EnsureColorCards()
         {
-            var colors = new (string id, Color32 color)[]
-            {
-                ("color_red", new Color32(0xFF, 0x3B, 0x30, 0xFF)),
-                ("color_orange", new Color32(0xFF, 0x95, 0x00, 0xFF)),
-                ("color_yellow", new Color32(0xFF, 0xD6, 0x0A, 0xFF)),
-                ("color_green", new Color32(0x34, 0xC7, 0x59, 0xFF)),
-                ("color_blue", new Color32(0x0A, 0x84, 0xFF, 0xFF)),
-                ("color_purple", new Color32(0xBF, 0x5A, 0xF2, 0xFF)),
-                ("color_pink", new Color32(0xFF, 0x6F, 0xB5, 0xFF)),
-                ("color_black", new Color32(0x2B, 0x2B, 0x2B, 0xFF))
-            };
-
             string folder = BabyAppPaths.CardArt + "/Colors";
             Directory.CreateDirectory(folder);
             bool any = false;
 
-            foreach (var (id, color) in colors)
+            foreach (var pair in BabyApp.Data.ColorPalette.All)
             {
+                string id = pair.Key;
+                Color32 color = pair.Value;
                 string path = folder + "/" + id + ".png";
                 if (File.Exists(path)) continue;
 
@@ -265,6 +255,43 @@ namespace BabyApp.EditorTools
                     c.Fill((x, y) => Inside.Circle(x, y, 26, 64, 11));
                     c.Fill((x, y) => Inside.Circle(x, y, 62, 64, 15));
                     c.Fill((x, y) => Inside.Circle(x, y, 102, 64, 19));
+                    break;
+
+                case "cards":
+                    // 兩張疊著的卡片，後面那張微微斜
+                    c.Fill((x, y) => Inside.RotatedRect(x, y, 70, 68, 56, 76, -14f));
+                    c.Cut((x, y) => Inside.RotatedRect(x, y, 70, 68, 44, 64, -14f));
+                    c.Fill((x, y) => Inside.RoundRect(x, y, 26, 22, 82, 100, 8));
+                    c.Cut((x, y) => Inside.RoundRect(x, y, 34, 30, 74, 92, 5));
+                    c.Fill((x, y) => Inside.Circle(x, y, 54, 68, 11));          // 卡片上的一個圓（代表圖）
+                    break;
+
+                case "paw":
+                    // 一個腳掌印：大肉墊 + 四根腳趾
+                    c.Fill((x, y) => Inside.Circle(x, y, 64, 46, 24));
+                    c.Cut((x, y) => Inside.Circle(x, y, 64, 20, 18));
+                    c.Fill((x, y) => Inside.Circle(x, y, 32, 72, 11));
+                    c.Fill((x, y) => Inside.Circle(x, y, 52, 92, 11));
+                    c.Fill((x, y) => Inside.Circle(x, y, 76, 92, 11));
+                    c.Fill((x, y) => Inside.Circle(x, y, 96, 72, 11));
+                    break;
+
+                case "puzzle":
+                    // 一片拼圖：方塊，上面與右邊各一個凸起、左邊一個凹口
+                    c.Fill((x, y) => Inside.RoundRect(x, y, 22, 22, 94, 94, 8));
+                    c.Fill((x, y) => Inside.Circle(x, y, 58, 94, 14));
+                    c.Fill((x, y) => Inside.Circle(x, y, 94, 58, 14));
+                    c.Cut((x, y) => Inside.Circle(x, y, 22, 58, 14));
+                    break;
+
+                case "match":
+                    // 兩個一模一樣的圓角方塊並排，中間一個小等號
+                    c.Fill((x, y) => Inside.RoundRect(x, y, 10, 40, 52, 88, 8));
+                    c.Cut((x, y) => Inside.Circle(x, y, 31, 64, 10));
+                    c.Fill((x, y) => Inside.RoundRect(x, y, 76, 40, 118, 88, 8));
+                    c.Cut((x, y) => Inside.Circle(x, y, 97, 64, 10));
+                    c.Fill((x, y) => Inside.Rect(x, y, 57, 68, 71, 73));
+                    c.Fill((x, y) => Inside.Rect(x, y, 57, 55, 71, 60));
                     break;
 
                 case "play":

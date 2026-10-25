@@ -14,8 +14,12 @@ namespace BabyApp.UI
     /// </summary>
     public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        [Tooltip("放手時要離原位多遠才算換卡（版面單位）")]
+        [Tooltip("放手時要離原位多遠才算換卡（版面單位）；實際門檻取這個與卡寬百分比的較小者")]
         [SerializeField] private float swipeThreshold = 160f;
+        [Tooltip("位移超過卡寬的這個比例就算換卡；小小孩的手短，拖不遠")]
+        [SerializeField, Range(0.1f, 0.6f)] private float swipeFraction = 0.25f;
+        [Tooltip("放手前的橫向速度超過這個值（版面單位/秒）也算換卡，隨手一甩就會翻")]
+        [SerializeField] private float flickSpeed = 900f;
         [SerializeField] private float flyDistance = 1400f;
         [SerializeField] private float flySeconds = 0.22f;
         [SerializeField] private float slideInSeconds = 0.28f;
@@ -40,6 +44,8 @@ namespace BabyApp.UI
         private Vector2 _pointerStart;
         private Vector2 _offset;
         private bool _dragging;
+        private float _velocityX;
+        private float _lastDragTime;
 
         private void Awake()
         {
@@ -70,6 +76,8 @@ namespace BabyApp.UI
             if (!ToLocal(eventData, out _pointerStart)) return;
             _dragging = true;
             _offset = Vector2.zero;
+            _velocityX = 0f;
+            _lastDragTime = Time.unscaledTime;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -77,8 +85,16 @@ namespace BabyApp.UI
             if (!_dragging) return;
             if (!ToLocal(eventData, out var local)) return;
 
+            var previous = _offset;
             _offset = local - _pointerStart;
-            // 橫向跟手、縱向只跟一點點，重點是左右滑
+
+            // 平滑一下的橫向速度，放手時拿來判斷是不是「甩」
+            float now = Time.unscaledTime;
+            float dt = Mathf.Max(now - _lastDragTime, 1e-4f);
+            _velocityX = Mathf.Lerp(_velocityX, (_offset.x - previous.x) / dt, 0.5f);
+            _lastDragTime = now;
+
+            // 橫向跟手、縱向只跟一點點，重點是左右滑（小小孩常常斜著拖，縱向不算）
             _rt.anchoredPosition = _home + new Vector2(_offset.x, _offset.y * 0.15f);
             _rt.localRotation = Quaternion.Euler(0f, 0f, -_offset.x * tiltPerUnit);
         }
@@ -91,8 +107,16 @@ namespace BabyApp.UI
             LastDragEndTime = Time.unscaledTime;
             LastDragMoved = Mathf.Abs(_offset.x) > 20f;
 
-            if (_offset.x < -swipeThreshold) StartCoroutine(FlipRoutine(-1));
-            else if (_offset.x > swipeThreshold) StartCoroutine(FlipRoutine(1));
+            // 放手太久之後速度不算（停著想了一下才放開）
+            if (Time.unscaledTime - _lastDragTime > 0.1f) _velocityX = 0f;
+
+            float threshold = Mathf.Min(swipeThreshold, _rt.rect.width * swipeFraction);
+            bool farEnough = Mathf.Abs(_offset.x) > threshold;
+            bool flicked = Mathf.Abs(_velocityX) > flickSpeed && Mathf.Abs(_offset.x) > 40f &&
+                           Mathf.Sign(_velocityX) == Mathf.Sign(_offset.x);
+
+            if ((farEnough || flicked) && _offset.x < 0f) StartCoroutine(FlipRoutine(-1));
+            else if (farEnough || flicked) StartCoroutine(FlipRoutine(1));
             else StartCoroutine(SpringBack());
         }
 

@@ -22,14 +22,22 @@ namespace BabyApp.UI
 
         [SerializeField] private float breathAmount = 0.025f;
 
+        [Tooltip("多久沒人碰螢幕就招手說「來玩吧」；0 = 不要")]
+        [SerializeField] private float idleNudgeSeconds = 20f;
+
         private RectTransform _rt;
         private Coroutine _hold;
         private Coroutine _jump;
         private float _breathPhase;
+        private float _idle;
 
         private void Awake() => _rt = (RectTransform)transform;
 
-        private void OnEnable() => Show(Pose.Idle);
+        private void OnEnable()
+        {
+            Show(Pose.Idle);
+            _idle = 0f;
+        }
 
         private void OnDisable()
         {
@@ -44,11 +52,38 @@ namespace BabyApp.UI
             _breathPhase += Time.unscaledDeltaTime * 2.2f;
             float s = 1f + Mathf.Sin(_breathPhase) * breathAmount;
             _rt.localScale = new Vector3(s, 1f + (s - 1f) * 0.6f, 1f);
+
+            // 小孩分心太久，小熊跳一下、喊一聲把他叫回來
+            if (idleNudgeSeconds <= 0f) return;
+            if (AnyPointerDown()) _idle = 0f;
+            else _idle += Time.unscaledDeltaTime;
+
+            if (_idle >= idleNudgeSeconds)
+            {
+                _idle = 0f;
+                React(Pose.Happy, 1.6f);
+                if (Core.VoiceService.Instance != null && Core.PromptLibrary.Instance != null &&
+                    !Core.VoiceService.Instance.IsSpeaking)
+                {
+                    Core.VoiceService.Instance.PlaySequence(Core.PromptLibrary.Instance.ComeOn);
+                }
+            }
+        }
+
+        private static bool AnyPointerDown()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var pointer = UnityEngine.InputSystem.Pointer.current;
+            return pointer != null && pointer.press.isPressed;
+#else
+            return Input.GetMouseButton(0) || Input.touchCount > 0;
+#endif
         }
 
         /// <summary>換個表情，seconds 秒後回到待機；順便跳一下。</summary>
         public void React(Pose pose, float seconds = 1.4f, bool jump = true)
         {
+            _idle = 0f;
             Show(pose);
             if (_hold != null) StopCoroutine(_hold);
             _hold = StartCoroutine(BackToIdle(seconds));
@@ -57,6 +92,7 @@ namespace BabyApp.UI
 
         public void Jump()
         {
+            _idle = 0f;
             if (_jump != null) StopCoroutine(_jump);
             _jump = StartCoroutine(JumpRoutine());
         }

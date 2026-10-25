@@ -57,6 +57,14 @@ namespace BabyApp.UI
             StartCoroutine(Shrink());
         }
 
+        /// <summary>直接拿掉蓋子，不播動畫也不發 Opened（這張卡一開始就不蓋）。</summary>
+        public void Dismiss()
+        {
+            StopAllCoroutines();
+            IsClosed = false;
+            gameObject.SetActive(false);
+        }
+
         private IEnumerator Shrink()
         {
             float t = 0f;

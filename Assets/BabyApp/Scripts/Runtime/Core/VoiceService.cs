@@ -25,6 +25,7 @@ namespace BabyApp.Core
         [SerializeField] private AudioClip pageSfx;
         [SerializeField] private AudioClip doorSfx;
         [SerializeField] private AudioClip sparkleSfx;
+        [SerializeField] private AudioClip chewSfx;
 
         [Header("背景音樂（可留空）")]
         [SerializeField] private AudioClip musicClip;
@@ -102,6 +103,7 @@ namespace BabyApp.Core
         public void PlayPage() => PlaySfx(pageSfx);
         public void PlayDoor() => PlaySfx(doorSfx);
         public void PlaySparkle() => PlaySfx(sparkleSfx);
+        public void PlayChew() => PlaySfx(chewSfx);
 
         private void ApplySettings()
         {

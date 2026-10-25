@@ -16,6 +16,11 @@ namespace BabyApp.Core
         [SerializeField] private AudioClip correctZh;      // 「答對了！」
         [SerializeField] private AudioClip tryAgainZh;     // 「再試試看」
         [SerializeField] private AudioClip allCountedZh;   // 「全部數完了！」
+        [SerializeField] private AudioClip hereZh;         // 「在這裡！」（找一找選錯時幫他指出來）
+        [SerializeField] private AudioClip yummyZh;        // 「好吃！」（數數餵小熊）
+        [SerializeField] private AudioClip sameZh;         // 「一樣的在哪裡？」（配對）
+        [SerializeField] private AudioClip comeOnZh;       // 「來玩吧！」（閒置太久）
+        [SerializeField] private AudioClip doneZh;         // 「拼好了！」（拼圖）
         [SerializeField] private AudioClip[] numbersZh;    // 一～五
 
         [Header("English")]
@@ -24,6 +29,11 @@ namespace BabyApp.Core
         [SerializeField] private AudioClip correctEn;
         [SerializeField] private AudioClip tryAgainEn;
         [SerializeField] private AudioClip allCountedEn;
+        [SerializeField] private AudioClip hereEn;
+        [SerializeField] private AudioClip yummyEn;
+        [SerializeField] private AudioClip sameEn;
+        [SerializeField] private AudioClip comeOnEn;
+        [SerializeField] private AudioClip doneEn;
         [SerializeField] private AudioClip[] numbersEn;
 
         private void Awake()
@@ -42,6 +52,11 @@ namespace BabyApp.Core
         public AudioClip Correct => En ? correctEn : correctZh;
         public AudioClip TryAgain => En ? tryAgainEn : tryAgainZh;
         public AudioClip AllCounted => En ? allCountedEn : allCountedZh;
+        public AudioClip Here => En ? hereEn : hereZh;
+        public AudioClip Yummy => En ? yummyEn : yummyZh;
+        public AudioClip Same => En ? sameEn : sameZh;
+        public AudioClip ComeOn => En ? comeOnEn : comeOnZh;
+        public AudioClip Done => En ? doneEn : doneZh;
 
         /// <summary>「狗狗在哪裡？」：中文是 名稱→在哪裡，英文是 Where is the→名稱，語序不同。</summary>
         public AudioClip[] WhereIs(AudioClip name)

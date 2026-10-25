@@ -9,8 +9,9 @@ namespace BabyApp.UI
 {
     /// <summary>
     /// 找一找：小熊問「狗狗在哪裡？」（或先播汪汪再問「這是誰的聲音？」），兩張大圖選一張。
-    /// 永遠只有兩個選項、選錯沒有懲罰（錯的那張晃一下、小熊說「再試試看」、題目重播一次），
-    /// 選對就慶祝然後換下一題。沒有分數、沒有關卡。點小熊可以再聽一次題目。
+    /// 永遠只有兩個選項、選錯沒有懲罰也不說「再試試看」：錯的那張淡掉、對的那張發光，
+    /// 小熊說「在這裡！狗狗！」等於幫他找到，然後換下一題。沒有分數、沒有關卡。點小熊可以再聽一次題目。
+    /// 干擾項一開始都從同一組挑（狗 vs 貓）；找對幾次之後才偶爾混進別組的（狗 vs 蘋果）。
     /// </summary>
     public class FindScreen : MonoBehaviour
     {
@@ -26,6 +27,14 @@ namespace BabyApp.UI
         [Tooltip("答對後等幾秒換下一題")]
         [SerializeField] private float nextRoundDelay = 1.8f;
 
+        [Tooltip("選錯被「幫忙找到」後等幾秒換下一題")]
+        [SerializeField] private float helpedRoundDelay = 2.6f;
+
+        [Tooltip("這次玩找對幾次之後，才開始偶爾出跨主題的干擾項")]
+        [SerializeField] private int crossDeckAfter = 8;
+
+        private static readonly Color Glow = new Color32(0xFF, 0xE8, 0xA3, 0xFF);
+
         public event System.Action HomeRequested;
 
         private struct Entry
@@ -35,10 +44,12 @@ namespace BabyApp.UI
         }
 
         private readonly List<Entry> _pool = new List<Entry>();
+        private readonly List<CanvasGroup> _groups = new List<CanvasGroup>();
         private Entry _target;
         private int _targetSlot;
         private bool _soundMode;
         private bool _busy;
+        private int _streak;
         private Color _fillColor = Color.white;
 
         private void Awake()
@@ -55,12 +66,25 @@ namespace BabyApp.UI
                 }
             }
             if (choiceFills != null && choiceFills.Length > 0 && choiceFills[0] != null) _fillColor = choiceFills[0].color;
+
+            // 淡出用的 CanvasGroup，場景裡沒有就補
+            if (choiceTiles != null)
+            {
+                foreach (var tile in choiceTiles)
+                {
+                    if (tile == null) { _groups.Add(null); continue; }
+                    var group = tile.GetComponent<CanvasGroup>();
+                    if (group == null) group = tile.gameObject.AddComponent<CanvasGroup>();
+                    _groups.Add(group);
+                }
+            }
         }
 
         private void OnEnable()
         {
             BuildPool();
             _busy = false;
+            _streak = 0;
             StartCoroutine(StartAfter(0.4f));
         }
 
@@ -100,18 +124,20 @@ namespace BabyApp.UI
 
             _target = _pool[Random.Range(0, _pool.Count)];
 
-            // 干擾項盡量從同一組挑，分辨「狗」和「貓」比分辨「狗」和「蘋果」更有學習價值
+            // 干擾項盡量從同一組挑，分辨「狗」和「貓」比分辨「狗」和「蘋果」更有學習價值；
+            // 找對夠多次之後才偶爾混進別組的，當作一點點變化
             var sameDeck = new List<Entry>();
+            var otherDeck = new List<Entry>();
             foreach (var e in _pool)
             {
-                if (e.Deck == _target.Deck && e.Card != _target.Card) sameDeck.Add(e);
+                if (e.Card == _target.Card) continue;
+                if (e.Deck == _target.Deck) sameDeck.Add(e);
+                else otherDeck.Add(e);
             }
-            Entry other;
-            if (sameDeck.Count > 0) other = sameDeck[Random.Range(0, sameDeck.Count)];
-            else
-            {
-                do { other = _pool[Random.Range(0, _pool.Count)]; } while (other.Card == _target.Card);
-            }
+            bool allowCross = _streak >= crossDeckAfter && otherDeck.Count > 0 && Random.value < 0.3f;
+            var candidates = allowCross || sameDeck.Count == 0 ? otherDeck : sameDeck;
+            if (candidates.Count == 0) candidates = sameDeck.Count > 0 ? sameDeck : otherDeck;
+            var other = candidates[Random.Range(0, candidates.Count)];
 
             _targetSlot = Random.Range(0, 2);
             SetTile(_targetSlot, _target.Card);
@@ -139,7 +165,9 @@ namespace BabyApp.UI
             if (choiceTiles != null && slot < choiceTiles.Length && choiceTiles[slot] != null)
             {
                 choiceTiles[slot].localRotation = Quaternion.identity;
+                choiceTiles[slot].localScale = Vector3.one;
             }
+            if (slot < _groups.Count && _groups[slot] != null) _groups[slot].alpha = 1f;
         }
 
         private AudioClip TargetSound()
@@ -182,10 +210,11 @@ namespace BabyApp.UI
         private void OnChoice(int slot)
         {
             if (_busy || _target.Card == null) return;
+            _busy = true;
 
             if (slot == _targetSlot)
             {
-                _busy = true;
+                _streak++;
                 if (choicePulses != null && slot < choicePulses.Length && choicePulses[slot] != null) choicePulses[slot].Play();
                 if (VoiceService.Instance != null)
                 {
@@ -199,42 +228,50 @@ namespace BabyApp.UI
             }
             else
             {
-                // 錯的那張晃一下、暗一下，沒有任何「錯誤音」
-                StartCoroutine(Wiggle(slot));
-                if (mascot != null) mascot.React(Mascot.Pose.Surprised, 1.0f, jump: false);
-                if (VoiceService.Instance != null && PromptLibrary.Instance != null)
-                {
-                    VoiceService.Instance.PlaySequence(PromptLibrary.Instance.TryAgain);
-                }
-                StartCoroutine(RepeatAfter(1.4f));
+                // 選錯不是錯：錯的那張悄悄淡掉，對的那張亮起來，小熊幫他指出來「在這裡！狗狗！」
+                StartCoroutine(HelpFind(slot));
             }
         }
 
-        private IEnumerator RepeatAfter(float seconds)
+        private IEnumerator HelpFind(int wrongSlot)
         {
-            yield return new WaitForSecondsRealtime(seconds);
-            if (!_busy) PlayPrompt();
-        }
+            var wrongGroup = wrongSlot < _groups.Count ? _groups[wrongSlot] : null;
+            var rightTile = choiceTiles != null && _targetSlot < choiceTiles.Length ? choiceTiles[_targetSlot] : null;
+            var rightFill = choiceFills != null && _targetSlot < choiceFills.Length ? choiceFills[_targetSlot] : null;
 
-        private IEnumerator Wiggle(int slot)
-        {
-            var tile = choiceTiles != null && slot < choiceTiles.Length ? choiceTiles[slot] : null;
-            var fill = choiceFills != null && slot < choiceFills.Length ? choiceFills[slot] : null;
-            if (fill != null) fill.color = Color.Lerp(_fillColor, Color.gray, 0.35f);
+            if (mascot != null) mascot.React(Mascot.Pose.Surprised, 0.8f, jump: false);
 
-            const float duration = 0.45f;
+            // 錯的淡掉
+            const float fade = 0.35f;
             float t = 0f;
-            while (t < duration)
+            while (t < fade)
             {
                 t += Time.unscaledDeltaTime;
-                float p = Mathf.Clamp01(t / duration);
-                if (tile != null) tile.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(p * Mathf.PI * 4f) * 6f * (1f - p));
+                if (wrongGroup != null) wrongGroup.alpha = Mathf.Lerp(1f, 0.25f, Mathf.Clamp01(t / fade));
                 yield return null;
             }
-            if (tile != null) tile.localRotation = Quaternion.identity;
 
-            yield return new WaitForSecondsRealtime(0.5f);
-            if (fill != null) fill.color = _fillColor;
+            // 對的發光、輕輕跳兩下，同時說「在這裡！」+ 名稱
+            if (rightFill != null) rightFill.color = Glow;
+            if (VoiceService.Instance != null && PromptLibrary.Instance != null)
+            {
+                VoiceService.Instance.PlaySequence(PromptLibrary.Instance.Here, TargetSound(), TargetName());
+            }
+            if (mascot != null) mascot.React(Mascot.Pose.Happy, helpedRoundDelay);
+
+            const float bounce = 0.9f;
+            t = 0f;
+            while (t < bounce)
+            {
+                t += Time.unscaledDeltaTime;
+                float p = Mathf.Clamp01(t / bounce);
+                if (rightTile != null) rightTile.localScale = Vector3.one * (1f + 0.08f * Mathf.Abs(Mathf.Sin(p * Mathf.PI * 2f)));
+                yield return null;
+            }
+            if (rightTile != null) rightTile.localScale = Vector3.one;
+
+            yield return new WaitForSecondsRealtime(Mathf.Max(0f, helpedRoundDelay - fade - bounce));
+            NewRound();
         }
     }
 }

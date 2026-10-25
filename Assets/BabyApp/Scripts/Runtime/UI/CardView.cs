@@ -14,6 +14,7 @@ namespace BabyApp.UI
     public class CardView : MonoBehaviour
     {
         [SerializeField] private Image image;
+        [SerializeField] private Image fill;
         [SerializeField] private Text nameLabel;
         [SerializeField] private Button tapTarget;
         [SerializeField] private CardDoor door;
@@ -28,6 +29,8 @@ namespace BabyApp.UI
         public bool IsCovered => door != null && door.IsClosed;
 
         private CardEntry _card;
+        private Color _fillDefault = Color.white;
+        private Color _labelDefault = Color.black;
 
         // 名稱平常在卡片下方（上面是圖），沒有圖的時候要移到正中間
         private Vector2 _labelAnchorMin;
@@ -39,9 +42,11 @@ namespace BabyApp.UI
         {
             if (tapTarget != null) tapTarget.onClick.AddListener(() => Tapped?.Invoke());
             if (door != null) door.Opened += OnDoorOpened;
+            if (fill != null) _fillDefault = fill.color;
 
             if (nameLabel != null)
             {
+                _labelDefault = nameLabel.color;
                 var rt = nameLabel.rectTransform;
                 _labelAnchorMin = rt.anchorMin;
                 _labelAnchorMax = rt.anchorMax;
@@ -53,12 +58,23 @@ namespace BabyApp.UI
         private void OnEnable() => AppSettings.Changed += RefreshName;
         private void OnDisable() => AppSettings.Changed -= RefreshName;
 
-        public void Bind(CardEntry card)
+        public void Bind(CardEntry card) => Bind(card, covered: true);
+
+        /// <summary>綁一張卡。covered=false 時不蓋「？」，圖和名稱直接露出來（同一組看熟了之後用）。</summary>
+        public void Bind(CardEntry card, bool covered)
         {
             _card = card;
             if (reaction != null) reaction.ResetState();
 
-            bool hasImage = card.HasImage;
+            // 顏色卡：整張卡填滿那個顏色、不放色球，名稱移到正中間；深色底換白字
+            bool isColorCard = ColorPalette.TryGet(card.id, out var cardColor);
+            bool hasImage = card.HasImage && !isColorCard;
+
+            if (fill != null) fill.color = isColorCard ? cardColor : _fillDefault;
+            if (nameLabel != null)
+            {
+                nameLabel.color = isColorCard && ColorPalette.IsDark(cardColor) ? Color.white : _labelDefault;
+            }
 
             if (image != null)
             {
@@ -87,15 +103,16 @@ namespace BabyApp.UI
                 }
             }
 
-            if (door != null)
+            if (door != null && covered)
             {
                 // 每張卡都從蓋著開始，名稱也藏著，打開才一起出現
                 door.Close();
                 if (nameLabel != null) nameLabel.enabled = false;
             }
-            else if (nameLabel != null)
+            else
             {
-                nameLabel.enabled = true;
+                if (door != null) door.Dismiss();
+                if (nameLabel != null) nameLabel.enabled = true;
             }
         }
 

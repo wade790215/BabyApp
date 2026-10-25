@@ -32,6 +32,11 @@ namespace BabyApp.Core
                 ["clear_recordings"] = ("清除錄音", "Clear recordings"),
                 ["find"] = ("找一找", "Find It"),
                 ["count"] = ("數數", "Count"),
+                ["cards"] = ("卡片", "Cards"),
+                ["touch"] = ("摸一摸", "Touch"),
+                ["match"] = ("配對", "Match"),
+                ["puzzle"] = ("拼圖", "Puzzle"),
+                ["labels"] = ("顯示文字", "Show labels"),
                 ["stats"] = ("今天翻了 {0} 張　最愛：{1}　錄了 {2} 段　找對 {3} 次　數了 {4} 回",
                              "Today: {0} cards · Favourite: {1} · {2} recordings · {3} found · {4} counted"),
                 ["none"] = ("還沒有", "none")

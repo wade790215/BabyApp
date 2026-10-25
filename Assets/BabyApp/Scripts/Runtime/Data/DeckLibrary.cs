@@ -25,6 +25,12 @@ namespace BabyApp.Data
                 {
                     if (deck != null && deck.PlayableCards().Count > 0) _cache.Add(deck);
                 }
+
+                // 只要有任何一組已經有圖，就把「整組還沒圖」的組藏起來：
+                // 小孩不認字，純文字卡混在圖卡裡只是噪音。全部都沒圖時才用純文字卡預覽流程。
+                bool anyArt = _cache.Exists(d => !d.IsArtPending());
+                if (anyArt) _cache.RemoveAll(d => d.IsArtPending());
+
                 _cache.Sort((a, b) => a.sortOrder.CompareTo(b.sortOrder));
 
                 if (_cache.Count == 0)

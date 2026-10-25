@@ -28,6 +28,7 @@ namespace BabyApp.EditorTools
         public const string SfxPage = SfxFolder + "/ui_swoosh.wav";
         public const string SfxDoor = SfxFolder + "/ui_tada.wav";
         public const string SfxSparkle = SfxFolder + "/ui_sparkle.wav";
+        public const string SfxChew = SfxFolder + "/ui_chew.wav";
 
         /// <summary>吉祥物五張表情圖的檔名（放在 Art/Mascot），缺的會退回第一張卡的熊。</summary>
         public static readonly string[] MascotPoses = { "mascot_idle", "mascot_happy", "mascot_surprised", "mascot_think", "mascot_sleep" };

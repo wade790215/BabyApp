@@ -1,0 +1,28 @@
+file,folder,subject,kind
+daily_cup,Assets/BabyApp/Art/Cards/Daily,a small light blue toddler sippy cup with two side handles and a spout lid; front view,card
+daily_spoon,Assets/BabyApp/Art/Cards/Daily,a short chunky toddler spoon with a green handle; standing upright; bowl of the spoon facing the viewer,card
+daily_bowl,Assets/BabyApp/Art/Cards/Daily,a round yellow bowl; empty; slight top-down three-quarter view,card
+daily_shoes,Assets/BabyApp/Art/Cards/Daily,a pair of small red toddler sneakers with white soles; side by side; front three-quarter view,card
+daily_hat,Assets/BabyApp/Art/Cards/Daily,a soft yellow bucket hat; front view,card
+daily_toothbrush,Assets/BabyApp/Art/Cards/Daily,a toddler toothbrush with a pink handle and white bristles; standing upright; bristles facing the viewer,card
+daily_toilet,Assets/BabyApp/Art/Cards/Daily,a simple white toilet with the lid up; front three-quarter view,card
+daily_bed,Assets/BabyApp/Art/Cards/Daily,a small toddler bed with a light blue blanket and a white pillow; side view,card
+daily_chair,Assets/BabyApp/Art/Cards/Daily,a small light wooden toddler chair; front three-quarter view,card
+daily_ball,Assets/BabyApp/Art/Cards/Daily,a round rubber ball with red and blue stripes and a white band,card
+body_eyes,Assets/BabyApp/Art/Cards/Body,a pair of big round friendly cartoon eyes with lashes and eyebrows on a soft peach skin-toned patch; nothing else,card
+body_nose,Assets/BabyApp/Art/Cards/Body,a simple round cartoon nose on a soft peach skin-toned patch of face; nothing else,card
+body_mouth,Assets/BabyApp/Art/Cards/Body,a big smiling cartoon mouth with a pink tongue and white teeth on a soft peach skin-toned patch; nothing else,card
+body_ears,Assets/BabyApp/Art/Cards/Body,a single cartoon ear in soft peach skin tone; side view; nothing else,card
+body_hands,Assets/BabyApp/Art/Cards/Body,two open cartoon hands in soft peach skin tone; palms facing the viewer; fingers spread,card
+body_feet,Assets/BabyApp/Art/Cards/Body,a pair of bare cartoon feet in soft peach skin tone; toes up; front view,card
+body_hair,Assets/BabyApp/Art/Cards/Body,the top of a toddler's head with short fluffy dark brown hair; no face visible; front view,card
+body_tummy,Assets/BabyApp/Art/Cards/Body,a round cartoon tummy in soft peach skin tone with a belly button; nothing else,card
+cover_daily,Assets/BabyApp/Art/Covers,a small group of toddler things together: a light blue sippy cup; a yellow bowl and a pair of red sneakers,card
+cover_body,Assets/BabyApp/Art/Covers,a small group together: a pair of big friendly cartoon eyes; a smiling mouth and two open hands in soft peach skin tone,card
+tile_cards,Assets/BabyApp/Art/UI,the honey bear mascot smiling and holding up a white rounded flashcard with a simple brown puppy drawn on it,tile
+tile_touch,Assets/BabyApp/Art/UI,the honey bear mascot gently patting a small brown puppy on the head; both smiling,tile
+tile_find,Assets/BabyApp/Art/UI,the honey bear mascot looking through a big round magnifying glass with a curious face,tile
+tile_count,Assets/BabyApp/Art/UI,three shiny red apples in a row with small green leaves,tile
+tile_match,Assets/BabyApp/Art/UI,two identical yellow rubber ducks side by side,tile
+tile_paint,Assets/BabyApp/Art/UI,the honey bear mascot holding a big paintbrush with colourful red blue and yellow paint splashes around it,tile
+tile_puzzle,Assets/BabyApp/Art/UI,the honey bear mascot happily holding one big colourful jigsaw puzzle piece,tile

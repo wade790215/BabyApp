@@ -37,6 +37,7 @@ namespace BabyApp.Core
         private const string MusicKey = "babyapp.music";
         private const string BackgroundKey = "babyapp.background";
         private const string LanguageKey = "babyapp.language";
+        private const string LabelsKey = "babyapp.labels";
 
         public static event Action Changed;
 
@@ -72,6 +73,13 @@ namespace BabyApp.Core
         {
             get => PlayerPrefs.GetInt(LanguageKey, 0) == 1;
             set => Set(LanguageKey, value ? 1 : 0);
+        }
+
+        /// <summary>格子上要不要顯示文字。預設關：小孩不認字，空間留給圖；家長想對照名稱再打開。</summary>
+        public static bool ShowLabels
+        {
+            get => PlayerPrefs.GetInt(LabelsKey, 0) == 1;
+            set => Set(LabelsKey, value ? 1 : 0);
         }
 
         private static void Set(string key, int value)

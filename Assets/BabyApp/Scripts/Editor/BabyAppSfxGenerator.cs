@@ -23,7 +23,7 @@ namespace BabyApp.EditorTools
             BabyAppPaths.SfxFolder + "/door_clack.wav"
         };
 
-        public static (AudioClip tap, AudioClip page, AudioClip door, AudioClip sparkle) EnsureAll()
+        public static (AudioClip tap, AudioClip page, AudioClip door, AudioClip sparkle, AudioClip chew) EnsureAll()
         {
             Directory.CreateDirectory(BabyAppPaths.SfxFolder);
             foreach (var old in Obsolete)
@@ -35,7 +35,8 @@ namespace BabyApp.EditorTools
             var page = Ensure(BabyAppPaths.SfxPage, Swoosh);
             var door = Ensure(BabyAppPaths.SfxDoor, TaDa);
             var sparkle = Ensure(BabyAppPaths.SfxSparkle, Sparkle);
-            return (tap, page, door, sparkle);
+            var chew = Ensure(BabyAppPaths.SfxChew, Chew);
+            return (tap, page, door, sparkle, chew);
         }
 
         private static AudioClip Ensure(string path, Func<float[]> synth)
@@ -89,9 +90,39 @@ namespace BabyApp.EditorTools
             return buffer;
         }
 
+        /// <summary>咔滋咔滋：兩下短促的雜音脆響，小熊把東西吃掉時用。</summary>
+        private static float[] Chew()
+        {
+            var buffer = NewBuffer(0.4f);
+            Crunch(buffer, 0.00f, 0.10f, 0.5f);
+            Crunch(buffer, 0.18f, 0.10f, 0.4f);
+            Tone(buffer, 220f, 0.00f, 0.08f, 0.2f);  // 低音墊一下，有「咬下去」的厚度
+            Tone(buffer, 196f, 0.18f, 0.08f, 0.16f);
+            return buffer;
+        }
+
         // ---------- 合成工具 ----------
 
         private static float[] NewBuffer(float seconds) => new float[(int)(Rate * seconds)];
+
+        /// <summary>一下帶濾波的雜音脆響：很快衰減，像咬到脆的東西。</summary>
+        private static void Crunch(float[] buffer, float start, float duration, float amplitude)
+        {
+            int begin = (int)(start * Rate);
+            int count = (int)(duration * Rate);
+            var random = new System.Random(begin + 7);
+            float previous = 0f;
+
+            for (int i = 0; i < count && begin + i < buffer.Length; i++)
+            {
+                float t = (float)i / Rate;
+                float envelope = Mathf.Exp(-t * (6f / duration));
+                float noise = (float)(random.NextDouble() * 2.0 - 1.0);
+                // 簡單的低通，讓它偏「咔滋」不偏「嘶」
+                previous = Mathf.Lerp(previous, noise, 0.45f);
+                buffer[begin + i] += previous * envelope * amplitude;
+            }
+        }
 
         /// <summary>
         /// 疊一個正弦音進緩衝：很快的起音、指數衰減，加一點二倍頻讓它不那麼空。
