@@ -34,7 +34,7 @@
 
 ## 素材現況（2026-11-04）
 
-- 主題 7 組：動物 12、水果 12、交通工具 11、工程車 8、顏色 8（程式畫色球）、生活用品 10（Gemini，2026-11-04）、**身體 8：眼睛／鼻子／嘴巴／耳朵已生（小熊指著該部位），手／腳／頭髮／肚子還沒（當天 Gemini 額度用完）**。身體卡的 prompt：「Same style, same honey bear character. Subject: the honey bear cub <動作>, front view, whole body visible.」，第一張要先貼小熊角色設定。
+- 主題 7 組：動物 12、水果 12、交通工具 11、工程車 8、顏色 8（程式畫色球）、生活用品 10（Gemini，2026-11-04）、身體 8（Gemini，2026-11-04，小熊指著該部位）。**七組全部有圖**。身體卡的 prompt：「Same style, same honey bear character. Subject: the honey bear cub <動作>, front view, whole body visible.」，第一張要先貼小熊角色設定。
 - 有圖的卡片全部 Gemini 生成並去背（2026-10-23）+ 4 張封面。OpenMoji 已不再使用（tools/openmoji-* 只是歷史）。
 - 叫聲：25 個來自 Wikimedia Commons（出處在 docs/素材授權.md）。卡車＝柴油引擎、消防車＝消防鐘、工程車組共用柴油、堆高機專屬。兔子沒叫聲。
 - 名稱語音：Windows SAPI 合成（Hanhan zh / Zira en），`tools/make-voices.ps1`；小熊台詞 `tools/make-prompts.ps1` + `tools/prompts.csv`（已存在的檔會跳過）。
@@ -45,11 +45,10 @@
 
 ## 用 Gemini 批次生圖（內建瀏覽器）
 
-gemini.google.com → 「+」→「建立圖像」→ 貼 prompt（風格句見 docs/AI圖片生成指南.md），同一個對話連續生、每張 ~35 秒。圖是 blob：用 javascript_tool 畫到 canvas → `<a download>` 存到 `C:\Users\Bachider\Downloads`，再 cp 進專案、跑去背。**坑**：連續多檔下載常落成 `.tmp` 亂數名，有時幾十秒後改回正確檔名、有時永遠不會。**不要用時間排序對應**（下載是平行啟動的）。正解：在頁面用 JS 把每張圖縮到 8×8 讀出 RGB 當指紋存成 json，再跑 `python tools/match-downloads.py 指紋.json`，它對每個 .tmp 算同樣指紋、取最近的、搬進對應資料夾並印出次近距離（差距 < 1.5 倍會標 !!）。一次 batch 最多 25 個動作；視窗變窄時用 `find` 拿 ref 而不是座標。免費額度一天約 50 張，用完要等到隔天同一時間。
+gemini.google.com → 「+」→「建立圖像」→ 貼 prompt（風格句見 docs/AI圖片生成指南.md），同一個對話連續生、每張 ~35 秒。圖是 blob：用 javascript_tool 畫到 canvas → `<a download>` 存到 `C:\Users\Bachider\Downloads`，再 cp 進專案、跑去背。**坑**：連續多檔下載常落成 `.tmp` 亂數名，有時幾十秒後改回正確檔名、有時永遠不會。**不要用時間排序對應**（下載是平行啟動的）。正解：在頁面用 JS 把每張圖縮到 8×8 讀出 RGB 當指紋存成 json（**要逐步減半縮到 8×8 並開 imageSmoothingQuality='high'**，一次 drawImage 到 8×8 只是點取樣，距離會從 ~45 暴增到 ~400 而配錯），再跑 `python tools/match-downloads.py 指紋.json`，它對每個 .tmp 算同樣指紋、取最近的、搬進對應資料夾並印出次近距離（差距 < 1.5 倍會標 !!）。一次 batch 最多 25 個動作；視窗變窄時用 `find` 拿 ref 而不是座標。免費額度一天約 50 張，用完要等到隔天同一時間。
 
 ## 待辦 / 想法
 
-- 身體、生活用品兩組的圖還沒生。
 - 家人相片卡（要接相機/相簿）— 第二階段。
 - iPad 安裝路線（有 Mac 用 Xcode／沒 Mac 出 WebGL）使用者還沒定。
 
