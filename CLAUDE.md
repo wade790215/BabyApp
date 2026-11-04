@@ -19,6 +19,7 @@
 - **我（Claude）可以直接操作 Unity**：`UnityMCP` MCP server（CoplayDev MCP for Unity，套件釘在 `Packages/manifest.json` 的 `com.coplaydev.unity-mcp`）打進你開著的編輯器，不是 batchmode、不搶 lock。常用：`read_console` 看編譯錯誤、`execute_menu_item` 跑「BabyApp → 2／3」、`manage_scene`／`manage_gameobject` 檢查 Builder 建出來的階層、`unity_reflect`／`unity_docs` 查證 Unity API（別憑記憶猜，容易幻想出不存在的 API）。
 - **MCP 的前提**：Unity 要開著，且 MCP 視窗（`Window → MCP for Unity → Toggle MCP Window`，`Ctrl+Shift+M`）的本機 HTTP server 在 8080 跑著；`MCPForUnity.AutoStartOnLoad` 打開就會隨編輯器自動起。接不上時依序查：8080 有沒有人聽 → `Library/MCPForUnity/Logs/server-launch-8080.log` 有沒有 `Plugin registered: BabyApp` → `~/.claude.json` 的專案層有沒有 `"UnityMCP": {"type": "http", "url": "http://127.0.0.1:8080/mcp"}`。注意 MCP 視窗裡按 Configure 只會寫給當下選到的那個 client，選錯會把 Claude Code 的註冊清掉。
 - Unity 或 MCP 連不上時的退路：scratchpad 的 `typecheck.csproj`（netstandard2.1，參照 `D:\UnityEditor\6000.5.1f1\Editor\Data\Managed\UnityEngine\*Module.dll` + `Library/ScriptAssemblies` 的 UI/InputSystem/URP）做型別檢查，然後請使用者在 Unity 裡跑選單。
+- 角色分工（`.claude/agents/`）：大任務先叫 `planner`（opus，唯讀）出方案、實作完叫 `evaluator`（sonnet，唯讀）獨立驗收，**Generator 一律留在主對話自己做**——改程式最需要完整上下文，交接成本高，而且它要獨佔 Unity。小任務（改一兩行、修錯字）不要叫 agent，直接做完比較快。同一時間只能有一個寫入者碰 Unity。
 - **每次交付結尾用 DEVELOPMENT_WORKFLOW.md 的驗收回報格式。**「編譯過」要拿 `read_console` 的實際輸出當證據才能寫 PASS，拿不到證據就寫 NOT_RUN；「畫面長這樣」「聲音聽起來對」永遠是 NOT_RUN。
 
 ## 選單（Unity 上方 BabyApp）
