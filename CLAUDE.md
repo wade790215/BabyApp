@@ -38,7 +38,7 @@
 
 ## 素材現況（2026-11-04）
 
-- 主題 7 組：動物 12、水果 12、交通工具 11、工程車 8、顏色 8（程式畫色球）、生活用品 10（Gemini，2026-11-04）、身體 8（Gemini，2026-11-04，小熊指著該部位）。**七組全部有圖**。身體卡的 prompt：「Same style, same honey bear character. Subject: the honey bear cub <動作>, front view, whole body visible.」，第一張要先貼小熊角色設定。
+- 主題 7 組：動物 12、水果 12、交通工具 11、工程車 8、顏色 8（程式畫色球）、生活用品 10（Gemini，2026-11-04）、身體 8（Gemini，2026-11-04，小熊指著該部位）。**七組全部有圖，69 張卡的圖與語音都已接進 Deck 資產**（2026-11-05 跑完選單 2 確認 69/69）。注意「有 PNG」不等於「Deck 接上了」：丟完素材沒跑選單 2 的話，Deck 裡的 `image` 會留在 `{fileID: 0}`，整組就退回純文字卡——身體與生活用品兩組就這樣空轉過一段時間。要查就 grep `Assets/BabyApp/Resources/Decks/Deck_*.asset` 還有沒有 `image: {fileID: 0}`。身體卡的 prompt：「Same style, same honey bear character. Subject: the honey bear cub <動作>, front view, whole body visible.」，第一張要先貼小熊角色設定。
 - 有圖的卡片全部 Gemini 生成並去背（2026-10-23）+ 4 張封面。OpenMoji 已不再使用（tools/openmoji-* 只是歷史）。
 - 叫聲：25 個來自 Wikimedia Commons（出處在 docs/素材授權.md）。卡車＝柴油引擎、消防車＝消防鐘、工程車組共用柴油、堆高機專屬。兔子沒叫聲。
 - 名稱語音：Windows SAPI 合成（Hanhan zh / Zira en），`tools/make-voices.ps1`；小熊台詞 `tools/make-prompts.ps1` + `tools/prompts.csv`（已存在的檔會跳過）。

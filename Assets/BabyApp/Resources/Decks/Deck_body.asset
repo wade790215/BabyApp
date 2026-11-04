@@ -23,56 +23,56 @@ MonoBehaviour:
   - id: body_eyes
     displayName: "\u773C\u775B"
     displayNameEn: Eyes
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: 01f242a508c166841be36a0676be789f, type: 3}
     voice: {fileID: 8300000, guid: a96dd1ecdf447f74ca00f05cdb32745a, type: 3}
     voiceEn: {fileID: 8300000, guid: 404734e8dad082c4da99225fc9904b3a, type: 3}
     sound: {fileID: 0}
   - id: body_nose
     displayName: "\u9F3B\u5B50"
     displayNameEn: Nose
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: d062caa2192d5424482eefe4c1d11737, type: 3}
     voice: {fileID: 8300000, guid: 250547e5d9abb3647a73e2a9aca270cb, type: 3}
     voiceEn: {fileID: 8300000, guid: 8aa91d783491c4142b6396063bee933e, type: 3}
     sound: {fileID: 0}
   - id: body_mouth
     displayName: "\u5634\u5DF4"
     displayNameEn: Mouth
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: 6fa94d7ce2e57134fbfc2ac4758e42e1, type: 3}
     voice: {fileID: 8300000, guid: 82534f6b9d1a4064789473212dca4b43, type: 3}
     voiceEn: {fileID: 8300000, guid: 244b27f93858fa543bcbb7004dae34ef, type: 3}
     sound: {fileID: 0}
   - id: body_ears
     displayName: "\u8033\u6735"
     displayNameEn: Ears
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: 01cd215413e4f1d47bd642b64761adf8, type: 3}
     voice: {fileID: 8300000, guid: 066bc9e878fecc44ba9f9d8f9d63503d, type: 3}
     voiceEn: {fileID: 8300000, guid: 5fbab964f8c95e7459aee7274b057027, type: 3}
     sound: {fileID: 0}
   - id: body_hands
     displayName: "\u624B"
     displayNameEn: Hands
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: 5ec10372ef03eb24781087fa26a2ddb0, type: 3}
     voice: {fileID: 8300000, guid: ef8e22bdc4f287e45a9c63cbef059b68, type: 3}
     voiceEn: {fileID: 8300000, guid: 85613155f40d86c44bd3976ace1cd4e2, type: 3}
     sound: {fileID: 0}
   - id: body_feet
     displayName: "\u8173"
     displayNameEn: Feet
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: c990a3f5baa93e546bf7053b910128f7, type: 3}
     voice: {fileID: 8300000, guid: e4f02e1b14924db4fb34f8fa04ad8826, type: 3}
     voiceEn: {fileID: 8300000, guid: 91625266635aab14cba22f9b3173b54b, type: 3}
     sound: {fileID: 0}
   - id: body_hair
     displayName: "\u982D\u9AEE"
     displayNameEn: Hair
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: 5ae58505ea50a3d49b6ced0084aef490, type: 3}
     voice: {fileID: 8300000, guid: 098208a6c871d5b4ebb4633e44378eca, type: 3}
     voiceEn: {fileID: 8300000, guid: db2167713ae529a4f8ddda56d102750f, type: 3}
     sound: {fileID: 0}
   - id: body_tummy
     displayName: "\u809A\u5B50"
     displayNameEn: Tummy
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: a99a98b05166ac649abb41ee69570d55, type: 3}
     voice: {fileID: 8300000, guid: 10e3813d9dc11074a8a706aaaf6d446a, type: 3}
     voiceEn: {fileID: 8300000, guid: 7b7e65b4cf4b22c4eb370860211c9c8b, type: 3}
     sound: {fileID: 0}
