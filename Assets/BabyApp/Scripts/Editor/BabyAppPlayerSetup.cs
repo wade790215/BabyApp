@@ -27,7 +27,8 @@ namespace BabyApp.EditorTools
 
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, AppId);
 
-            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+            // Unity 已把 24 標成 obsolete（下一版會變 error）；26 是 Android 8.0，平板早就都過了
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
             PlayerSettings.Android.bundleVersionCode = 1;
             // 瀏海與圓角螢幕的平板上也佔滿整個畫面
