@@ -11,7 +11,7 @@
 | 知識來源與搜尋順序 | `CLAUDE.md` → `README.md` 與 `docs/`（素材授權、語音素材指南、AI圖片生成指南）→ 程式碼本身（`Assets/BabyApp/Scripts`）與 `CardManifest.csv` → 外部資料／模型一般知識。沒有獨立知識庫。 |
 | 規格／計畫落點 | 小任務：直接在對話裡列出方案與驗收條件再動手。大任務（跨多個畫面、改資料格式、整批素材）：寫到 `docs/specs/<日期>-<主題>.md`，做完後把結論併回 `CLAUDE.md`／`README.md`，規格檔可留作紀錄。 |
 | 實作或文件產出落點 | 程式：`Assets/BabyApp/Scripts/{Runtime,Editor}`；場景與預置物只由 `BabyAppSceneBuilder` 產生，不手動改；素材：`Assets/BabyApp/Art`、`Audio`；卡片內容：`Assets/BabyApp/CardManifest.csv`；工具腳本：`tools/`；文件：`docs/`。 |
-| 驗收方式 | **自動化只到型別檢查**：scratchpad 的 `typecheck.csproj`（netstandard2.1，參照 Unity 的 `*Module.dll` 與 `Library/ScriptAssemblies`）`dotnet build` 必須 0 錯誤。**真正的驗收是使用者在 Unity 裡做**：依需要跑「2. 匯入卡片素材」／「3. 重建場景」→ Play → 用 iPad 2360×1640 的 Game 視窗看畫面、聽聲音。素材用 `tools/knockout-white.py` 的讀檔器驗證尺寸與去背。Claude 無法執行 Unity（編輯器開著、batchmode 會搶 lock）。 |
+| 驗收方式 | **Claude 自己驗到「編譯過」與「選單跑過」**：用 `UnityMCP` 的 `execute_menu_item` 跑「2. 匯入卡片素材」／「3. 重建場景」，再用 `read_console` 確認 0 錯誤；MCP 連不上時退回 scratchpad 的 `typecheck.csproj`（netstandard2.1）`dotnet build` 必須 0 錯誤。**「畫面長這樣」「聲音聽起來對」仍然只能由使用者驗**：Play → 用 iPad 2360×1640 的 Game 視窗看畫面、聽聲音。素材用 `tools/knockout-white.py` 的讀檔器驗證尺寸與去背。 |
 | 需要人工處理的阻塞事項 | 直接在對話裡問使用者；下載檔案、刪除檔案、用使用者的帳號操作網站（Gemini 等）一律先問。 |
 | Generator 重試上限 | 3 |
 | Planner 回退上限 | 2 |
@@ -72,7 +72,7 @@ Planner 的輸出至少包含：
 - 不覆蓋或清理與本次任務無關的既有變更。
 
 **BabyApp 備註**：
-- 改版面 → 改 `BabyAppSceneBuilder`，請使用者跑「3. 重建場景」；改 CSV 或素材 → 請使用者跑「2. 匯入卡片素材」。回報時要明說需要跑哪一個。
+- 改版面 → 改 `BabyAppSceneBuilder`，然後自己用 `execute_menu_item` 跑「3. 重建場景」；改 CSV 或素材 → 跑「2. 匯入卡片素材」；改 `BabyAppPlayerSetup` → 跑「4. 套用播放器設定」（否則只改了程式、`ProjectSettings` 沒吃到）。跑完一定要 `read_console` 確認沒有紅字。MCP 連不上時才改成請使用者跑，並在回報裡明說要跑哪一個。
 - 新畫面要接進 `AppRoot`、`HomeScreen`（或 `DeckPickScreen`）、Builder 三處，少一處就是「有程式但進不去」。
 - 新文字一律加進 `Strings`（中英各一），新台詞加進 `tools/prompts.csv` 並跑 `make-prompts.ps1`。
 
@@ -81,11 +81,11 @@ Planner 的輸出至少包含：
 Evaluator 逐項對照需求與驗收條件，檢查：
 
 - 交付物是否符合需求，是否有遺漏或超出範圍。
-- 型別檢查是否 0 錯誤；若改了 Builder，接線欄位名是否與程式的 `[SerializeField]` 一致（`Wire` 找不到欄位會在 Unity Console 印紅字）。
+- 編譯是否 0 錯誤（`read_console`；MCP 連不上才退回型別檢查）；若改了 Builder，接線欄位名是否與程式的 `[SerializeField]` 一致（`Wire` 找不到欄位會印紅字，`read_console` 看得到）。
 - 邊界條件、相容性及受影響的呼叫方是否已驗證。
 - 哪些項目未執行、無法執行或仍有不確定性。
 
-**BabyApp 備註**：Claude 做得到的驗證只有「編譯過」與「檔案存在、尺寸正確、去背正確」；「畫面長這樣」「聲音聽起來對」永遠是 NOT_RUN，要列成給使用者的具體檢查步驟（在哪一頁、按什麼、應該看到／聽到什麼）。**不得把「編譯過」寫成「通過」。**
+**BabyApp 備註**：Claude 做得到的驗證是「編譯過」（`read_console` 0 錯誤）、「選單跑過」（`execute_menu_item` 的回傳）、「場景階層對」（`manage_scene`／`manage_gameobject`）與「檔案存在、尺寸正確、去背正確」；「畫面長這樣」「聲音聽起來對」永遠是 NOT_RUN，要列成給使用者的具體檢查步驟（在哪一頁、按什麼、應該看到／聽到什麼）。**「編譯過」要附 `read_console` 的實際輸出當證據；拿不到證據就寫 NOT_RUN，不得憑「應該會過」寫成 PASS。**
 
 ### 5. 流程決策與錯誤恢復
 
@@ -94,7 +94,7 @@ Evaluator 逐項對照需求與驗收條件，檢查：
 | PASS | 確認驗收條件均有結果，整理交付與驗證狀態後完成 |
 | RETRYABLE | 將明確修正指示交 Generator；達 3 次仍未通過則升級 |
 | BACKTRACK | 問題來自需求或規格時，附差異與證據退回 Planner；達 2 次仍不清楚則升級 |
-| ESCALATE | 存在人工裁決、外部依賴（Unity 執行結果、使用者帳號、下載）或無法自動安全處理的阻塞時，停止相關工作並在對話裡問使用者 |
+| ESCALATE | 存在人工裁決、外部依賴（使用者帳號、下載、Play 之後的畫面與聲音確認）、MCP 連不上或無法自動安全處理的阻塞時，停止相關工作並在對話裡問使用者 |
 
 重試或回退時必須附上錯誤摘要、證據、已嘗試次數與下一步指示。不得無限重試，也不得以改寫驗收條件來假裝通過。
 
@@ -104,7 +104,7 @@ Evaluator 逐項對照需求與驗收條件，檢查：
 2. **簡單優先**：以最少且足夠的變更解決問題，不擴充未要求的功能。
 3. **精準修改**：只改與需求直接相關的內容；不順手重構或格式化周邊程式。
 4. **先讀再寫**：閱讀目標檔案、直接呼叫方、共用工具及資料／資產引用。
-5. **定義可驗證目標**：每個重要需求要有對應的型別檢查或明確的 Unity 人工檢查步驟。
+5. **定義可驗證目標**：每個重要需求要有對應的 `read_console` 驗證（或型別檢查）與明確的 Unity 人工檢查步驟。
 6. **維持一致性**：遵循現有命名、架構、API、序列化及錯誤處理模式。
 7. **評估變更影響**：共用模組、資料格式（CSV 欄位、Deck 資產、錄音檔）或 Builder 接線的修改，列出相依方與相容性風險。
 8. **如實回報**：明確列出已驗證、未驗證、失敗及被阻塞的項目。
@@ -140,7 +140,7 @@ next_for_user:
 - [x] 文件放在 `docs/`，`CLAUDE.md` 有連結。
 - [x] 入口指引、規則文件、知識來源順序、輸出路徑與升級管道已填。
 - [x] 角色對齊為「單一對話依序扮演」；工具為 Claude Code 的檔案／Shell／瀏覽器工具。
-- [x] 重試 3／回退 2；驗收命令＝型別檢查 + Unity 人工步驟。
+- [x] 重試 3／回退 2；驗收命令＝`UnityMCP` 的 `execute_menu_item` + `read_console`（退路：型別檢查）+ Play 之後的人工確認。
 - [x] 程式風格：繁中註解、英文識別字、Builder 接線、素材靠檔名。
 - [ ] 知識庫流程未啟用（專案沒有知識庫）。
 - [ ] 尚未以一個小任務試跑完整格式——下一個任務開始用。

@@ -11,15 +11,19 @@
 - **沒有分數、計時、關卡、答錯懲罰**。2～3 歲只要「我按下去，世界有反應」。選錯不是錯：那張淡掉、對的亮起來、小熊說「在這裡！」。
 - **按鈕用圖示不用字**（小孩不認字）。卡片／格子上的名稱預設藏著，設定「顯示文字」才出現（`AppSettings.ShowLabels`、`TileLabelToggle`）。
 - **場景是程式建的**：`Assets/BabyApp/Scripts/Editor/BabyAppSceneBuilder.cs`，改版面改那支然後跑「BabyApp → 3. 重建場景」。不要手動在 Inspector 接線。新畫面要接 `AppRoot` + `HomeScreen`（或 `DeckPickScreen`）+ Builder 三處。
+- **改了 Editor 下的腳本就要跑對應選單**，程式改了不等於專案吃到：`BabyAppSceneBuilder.cs` → 跑「3. 重建場景」；`CardManifest.csv` 或素材 → 跑「2. 匯入卡片素材」；`BabyAppPlayerSetup.cs` → 跑「4. 套用播放器設定」（它寫的是 `ProjectSettings/ProjectSettings.asset`）。漏跑選單 4 的代價是真的：`microphoneUsageDescription` 曾經一直空著，iOS 上空白會被 App Store 退件，裝置上 `VoiceRecorder` 要麥克風權限時會當場 crash。
 - **素材靠檔名接線**：`{cardId}.png` 圖、`{cardId}.wav` 中文名、`{cardId}_en.wav` 英文名、`{cardId}_sound.*` 叫聲、`{deckId}_sound.*` 整組共用叫聲、`cover_{deckId}.png` 封面。跑「2. 匯入卡片素材」就接上。
 - **卡片內容在 `Assets/BabyApp/CardManifest.csv`**（8 欄：deckId,deckName,deckNameEn,sortOrder,themeColor,cardId,cardName,cardNameEn）。加卡、加主題只改 CSV。
 - **版面全部用錨點百分比**，不用固定像素；`EvenStrip`（一條線平均排、不夠就縮）、`ResponsiveGrid`（正方形格子自動排）、`SafeAreaFitter`（瀏海）。
 - 介面文字走 `Strings.Get(key)` + `LocalizedText`；小熊台詞走 `PromptLibrary`（`tools/prompts.csv` → `make-prompts.ps1`）；設定走 `AppSettings`（PlayerPrefs）。
-- 我（Claude）無法跑 Unity（編輯器開著、batchmode 會搶 lock）；用 scratchpad 的 `typecheck.csproj`（netstandard2.1，參照 `D:\UnityEditor\6000.5.1f1\Editor\Data\Managed\UnityEngine\*Module.dll` + `Library/ScriptAssemblies` 的 UI/InputSystem/URP）做型別檢查，然後請使用者在 Unity 裡跑選單。**每次交付結尾用 DEVELOPMENT_WORKFLOW.md 的驗收回報格式，「編譯過」只能寫 NOT_RUN 不能寫 PASS。**
+- **我（Claude）可以直接操作 Unity**：`UnityMCP` MCP server（CoplayDev MCP for Unity，套件釘在 `Packages/manifest.json` 的 `com.coplaydev.unity-mcp`）打進你開著的編輯器，不是 batchmode、不搶 lock。常用：`read_console` 看編譯錯誤、`execute_menu_item` 跑「BabyApp → 2／3」、`manage_scene`／`manage_gameobject` 檢查 Builder 建出來的階層、`unity_reflect`／`unity_docs` 查證 Unity API（別憑記憶猜，容易幻想出不存在的 API）。
+- **MCP 的前提**：Unity 要開著，且 MCP 視窗（`Window → MCP for Unity → Toggle MCP Window`，`Ctrl+Shift+M`）的本機 HTTP server 在 8080 跑著；`MCPForUnity.AutoStartOnLoad` 打開就會隨編輯器自動起。接不上時依序查：8080 有沒有人聽 → `Library/MCPForUnity/Logs/server-launch-8080.log` 有沒有 `Plugin registered: BabyApp` → `~/.claude.json` 的專案層有沒有 `"UnityMCP": {"type": "http", "url": "http://127.0.0.1:8080/mcp"}`。注意 MCP 視窗裡按 Configure 只會寫給當下選到的那個 client，選錯會把 Claude Code 的註冊清掉。
+- Unity 或 MCP 連不上時的退路：scratchpad 的 `typecheck.csproj`（netstandard2.1，參照 `D:\UnityEditor\6000.5.1f1\Editor\Data\Managed\UnityEngine\*Module.dll` + `Library/ScriptAssemblies` 的 UI/InputSystem/URP）做型別檢查，然後請使用者在 Unity 裡跑選單。
+- **每次交付結尾用 DEVELOPMENT_WORKFLOW.md 的驗收回報格式。**「編譯過」要拿 `read_console` 的實際輸出當證據才能寫 PASS，拿不到證據就寫 NOT_RUN；「畫面長這樣」「聲音聽起來對」永遠是 NOT_RUN。
 
 ## 選單（Unity 上方 BabyApp）
 
-1 一鍵初始化 ｜ 2 匯入卡片素材（改 CSV、丟素材後）｜ 3 重建場景（改 Builder 後）｜ 4 套用播放器設定 ｜ 5/6 切平台 Android/iOS ｜ 7 出 APK ｜ 8 匯出 Xcode 專案 ｜ 檢查還缺哪些素材
+1 一鍵初始化 ｜ 2 匯入卡片素材（改 CSV、丟素材後）｜ 3 重建場景（改 Builder 後）｜ 4 套用播放器設定（改 BabyAppPlayerSetup 後）｜ 5/6 切平台 Android/iOS ｜ 7 出 APK ｜ 8 匯出 Xcode 專案 ｜ 檢查還缺哪些素材
 
 ## 程式地圖（Assets/BabyApp/Scripts）
 
