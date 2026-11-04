@@ -44,6 +44,7 @@
 - 名稱語音：Windows SAPI 合成（Hanhan zh / Zira en），`tools/make-voices.ps1`；小熊台詞 `tools/make-prompts.ps1` + `tools/prompts.csv`（已存在的檔會跳過）。
 - 吉祥物：五張蜂蜜小熊 Gemini 生成並去背（Art/Mascot）。`EnsureMascotPlaceholders()` 只在檔案缺時畫程式佔位。
 - 去白底：`python tools/knockout-white.py 圖.png ...`（純 Python，從四邊淹白、邊緣半透明）。
+- 丟完素材要查 `.meta` 有沒有一起進版控：`python tools/check-meta.py`（純 Python，發現漏的回傳 1；`--fix-cmd` 會印出補齊用的 `git add` 指令）。`.meta` 裡的 GUID 是 Unity 唯一的資產參照，圖 commit 了但 `.meta` 沒 commit，別台機器 clone 下來 GUID 會重生、參照全斷。
 - 方塊底圖：`Art/UI/roundrect.png` 程式畫的大圓角（半徑 72，九宮格），所有 `CreateTile` 共用。
 - 發佈前要處理：字體授權、CC BY 標註、合成語音換掉。
 
