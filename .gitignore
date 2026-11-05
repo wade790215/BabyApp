@@ -107,3 +107,6 @@ InitTestScene*.unity*
 
 # BabyApp 一鍵出包的產出
 /Builds/
+
+# Azure TTS 試聽檔，不進版控
+tools/azure-trial/
