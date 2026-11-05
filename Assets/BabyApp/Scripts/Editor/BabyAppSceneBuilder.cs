@@ -54,17 +54,32 @@ namespace BabyApp.EditorTools
         private static AudioClip _sparkleSfx;
         private static AudioClip _chewSfx;
 
-        public static void BuildScene()
-        {
-            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+        public static void BuildScene() => BuildScene(confirm: true);
 
-            if (File.Exists(BabyAppPaths.MainScene) &&
-                !EditorUtility.DisplayDialog(
-                    "重建場景",
-                    BabyAppPaths.MainScene + " 已經存在，重建會覆蓋掉你在場景裡的手動調整。要繼續嗎？",
-                    "重建", "取消"))
+        /// <summary>
+        /// confirm=false 是給 MCP（execute_code）用的：不跳任何對話框直接重建。
+        /// 選單走 confirm=true，會先問要不要存目前場景、要不要覆蓋。Play 模式下兩種都不做。
+        /// </summary>
+        public static void BuildScene(bool confirm)
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
             {
+                Debug.LogWarning("[BabyApp] Play 模式下不能重建場景，請先停止 Play。");
                 return;
+            }
+
+            if (confirm)
+            {
+                if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+
+                if (File.Exists(BabyAppPaths.MainScene) &&
+                    !EditorUtility.DisplayDialog(
+                        "重建場景",
+                        BabyAppPaths.MainScene + " 已經存在，重建會覆蓋掉你在場景裡的手動調整。要繼續嗎？",
+                        "重建", "取消"))
+                {
+                    return;
+                }
             }
 
             _font = BabyAppFontSetup.EnsureFont();
@@ -1244,13 +1259,14 @@ namespace BabyApp.EditorTools
             Localize(title, "family_cards");
 
             // 提醒：照片只存在這台平板。家長要知道換平板就沒了
-            var notice = CreateText("Notice", screen, Strings.Get("family_notice"), 32, Ink);
-            Anchor(notice.rectTransform, new Vector2(0.05f, 0.81f), new Vector2(0.95f, 0.88f));
-            FitText(notice, 18);
+            // 字串裡用換行切成兩行；Best Fit 只看寬度不看高度，所以框要留足兩行的高
+            var notice = CreateText("Notice", screen, Strings.Get("family_notice"), 28, Ink);
+            Anchor(notice.rectTransform, new Vector2(0.06f, 0.795f), new Vector2(0.94f, 0.885f));
+            FitText(notice, 16);
             Localize(notice, "family_notice");
 
             var grid = CreateChild("SlotGrid", screen);
-            Anchor(grid, new Vector2(0.04f, 0.15f), new Vector2(0.96f, 0.80f));
+            Anchor(grid, new Vector2(0.04f, 0.15f), new Vector2(0.96f, 0.78f));
             grid.gameObject.AddComponent<GridLayoutGroup>();
             grid.gameObject.AddComponent<ResponsiveGrid>(); // 8 格會排成 4×2 的正方形
 
@@ -1271,36 +1287,40 @@ namespace BabyApp.EditorTools
             var (root, _, _) = CreateTile("FamilySlot_" + index, grid, new Vector2(300f, 300f), Color.white);
             var view = root.gameObject.AddComponent<FamilySlotView>();
 
+            // 格子實際約 300 單位見方（ResponsiveGrid 在 iPad 與 16:10 平板上算出來都差不多），
+            // 由上到下：照片 46%、稱呼 14%、狀態 9%、按鈕 23%。
+            // Best Fit 只會為了寬度縮字、不管高度，所以文字框的高要大於等於最大字級。
             var photo = CreateImage("Photo", root, null, Color.white);
             photo.preserveAspect = true;
             photo.raycastTarget = false;
-            Anchor(photo.rectTransform, new Vector2(0.08f, 0.40f), new Vector2(0.92f, 0.94f));
+            Anchor(photo.rectTransform, new Vector2(0.08f, 0.50f), new Vector2(0.92f, 0.96f));
 
             var placeholder = CreateImage("Placeholder", root, Icon("picture"), new Color(Ink.r, Ink.g, Ink.b, 0.25f));
             placeholder.preserveAspect = true;
             placeholder.raycastTarget = false;
-            Anchor(placeholder.rectTransform, new Vector2(0.08f, 0.40f), new Vector2(0.92f, 0.94f));
+            Anchor(placeholder.rectTransform, new Vector2(0.08f, 0.50f), new Vector2(0.92f, 0.96f));
 
-            var name = CreateText("Name", root, "", 40, Ink);
-            Anchor(name.rectTransform, new Vector2(0.05f, 0.29f), new Vector2(0.95f, 0.39f));
+            var name = CreateText("Name", root, "", 36, Ink);
+            Anchor(name.rectTransform, new Vector2(0.05f, 0.36f), new Vector2(0.95f, 0.50f));
             FitText(name, 18);
 
-            var status = CreateText("Status", root, "", 28, Ink);
-            Anchor(status.rectTransform, new Vector2(0.05f, 0.21f), new Vector2(0.95f, 0.29f));
-            FitText(status, 14);
+            var status = CreateText("Status", root, "", 22, Ink);
+            Anchor(status.rectTransform, new Vector2(0.05f, 0.27f), new Vector2(0.95f, 0.36f));
+            FitText(status, 12);
 
-            // 四顆鈕交給 EvenStrip 平均排，格子小的時候整條縮小、不會疊
+            // 四顆鈕交給 EvenStrip 平均排：太寬或太高都會整條等比縮小，按鈕隱藏／顯示也會自己重排
             var strip = CreateChild("Buttons", root);
-            Anchor(strip, new Vector2(0f, 0.02f), new Vector2(1f, 0.20f));
+            Anchor(strip, new Vector2(0f, 0.03f), new Vector2(1f, 0.26f));
             var even = strip.gameObject.AddComponent<EvenStrip>();
-            even.Configure(isHorizontal: true, min: 8f, max: 30f);
+            even.Configure(isHorizontal: true, min: 6f, max: 30f);
             EditorUtility.SetDirty(even);
 
+            const float button = 66f;
             var center = new Vector2(0.5f, 0.5f);
-            var pick = CreateRoundButton("PickButton", strip, "picture", Sky, center, Vector2.zero, 100f);
-            var record = CreateRecordButton(strip, center, Vector2.zero, 100f);
-            var play = CreateRoundButton("PlayButton", strip, "play", Mint, center, Vector2.zero, 100f);
-            var (delete, _) = CreateHoldButton("DeleteButton", strip, "eraser", CoverYellow, center, Vector2.zero, 100f);
+            var pick = CreateRoundButton("PickButton", strip, "picture", Sky, center, Vector2.zero, button);
+            var record = CreateRecordButton(strip, center, Vector2.zero, button);
+            var play = CreateRoundButton("PlayButton", strip, "play", Mint, center, Vector2.zero, button);
+            var (delete, _) = CreateHoldButton("DeleteButton", strip, "eraser", CoverYellow, center, Vector2.zero, button);
 
             Wire(view,
                 ("photo", photo),

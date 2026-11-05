@@ -28,18 +28,42 @@ namespace BabyApp.UI
             maxSpacing = max;
         }
 
+        // 上次排版時哪些子物件是開著的；SetActive 不會觸發任何回呼，所以每幀比對一次
+        private int _activeMask;
+
         private void Awake() => _rt = (RectTransform)transform;
 
         private void OnEnable() => Layout();
         private void OnRectTransformDimensionsChange() => Layout();
         private void OnTransformChildrenChanged() => Layout();
 
+        private void LateUpdate()
+        {
+            if (ActiveMask() != _activeMask) Layout();
+        }
+
+        /// <summary>子物件顯示／隱藏之後要重排，可以直接叫這個，不必等下一幀。</summary>
+        public void Relayout() => Layout();
+
+        private int ActiveMask()
+        {
+            int mask = 0, bit = 0;
+            foreach (Transform child in transform)
+            {
+                if (child.gameObject.activeSelf && bit < 31) mask |= 1 << bit;
+                bit++;
+            }
+            return mask;
+        }
+
         private void Layout()
         {
             if (_rt == null) _rt = (RectTransform)transform;
+            _activeMask = ActiveMask();
 
             _items.Clear();
             float total = 0f;
+            float thickest = 0f;
             foreach (Transform child in transform)
             {
                 if (!child.gameObject.activeSelf) continue;
@@ -47,6 +71,7 @@ namespace BabyApp.UI
                 if (item == null) continue;
                 _items.Add(item);
                 total += Extent(item);
+                thickest = Mathf.Max(thickest, Cross(item));
             }
 
             int count = _items.Count;
@@ -62,6 +87,11 @@ namespace BabyApp.UI
 
             // 連最小間距都塞不下，就整條等比縮小
             float scale = needed > available ? available / needed : 1f;
+
+            // 另一個方向也要塞得下：橫條太矮（或直欄太窄）時整條跟著縮，按鈕才不會凸出去疊到旁邊的字
+            float crossAvailable = horizontal ? _rt.rect.height : _rt.rect.width;
+            if (crossAvailable > 0f && thickest > crossAvailable) scale = Mathf.Min(scale, crossAvailable / thickest);
+
             _rt.localScale = Vector3.one * scale;
 
             // 在這一條的座標裡（未縮放）從頭排到尾，整體置中
@@ -79,5 +109,6 @@ namespace BabyApp.UI
         }
 
         private float Extent(RectTransform item) => horizontal ? item.sizeDelta.x : item.sizeDelta.y;
+        private float Cross(RectTransform item) => horizontal ? item.sizeDelta.y : item.sizeDelta.x;
     }
 }
