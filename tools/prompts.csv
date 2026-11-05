@@ -29,3 +29,11 @@ prompt_yummy_en,en,Mmm, yummy!
 prompt_same_en,en,Which one is the same?
 prompt_come_on_en,en,Hey! Come play with me!
 prompt_done_en,en,Yay! You did it!
+family_dad,zh,爸爸
+family_mom,zh,媽媽
+family_grandpa,zh,阿公
+family_grandma,zh,阿嬤
+family_dad_en,en,Daddy
+family_mom_en,en,Mommy
+family_grandpa_en,en,Grandpa
+family_grandma_en,en,Grandma

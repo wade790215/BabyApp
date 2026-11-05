@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using BabyApp.Core;
+using BabyApp.Data;
 using BabyApp.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -98,11 +99,12 @@ namespace BabyApp.EditorTools
             var puzzle = CreatePuzzleScreen(safeRoot);
             var paint = CreatePaintScreen(safeRoot);
             var settings = CreateSettingsScreen(safeRoot);
+            var familyEdit = CreateFamilyEditScreen(safeRoot);
 
             var deckButton = BuildDeckButtonPrefab();
             Wire(deckPick, ("buttonPrefab", deckButton));
 
-            CreateAppRoot(home, deckPick, deck, touch, find, count, match, puzzle, paint, settings);
+            CreateAppRoot(home, deckPick, deck, touch, find, count, match, puzzle, paint, settings, familyEdit);
 
             deckPick.gameObject.SetActive(false);
             deck.gameObject.SetActive(false);
@@ -113,6 +115,7 @@ namespace BabyApp.EditorTools
             puzzle.gameObject.SetActive(false);
             paint.gameObject.SetActive(false);
             settings.gameObject.SetActive(false);
+            familyEdit.gameObject.SetActive(false);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, BabyAppPaths.MainScene);
@@ -168,7 +171,8 @@ namespace BabyApp.EditorTools
         }
 
         private static void CreateAppRoot(HomeScreen home, DeckPickScreen deckPick, DeckScreen deck, TouchScreen touch,
-            FindScreen find, CountScreen count, MatchScreen match, PuzzleScreen puzzle, PaintScreen paint, SettingsScreen settings)
+            FindScreen find, CountScreen count, MatchScreen match, PuzzleScreen puzzle, PaintScreen paint, SettingsScreen settings,
+            FamilyEditScreen familyEdit)
         {
             var go = new GameObject("AppRoot");
             var voiceSource = go.AddComponent<AudioSource>();
@@ -215,6 +219,11 @@ namespace BabyApp.EditorTools
             WireArray(prompts, "numbersZh", Prompt("num_1"), Prompt("num_2"), Prompt("num_3"), Prompt("num_4"), Prompt("num_5"));
             WireArray(prompts, "numbersEn", Prompt("num_1_en"), Prompt("num_2_en"), Prompt("num_3_en"), Prompt("num_4_en"), Prompt("num_5_en"));
 
+            // 家人相片卡：固定四格沒錄稱呼時的預設語音（跟小熊台詞同一套聲音）
+            var family = go.AddComponent<FamilyLibrary>();
+            WireArray(family, "fallbackZh", Prompt("family_dad"), Prompt("family_mom"), Prompt("family_grandpa"), Prompt("family_grandma"));
+            WireArray(family, "fallbackEn", Prompt("family_dad_en"), Prompt("family_mom_en"), Prompt("family_grandpa_en"), Prompt("family_grandma_en"));
+
             var root = go.AddComponent<AppRoot>();
             Wire(root,
                 ("homeScreen", home),
@@ -226,7 +235,8 @@ namespace BabyApp.EditorTools
                 ("matchScreen", match),
                 ("puzzleScreen", puzzle),
                 ("paintScreen", paint),
-                ("settingsScreen", settings));
+                ("settingsScreen", settings),
+                ("familyEditScreen", familyEdit));
         }
 
         private static AudioClip Prompt(string name)
@@ -641,9 +651,15 @@ namespace BabyApp.EditorTools
         /// <summary>左下角的錄音鈕：按住錄、放開存。外圈跟著錄音長度長出來，錄的時候面變紅。</summary>
         private static RecordButton CreateRecordButton(Transform parent)
         {
-            const float size = 150f;
+            // 卡片頁左下角那顆，位置與大小維持原樣
+            return CreateRecordButton(parent, new Vector2(0f, 0f), new Vector2(100f, 100f), 150f);
+        }
+
+        /// <summary>同一顆錄音鈕，但位置與大小由呼叫端決定（家長頁每格一顆）。</summary>
+        private static RecordButton CreateRecordButton(Transform parent, Vector2 anchor, Vector2 position, float size)
+        {
             var rt = CreateChild("RecordButton", parent);
-            Place(rt, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(100f, 100f), new Vector2(size, size));
+            Place(rt, anchor, anchor, position, new Vector2(size, size));
 
             var hitArea = rt.gameObject.AddComponent<Image>();
             hitArea.color = new Color(0f, 0f, 0f, 0f);
@@ -1191,8 +1207,12 @@ namespace BabyApp.EditorTools
                 new Vector2(0.5f, 0.085f), Vector2.zero, new Vector2(300f, 96f));
             var (clearRecordings, _) = CreateTextButton("ClearRecordingsButton", screen, "clear_recordings", Peach,
                 new Vector2(0.2f, 0.085f), Vector2.zero, new Vector2(340f, 96f));
+            // 家人相片卡的編輯入口：跟「回首頁」「清除錄音」並排在底部，只有家長會到這裡
+            var (familyButton, _) = CreateTextButton("FamilyButton", screen, "family_cards", Rose,
+                new Vector2(0.8f, 0.085f), Vector2.zero, new Vector2(300f, 96f));
 
             Wire(settings,
+                ("familyButton", familyButton),
                 ("closeButton", close),
                 ("sfxToggle", sfx),
                 ("voiceToggle", voice),
@@ -1206,6 +1226,92 @@ namespace BabyApp.EditorTools
             WireArray(settings, "backgroundRings", swatchRings);
 
             return settings;
+        }
+
+        // ---------- 家人相片卡（家長頁）----------
+
+        /// <summary>
+        /// 家長編輯家人卡的畫面：標題、一行提醒、8 格 4×2、回設定。
+        /// 文字可以給家長看，但按鈕仍然是圖示，跟整個 App 一致。
+        /// </summary>
+        private static FamilyEditScreen CreateFamilyEditScreen(Transform parent)
+        {
+            var screen = CreateScreen("FamilyEditScreen", parent);
+            var edit = screen.gameObject.AddComponent<FamilyEditScreen>();
+
+            var title = CreateText("Title", screen, Strings.Get("family_cards"), 76, Ink, shadowed: true);
+            Anchor(title.rectTransform, new Vector2(0.2f, 0.89f), new Vector2(0.8f, 0.98f));
+            Localize(title, "family_cards");
+
+            // 提醒：照片只存在這台平板。家長要知道換平板就沒了
+            var notice = CreateText("Notice", screen, Strings.Get("family_notice"), 32, Ink);
+            Anchor(notice.rectTransform, new Vector2(0.05f, 0.81f), new Vector2(0.95f, 0.88f));
+            FitText(notice, 18);
+            Localize(notice, "family_notice");
+
+            var grid = CreateChild("SlotGrid", screen);
+            Anchor(grid, new Vector2(0.04f, 0.15f), new Vector2(0.96f, 0.80f));
+            grid.gameObject.AddComponent<GridLayoutGroup>();
+            grid.gameObject.AddComponent<ResponsiveGrid>(); // 8 格會排成 4×2 的正方形
+
+            var slots = new FamilySlotView[FamilyLibrary.SlotCount];
+            for (int i = 0; i < slots.Length; i++) slots[i] = CreateFamilySlot(grid, i);
+
+            var (close, _) = CreateTextButton("CloseButton", screen, "back_settings", Mint,
+                new Vector2(0.5f, 0.075f), Vector2.zero, new Vector2(300f, 96f));
+
+            Wire(edit, ("closeButton", close));
+            WireArray(edit, "slots", slots);
+            return edit;
+        }
+
+        /// <summary>家長頁的一格：上面照片（或淡淡的相片圖示），中間稱呼與狀態，下面四顆圓鈕平均排。</summary>
+        private static FamilySlotView CreateFamilySlot(Transform grid, int index)
+        {
+            var (root, _, _) = CreateTile("FamilySlot_" + index, grid, new Vector2(300f, 300f), Color.white);
+            var view = root.gameObject.AddComponent<FamilySlotView>();
+
+            var photo = CreateImage("Photo", root, null, Color.white);
+            photo.preserveAspect = true;
+            photo.raycastTarget = false;
+            Anchor(photo.rectTransform, new Vector2(0.08f, 0.40f), new Vector2(0.92f, 0.94f));
+
+            var placeholder = CreateImage("Placeholder", root, Icon("picture"), new Color(Ink.r, Ink.g, Ink.b, 0.25f));
+            placeholder.preserveAspect = true;
+            placeholder.raycastTarget = false;
+            Anchor(placeholder.rectTransform, new Vector2(0.08f, 0.40f), new Vector2(0.92f, 0.94f));
+
+            var name = CreateText("Name", root, "", 40, Ink);
+            Anchor(name.rectTransform, new Vector2(0.05f, 0.29f), new Vector2(0.95f, 0.39f));
+            FitText(name, 18);
+
+            var status = CreateText("Status", root, "", 28, Ink);
+            Anchor(status.rectTransform, new Vector2(0.05f, 0.21f), new Vector2(0.95f, 0.29f));
+            FitText(status, 14);
+
+            // 四顆鈕交給 EvenStrip 平均排，格子小的時候整條縮小、不會疊
+            var strip = CreateChild("Buttons", root);
+            Anchor(strip, new Vector2(0f, 0.02f), new Vector2(1f, 0.20f));
+            var even = strip.gameObject.AddComponent<EvenStrip>();
+            even.Configure(isHorizontal: true, min: 8f, max: 30f);
+            EditorUtility.SetDirty(even);
+
+            var center = new Vector2(0.5f, 0.5f);
+            var pick = CreateRoundButton("PickButton", strip, "picture", Sky, center, Vector2.zero, 100f);
+            var record = CreateRecordButton(strip, center, Vector2.zero, 100f);
+            var play = CreateRoundButton("PlayButton", strip, "play", Mint, center, Vector2.zero, 100f);
+            var (delete, _) = CreateHoldButton("DeleteButton", strip, "eraser", CoverYellow, center, Vector2.zero, 100f);
+
+            Wire(view,
+                ("photo", photo),
+                ("placeholder", placeholder),
+                ("nameLabel", name),
+                ("statusLabel", status),
+                ("pickButton", pick),
+                ("recordButton", record),
+                ("playButton", play),
+                ("deleteButton", delete));
+            return view;
         }
 
         /// <summary>設定頁一列左邊的名稱，y 是面板高度的百分比。</summary>

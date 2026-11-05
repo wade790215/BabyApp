@@ -15,7 +15,7 @@
 - **素材靠檔名接線**：`{cardId}.png` 圖、`{cardId}.wav` 中文名、`{cardId}_en.wav` 英文名、`{cardId}_sound.*` 叫聲、`{deckId}_sound.*` 整組共用叫聲、`cover_{deckId}.png` 封面。跑「2. 匯入卡片素材」就接上。
 - **卡片內容在 `Assets/BabyApp/CardManifest.csv`**（8 欄：deckId,deckName,deckNameEn,sortOrder,themeColor,cardId,cardName,cardNameEn）。加卡、加主題只改 CSV。
 - **版面全部用錨點百分比**，不用固定像素；`EvenStrip`（一條線平均排、不夠就縮）、`ResponsiveGrid`（正方形格子自動排）、`SafeAreaFitter`（瀏海）。
-- 介面文字走 `Strings.Get(key)` + `LocalizedText`；小熊台詞走 `PromptLibrary`（`tools/prompts.csv` → `make-prompts.ps1`）；設定走 `AppSettings`（PlayerPrefs）。
+- 介面文字走 `Strings.Get(key)` + `LocalizedText`；小熊台詞走 `PromptLibrary`（`tools/prompts.csv` → `python tools/make-voices-edge.py --prompts`）；設定走 `AppSettings`（PlayerPrefs）。
 - **我（Claude）可以直接操作 Unity**：`UnityMCP` MCP server（CoplayDev MCP for Unity，套件釘在 `Packages/manifest.json` 的 `com.coplaydev.unity-mcp`）打進你開著的編輯器，不是 batchmode、不搶 lock。常用：`read_console` 看編譯錯誤、`execute_menu_item` 跑「BabyApp → 2／3」、`manage_scene`／`manage_gameobject` 檢查 Builder 建出來的階層、`unity_reflect`／`unity_docs` 查證 Unity API（別憑記憶猜，容易幻想出不存在的 API）。
 - **Unity 內建的 `com.unity.ai.assistant` 已經移除**（2026-11-05）。它和 CoplayDev 的套件各起一支 relay、搶同一條路，當初 MCP 一直接不上就是這樣來的。不要「順手裝回去」——要裝回去是一個要先想清楚的決定，不是補遺漏。
 - **MCP 的前提**：Unity 要開著，且 MCP 視窗（`Window → MCP for Unity → Toggle MCP Window`，`Ctrl+Shift+M`）的本機 HTTP server 在 8080 跑著；`MCPForUnity.AutoStartOnLoad` 打開就會隨編輯器自動起。接不上時依序查：8080 有沒有人聽 → `Library/MCPForUnity/Logs/server-launch-8080.log` 有沒有 `Plugin registered: BabyApp` → `~/.claude.json` 的專案層有沒有 `"UnityMCP": {"type": "http", "url": "http://127.0.0.1:8080/mcp"}`。注意 MCP 視窗裡按 Configure 只會寫給當下選到的那個 client，選錯會把 Claude Code 的註冊清掉。
@@ -31,9 +31,10 @@
 
 ## 程式地圖（Assets/BabyApp/Scripts）
 
-- Runtime/Data：`CardEntry`（`LocalizedName/LocalizedVoice`、`HasImage`）、`CardDeck`（`PlayableCards()` 有圖優先、整組沒圖退回純文字；`fallbackSound`）、`DeckLibrary`（Resources/Decks）、`ColorPalette`（顏色卡整張填色，Editor 畫色球共用）
-- Runtime/Core：`AppRoot`（畫面切換）、`AppSettings`（音效/語音/音樂/背景/語言/顯示文字）、`Strings`、`LocalizedText`、`VoiceService`（語音/音效/音樂三軌，`PlaySequence` 串播、每段最多 2.5 秒；音效：boop/swoosh/tada/sparkle/chew）、`PromptLibrary`（在哪裡／這是誰的聲音／答對了／再試試看／全部數完了／在這裡／好吃／一樣的在哪裡／來玩吧／拼好了／一～五）、`VoiceRecorder`+`WavFile`+`RecordingStore`（錄音存 persistentDataPath/recordings）、`UsageStats`、`ThemedBackground`、`SafeAreaFitter`、`HoldButton`（長按）、`Pulse`、`TapReaction`（四種隨機動畫+星星）
+- Runtime/Data：`FamilyLibrary`（家人相片卡：8 個槽位、persistentDataPath/family 的 jpg+wav、組出執行時的 `CardDeck`，**不進 `DeckLibrary`**，只有 `DeckPickScreen` 會多加它）、`CardEntry`（`LocalizedName/LocalizedVoice`、`HasImage`）、`CardDeck`（`PlayableCards()` 有圖優先、整組沒圖退回純文字；`fallbackSound`）、`DeckLibrary`（Resources/Decks）、`ColorPalette`（顏色卡整張填色，Editor 畫色球共用）
+- Runtime/Core：`PhotoPicker`（包 NativeGallery 從相簿挑圖＋GPU 逐半縮圖到長邊 1024；Android 設免權限模式）、`AppRoot`（畫面切換）、`AppSettings`（音效/語音/音樂/背景/語言/顯示文字）、`Strings`、`LocalizedText`、`VoiceService`（語音/音效/音樂三軌，`PlaySequence` 串播、每段最多 2.5 秒；音效：boop/swoosh/tada/sparkle/chew）、`PromptLibrary`（在哪裡／這是誰的聲音／答對了／再試試看／全部數完了／在這裡／好吃／一樣的在哪裡／來玩吧／拼好了／一～五）、`VoiceRecorder`+`WavFile`+`RecordingStore`（錄音存 persistentDataPath/recordings）、`UsageStats`、`ThemedBackground`、`SafeAreaFitter`、`HoldButton`（長按）、`Pulse`、`TapReaction`（四種隨機動畫+星星）
 - Runtime/UI：
+  - 家長：`FamilyEditScreen`（家人卡 8 格 4×2，從設定頁「家人卡」進、關閉回設定頁）、`FamilySlotView`（一格：選照片／按住錄稱呼／聽／按住刪）
   - 導覽：`HomeScreen`（七格）、`DeckPickScreen`（選主題，每組一格封面）、`DeckButton`、`TileLabelToggle`、`SettingsScreen`、`ToggleRow`
   - 卡片：`DeckScreen`（新主題前 `coveredCardsPerDeck`=3 張蓋「？」，之後直接看；滑到底自動接下一組 `chainDecks`；拖曳換卡、錄音、自動播放）、`CardView`、`CardDoor`（蓋子，`Dismiss()` 直接不蓋）、`DraggableCard`、`RecordButton`
   - 遊戲：`TouchScreen`（摸一摸：6 格點誰誰叫，點小熊換頁）、`FindScreen`（兩選一，名稱或叫聲出題）、`CountScreen`（點一個念一個數，東西飛進小熊嘴裡咔滋）、`MatchScreen`（左一張樣子、右三張選一樣的）、`PuzzleScreen`+`PuzzlePiece`（2×2 拼圖，前兩回合 2 片，寬鬆吸附，底下淡淡完整圖）、`PaintScreen`+`PaintCanvas`+`PictureCell`（24 色色盤、三種粗細、選底圖）
@@ -45,12 +46,13 @@
 - 主題 7 組：動物 12、水果 12、交通工具 11、工程車 8、顏色 8（程式畫色球）、生活用品 10（Gemini，2026-11-04）、身體 8（Gemini，2026-11-04，小熊指著該部位）。**七組全部有圖，69 張卡的圖與語音都已接進 Deck 資產**（2026-11-05 跑完選單 2 確認 69/69）。注意「有 PNG」不等於「Deck 接上了」：丟完素材沒跑選單 2 的話，Deck 裡的 `image` 會留在 `{fileID: 0}`，整組就退回純文字卡——身體與生活用品兩組就這樣空轉過一段時間。要查就 grep `Assets/BabyApp/Resources/Decks/Deck_*.asset` 還有沒有 `image: {fileID: 0}`。身體卡的 prompt：「Same style, same honey bear character. Subject: the honey bear cub <動作>, front view, whole body visible.」，第一張要先貼小熊角色設定。
 - 有圖的卡片全部 Gemini 生成並去背（2026-10-23）+ 4 張封面。OpenMoji 已不再使用（tools/openmoji-* 只是歷史）。
 - 叫聲：25 個來自 Wikimedia Commons（出處在 docs/素材授權.md）。卡車＝柴油引擎、消防車＝消防鐘、工程車組共用柴油、堆高機專屬。兔子沒叫聲。
-- 名稱語音：Windows SAPI 合成（Hanhan zh / Zira en），`tools/make-voices.ps1`；小熊台詞 `tools/make-prompts.ps1` + `tools/prompts.csv`（已存在的檔會跳過）。
+- 名稱語音與小熊台詞：**edge-tts**（微軟神經網路語音，中文曉雨、英文 Ana）`python tools/make-voices-edge.py`（`--prompts` 只做台詞、`--cards` 只做卡名；已存在的檔會跳過；沒 ffmpeg 就出 `.mp3`，現有 `Audio/Prompts/*` 全是 `.mp3`）。台詞清單在 `tools/prompts.csv`。**不要跑 `make-prompts.ps1`／`make-voices.ps1`**（舊的 SAPI 版）：它們只檢查 `.wav` 存不存在，會把全部台詞重生成 SAPI 的 `.wav`，而 Builder 的 `Prompt()` 優先吃 `.wav`，小熊的聲音會整個被換掉。
 - 吉祥物：五張蜂蜜小熊 Gemini 生成並去背（Art/Mascot）。`EnsureMascotPlaceholders()` 只在檔案缺時畫程式佔位。
 - 去白底：`python tools/knockout-white.py 圖.png ...`（純 Python，從四邊淹白、邊緣半透明）。
 - 丟完素材要查 `.meta` 有沒有一起進版控：`python tools/check-meta.py`（純 Python，發現漏的回傳 1；`--fix-cmd` 會印出補齊用的 `git add` 指令）。`.meta` 裡的 GUID 是 Unity 唯一的資產參照，圖 commit 了但 `.meta` 沒 commit，別台機器 clone 下來 GUID 會重生、參照全斷。
 - 方塊底圖：`Art/UI/roundrect.png` 程式畫的大圓角（半徑 72，九宮格），所有 `CreateTile` 共用。
-- 發佈前要處理：字體授權、CC BY 標註、合成語音換掉。
+- 家人相片卡（2026-11-05）：預設稱呼語音 `Audio/Prompts/family_{dad,mom,grandpa,grandma}{,_en}.mp3`；相簿挑圖靠第三方套件 **NativeGallery 1.9.5**（MIT，`Packages/manifest.json` 的 scopedRegistry `package.openupm.com` + `com.yasirkula.nativegallery`，版本釘死）。iOS 用途字串由 `BabyAppPlayerSetup` 寫進 `ProjectSettings/NativeGallery.json`。Android 走的是 `ACTION_GET_CONTENT` 不是 Google 的 Photo Picker，AAR manifest 帶 `READ/WRITE_EXTERNAL_STORAGE`，上架前要用 Custom Main Manifest 拿掉。WebGL 整個功能不可用（入口已藏）。規格與驗收清單在 `docs/specs/2026-11-05-家人相片卡.md`。
+- 發佈前要處理：字體授權、CC BY 標註、合成語音換掉、NativeGallery 的 Android 權限清理、App Privacy／Data safety 誠實勾選（家人照片是兒童相關內容，只存本機）。
 
 ## 用 Gemini 批次生圖（內建瀏覽器）
 
@@ -58,7 +60,7 @@ gemini.google.com → 「+」→「建立圖像」→ 貼 prompt（風格句見 
 
 ## 待辦 / 想法
 
-- 家人相片卡（要接相機/相簿）— 第二階段。
+- 家人相片卡第二階段：相機（NativeCamera）、家人卡進找一找／配對（要動 `DeckLibrary` 來源並做方形裁切給拼圖）、自訂槽打字取名、超過 8 格。
 - iPad 安裝路線（有 Mac 用 Xcode／沒 Mac 出 WebGL）使用者還沒定。
 
 ## 語言

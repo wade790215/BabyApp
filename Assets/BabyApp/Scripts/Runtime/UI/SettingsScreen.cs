@@ -24,12 +24,25 @@ namespace BabyApp.UI
         [SerializeField] private Button[] backgroundButtons;
         [SerializeField] private Image[] backgroundRings;
         [SerializeField] private Text statsLabel;
+        [SerializeField] private Button familyButton;
 
         public event Action CloseRequested;
+
+        /// <summary>家長要去編輯家人相片卡。</summary>
+        public event Action FamilyRequested;
 
         private void Awake()
         {
             if (closeButton != null) closeButton.onClick.AddListener(() => CloseRequested?.Invoke());
+
+            if (familyButton != null)
+            {
+                familyButton.onClick.AddListener(() => { Tap(); FamilyRequested?.Invoke(); });
+#if UNITY_WEBGL && !UNITY_EDITOR
+                // WebGL 沒有相簿挑圖也沒有麥克風，整個功能用不了，乾脆不露出入口
+                familyButton.gameObject.SetActive(false);
+#endif
+            }
 
             if (sfxToggle != null) sfxToggle.Changed += v => { AppSettings.SfxEnabled = v; Tap(); };
             if (voiceToggle != null) voiceToggle.Changed += v => { AppSettings.VoiceEnabled = v; Tap(); };
@@ -112,6 +125,15 @@ namespace BabyApp.UI
             foreach (var deck in DeckLibrary.All)
             {
                 foreach (var card in deck.cards)
+                {
+                    if (card != null && card.id == id) return card.LocalizedName;
+                }
+            }
+            // 最愛的可能是家人卡（不在 DeckLibrary 裡）
+            var family = FamilyLibrary.Instance != null ? FamilyLibrary.Instance.Deck : null;
+            if (family != null)
+            {
+                foreach (var card in family.cards)
                 {
                     if (card != null && card.id == id) return card.LocalizedName;
                 }

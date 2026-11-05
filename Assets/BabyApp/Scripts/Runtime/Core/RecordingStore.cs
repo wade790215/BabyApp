@@ -40,6 +40,19 @@ namespace BabyApp.Core
             Cache[Key(cardId)] = clip;
         }
 
+        /// <summary>刪掉這張卡中英兩段錄音（家長刪掉一張家人卡時，小孩在那張卡錄的聲音也一起清）。</summary>
+        public static void Delete(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId)) return;
+            foreach (var suffix in new[] { "_zh", "_en" })
+            {
+                string key = cardId + suffix;
+                Cache.Remove(key);
+                string path = Path.Combine(Folder, key + ".wav");
+                if (File.Exists(path)) File.Delete(path);
+            }
+        }
+
         public static void DeleteAll()
         {
             Cache.Clear();

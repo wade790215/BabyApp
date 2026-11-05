@@ -39,7 +39,18 @@ namespace BabyApp.Core
                 ["labels"] = ("顯示文字", "Show labels"),
                 ["stats"] = ("今天翻了 {0} 張　最愛：{1}　錄了 {2} 段　找對 {3} 次　數了 {4} 回",
                              "Today: {0} cards · Favourite: {1} · {2} recordings · {3} found · {4} counted"),
-                ["none"] = ("還沒有", "none")
+                ["none"] = ("還沒有", "none"),
+                // 家人相片卡（家長頁）
+                ["family_cards"] = ("家人卡", "Family cards"),
+                ["family_notice"] = ("照片和錄音只存在這台平板上，換平板或刪除 App 就會不見。按住麥克風錄稱呼，按住橡皮擦刪除。",
+                                     "Photos and recordings stay on this tablet only and are lost if you switch tablets or delete the app. Hold the mic to record a name; hold the eraser to delete."),
+                ["family_custom"] = ("自訂 {0}", "Custom {0}"),
+                ["family_need_photo"] = ("還沒選照片", "Pick a photo"),
+                ["family_need_voice"] = ("還沒錄稱呼", "Record a name"),
+                ["family_builtin_voice"] = ("可以玩了（用內建稱呼）", "Ready (built-in name)"),
+                ["family_ready"] = ("可以玩了", "Ready"),
+                ["family_pick_title"] = ("選一張照片", "Choose a photo"),
+                ["back_settings"] = ("回設定", "Back")
             };
 
         public static string Get(string key)

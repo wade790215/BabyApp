@@ -20,6 +20,7 @@ namespace BabyApp.Core
         [SerializeField] private PuzzleScreen puzzleScreen;
         [SerializeField] private PaintScreen paintScreen;
         [SerializeField] private SettingsScreen settingsScreen;
+        [SerializeField] private FamilyEditScreen familyEditScreen;
 
         private void Awake()
         {
@@ -50,7 +51,13 @@ namespace BabyApp.Core
             if (matchScreen != null) matchScreen.HomeRequested += GoHome;
             if (puzzleScreen != null) puzzleScreen.HomeRequested += GoHome;
             if (paintScreen != null) paintScreen.HomeRequested += GoHome;
-            if (settingsScreen != null) settingsScreen.CloseRequested += GoHome;
+            if (settingsScreen != null)
+            {
+                settingsScreen.CloseRequested += GoHome;
+                settingsScreen.FamilyRequested += () => ShowOnly(familyEditScreen);
+            }
+            // 家人卡編輯完回設定頁，不是回首頁
+            if (familyEditScreen != null) familyEditScreen.CloseRequested += () => ShowOnly(settingsScreen);
         }
 
         private void Start() => GoHome();
@@ -77,6 +84,7 @@ namespace BabyApp.Core
             Toggle(puzzleScreen, screen);
             Toggle(paintScreen, screen);
             Toggle(settingsScreen, screen);
+            Toggle(familyEditScreen, screen);
         }
 
         private static void Toggle(Component candidate, Component wanted)

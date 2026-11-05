@@ -1,0 +1,6 @@
+{
+    "AutomatedSetup": true,
+    "PhotoLibraryUsageDescription": "讓家長從相簿挑一張家人的照片做成卡片；照片只存在這台裝置上。",
+    "PhotoLibraryAdditionsUsageDescription": "本 App 不會把照片存進你的相簿。",
+    "DontAskLimitedPhotosPermissionAutomaticallyOnIos14": true
+}
