@@ -29,6 +29,7 @@ TRIAL_DIR = os.path.join(PROJECT, "tools", "azure-trial")
 KEY_FILE = os.path.join(PROJECT, "tools", "azure.key")
 
 ZH_VOICES = ["zh-TW-HsiaoChenNeural", "zh-TW-HsiaoYuNeural"]
+TRIAL_VOICES = ZH_VOICES + ["zh-TW-HsiaoChen:DragonLatestNeural"]   # 曉臻新一代模型，試聽時一起比
 EN_VOICE = "en-US-AvaMultilingualNeural"   # 英文名稱用；Ava 是 multilingual，也能念 zh-TW，但中文還是用台灣的聲音
 OUTPUT_FORMAT = "riff-24khz-16bit-mono-pcm"
 
@@ -77,8 +78,8 @@ def list_voices(key, region):
     except urllib.error.HTTPError as e:
         hint = "金鑰或區域不對（401）。檢查 KEY 1 有沒有抄完整、區域是不是資源所在的那個。" if e.code in (401, 403) else ""
         sys.exit("Azure 回 HTTP %d。%s" % (e.code, hint))
-    rows = [v for v in voices if v.get("Locale") == "zh-TW" or "zh-TW" in str(v.get("SecondaryLocaleList", ""))]
-    print("zh-TW 相關的聲音（%d）：" % len(rows))
+    rows = [v for v in voices if v.get("Locale") == "zh-TW"]
+    print("zh-TW 的聲音（%d）：" % len(rows))
     for v in rows:
         print("  %-32s %-7s %s" % (v["ShortName"], v.get("Gender", ""), v.get("LocalName", "")))
 
@@ -143,12 +144,16 @@ def write_wav(path, data):
 
 def run_trial(key, region, rate, pitch):
     print("試聽檔寫到 %s" % TRIAL_DIR)
-    for voice in ZH_VOICES:
-        short = voice.split("-")[2].replace("Neural", "")
+    for voice in TRIAL_VOICES:
+        short = voice.split("-")[2].replace("Neural", "").replace(":", "_")
         for tag, text in TRIAL_LINES:
-            data = trim_silence(synthesize(key, region, voice, text, rate, pitch, "zh-TW"))
+            try:
+                data = trim_silence(synthesize(key, region, voice, text, rate, pitch, "zh-TW"))
+            except SystemExit as e:
+                print("  %s 做不出來，跳過：%s" % (voice, e))
+                break
             path = os.path.join(TRIAL_DIR, "%s_%s.wav" % (short, tag))
-            print("  %5.2fs  %-24s %s" % (write_wav(path, data), os.path.basename(path), text))
+            print("  %5.2fs  %-28s %s" % (write_wav(path, data), os.path.basename(path), text))
 
 
 def run_cards(key, region, voice, rate, pitch, en_voice):
