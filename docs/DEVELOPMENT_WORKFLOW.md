@@ -9,6 +9,7 @@
 | 專案入口／主要指引 | `CLAUDE.md`（每次對話自動載入；架構、鐵律、選單、素材現況） |
 | 專案技術與修改規則 | `CLAUDE.md` 的「鐵律」一節；細節在 `README.md` |
 | 知識來源與搜尋順序 | `CLAUDE.md` → `README.md` 與 `docs/`（素材授權、語音素材指南、AI圖片生成指南）→ 程式碼本身（`Assets/BabyApp/Scripts`）與 `CardManifest.csv` → 外部資料／模型一般知識。沒有獨立知識庫。 |
+| 研究報告落點 | 新功能先由 `researcher` 查熱門幼兒 App 的做法，報告存 `docs/research/<日期>-<主題>.md`；討論結論（採用哪個選項、為什麼不採用其他的）補寫在同一份報告最後的「決定」一節。 |
 | 規格／計畫落點 | 小任務：直接在對話裡列出方案與驗收條件再動手。大任務（跨多個畫面、改資料格式、整批素材）：寫到 `docs/specs/<日期>-<主題>.md`，做完後把結論併回 `CLAUDE.md`／`README.md`，規格檔可留作紀錄。 |
 | 實作或文件產出落點 | 程式：`Assets/BabyApp/Scripts/{Runtime,Editor}`；場景與預置物只由 `BabyAppSceneBuilder` 產生，不手動改；素材：`Assets/BabyApp/Art`、`Audio`；卡片內容：`Assets/BabyApp/CardManifest.csv`；工具腳本：`tools/`；文件：`docs/`。 |
 | 驗收方式 | **Claude 自己驗到「編譯過」與「選單跑過」**：用 `UnityMCP` 的 `execute_menu_item` 跑「2. 匯入卡片素材」／「3. 重建場景」，再用 `read_console` 確認 0 錯誤；MCP 連不上時退回 scratchpad 的 `typecheck.csproj`（netstandard2.1）`dotnet build` 必須 0 錯誤。**「畫面長這樣」「聲音聽起來對」仍然只能由使用者驗**：Play → 用 iPad 2360×1640 的 Game 視窗看畫面、聽聲音。素材用 `tools/knockout-white.py` 的讀檔器驗證尺寸與去背。 |
@@ -25,11 +26,12 @@
 | 角色 | 責任 | 不應做的事 |
 |---|---|---|
 | Coordinator | 判斷任務範圍、安排流程、追蹤狀態、決定完成／重試／回退／升級 | 代替 Planner 做需求分析，或代替 Generator 產出主要交付物 |
+| Researcher | 新功能開工前上網查熱門幼兒 App 怎麼做這類功能，整理成有來源的「範例＋說明＋選項」報告，供使用者討論 | 替使用者決定做不做；寫方案或程式；寫沒有來源的「某 App 這樣做」 |
 | Planner | 釐清需求與限制、查閱現有程式和知識、提出方案與驗收條件 | 在需求或關鍵取捨不明時自行猜定；越權修改非其負責的產出 |
 | Generator | 依已確認的方案實作程式或產出文件 | 擴大需求範圍、擅自改寫規格或無關重構 |
 | Evaluator | 對照需求與驗收條件檢查產出，報告事實、差異及未驗證項 | 修改交付物，或自行決定重試／回退 |
 
-**BabyApp 備註**：這是一個人的專案。小任務（改一兩行、修錯字、單純查資料）由同一個對話依序扮演四個角色就夠，不要開子代理，直接做完比較快。大任務（跨多個畫面的新功能、改資料格式、整批素材）才值得把 Planner 與 Evaluator 獨立出去：桌面 App 用 `.claude/skills/{planner,evaluator}/`，`claude` CLI 用 `.claude/agents/{planner,evaluator}.md`（兩份內容相同，因為兩個環境吃的不一樣，見 `CLAUDE.md`）。
+**BabyApp 備註**：這是一個人的專案。小任務（改一兩行、修錯字、單純查資料）由同一個對話依序扮演四個角色就夠，不要開子代理，直接做完比較快。大任務（跨多個畫面的新功能、改資料格式、整批素材）才值得把 Planner 與 Evaluator 獨立出去；Researcher 則一律獨立跑（要上網、要花時間，而且報告不該被主對話既有的想法帶著走）。桌面 App 用 `.claude/skills/{researcher,planner,evaluator}/`，`claude` CLI 用 `.claude/agents/{researcher,planner,evaluator}.md`（兩份內容相同，因為兩個環境吃的不一樣，見 `CLAUDE.md`）。
 
 **Generator 一律留在主對話**，不獨立出去——改程式最需要完整上下文，交接成本高，而且同一時間只能有一個寫入者碰 Unity。Coordinator 也留在主對話，負責匯總各角色的結果。
 
@@ -38,11 +40,18 @@
 ```text
 使用者需求
   → Coordinator：分類、界定範圍、追蹤狀態
+  → （新功能）Researcher：查熱門幼兒 App 怎麼做 → 使用者看報告、討論、決定做不做
   → Planner：釐清需求、讀取既有資料、產出方案與驗收條件
   → Generator：按方案實作或產出
   → Evaluator：逐項驗證並回報
   → Coordinator：完成、重試、回退或升級
 ```
+
+### 0. 研究（只有「新功能」才做）
+
+- 使用者說「想做 X」而 X 是 App 裡還沒有的玩法或畫面時，先叫 `researcher`，呼叫時給它：功能一句話、目標年齡、BabyApp 已有的相關東西、已知限制。
+- 報告回來後主對話**不要直接開做**：把第 6 節的選項與第 7 節的決策點整理成討論，跟使用者一題一題定案。使用者可以決定「不做」——那也是這一步的正常結果。
+- 定案寫進報告最後的「決定」一節再進 Planner。小修小改、修 bug、調版面不走這一步。
 
 ### 1. 需求與範圍
 
