@@ -1,8 +1,10 @@
 # 用 Azure AI Speech 的 neural 聲音產生名稱語音與小熊台詞，取代 Windows SAPI。
-# 純 Python 標準庫，不裝套件。金鑰只從環境變數讀，不要寫進任何檔案。
+# 純 Python 標準庫，不裝套件。
 #
-#   set AZURE_SPEECH_KEY=...        （PowerShell：$env:AZURE_SPEECH_KEY = "..."）
-#   set AZURE_SPEECH_REGION=eastasia（資源所在區域，建 Speech 資源時選的）
+# 金鑰放 tools/azure.key（已在 .gitignore，不會進版控）：第一行 KEY 1、第二行區域，例如
+#   a1b2c3...（一長串英數字）
+#   eastasia
+# 沒有這個檔才退回環境變數 AZURE_SPEECH_KEY / AZURE_SPEECH_REGION。
 #
 #   python tools/make-voices-azure.py --list-voices          列出 zh-TW 有哪些聲音
 #   python tools/make-voices-azure.py --trial                 兩個女聲各念幾句到 tools/azure-trial/，先聽
@@ -24,6 +26,7 @@ PROMPTS = os.path.join(PROJECT, "tools", "prompts.csv")
 CARD_AUDIO = os.path.join(PROJECT, "Assets", "BabyApp", "Audio", "Cards")
 PROMPT_AUDIO = os.path.join(PROJECT, "Assets", "BabyApp", "Audio", "Prompts")
 TRIAL_DIR = os.path.join(PROJECT, "tools", "azure-trial")
+KEY_FILE = os.path.join(PROJECT, "tools", "azure.key")
 
 ZH_VOICES = ["zh-TW-HsiaoChenNeural", "zh-TW-HsiaoYuNeural"]
 EN_VOICE = "en-US-AvaMultilingualNeural"   # 英文名稱用；Ava 是 multilingual，也能念 zh-TW，但中文還是用台灣的聲音
@@ -39,19 +42,41 @@ TRIAL_LINES = [
 ]
 
 
-def need_env(name):
-    v = os.environ.get(name, "").strip()
-    if not v:
-        sys.exit("缺環境變數 %s。建好 Azure 的 Speech 資源後，到「金鑰與端點」頁抄 KEY 1 與 Region。" % name)
+def check_value(label, v):
+    # 金鑰與區域都是純 ASCII、沒有空白；有中文多半是把提示文字原樣貼進來了
+    if not v.isascii() or " " in v:
+        sys.exit("%s 的值「%s」看起來不是真的金鑰／區域（有中文或空白）。\n"
+                 "到 portal.azure.com 的 Speech 資源 →「金鑰與端點」，把 KEY 1 整串（一長串英數字）貼進來；"
+                 "Region 是 eastasia、japaneast 這種小寫英文。" % (label, v[:20]))
     return v
+
+
+def load_credentials():
+    """先讀 tools/azure.key（第一行 KEY、第二行 region），沒有才看環境變數。"""
+    if os.path.exists(KEY_FILE):
+        with open(KEY_FILE, encoding="utf-8-sig") as f:
+            lines = [ln.strip() for ln in f if ln.strip() and not ln.lstrip().startswith("#")]
+        if len(lines) < 2:
+            sys.exit("%s 要有兩行：第一行 KEY 1、第二行區域（例如 eastasia）。" % KEY_FILE)
+        return check_value("azure.key 第一行", lines[0]), check_value("azure.key 第二行", lines[1].lower())
+    key = os.environ.get("AZURE_SPEECH_KEY", "").strip()
+    region = os.environ.get("AZURE_SPEECH_REGION", "").strip()
+    if not key or not region:
+        sys.exit("找不到金鑰。建好 Azure 的 Speech 資源後，到「金鑰與端點」頁抄 KEY 1 與區域，\n"
+                 "存成 %s（第一行 KEY、第二行區域），或設環境變數 AZURE_SPEECH_KEY / AZURE_SPEECH_REGION。" % KEY_FILE)
+    return check_value("AZURE_SPEECH_KEY", key), check_value("AZURE_SPEECH_REGION", region.lower())
 
 
 def list_voices(key, region):
     # 聲音清單 API 走 <region>.tts.speech.microsoft.com，跟合成同一台主機
     url = "https://%s.tts.speech.microsoft.com/cognitiveservices/voices/list" % region
     req = urllib.request.Request(url, headers={"Ocp-Apim-Subscription-Key": key})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        voices = json.loads(r.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            voices = json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        hint = "金鑰或區域不對（401）。檢查 KEY 1 有沒有抄完整、區域是不是資源所在的那個。" if e.code in (401, 403) else ""
+        sys.exit("Azure 回 HTTP %d。%s" % (e.code, hint))
     rows = [v for v in voices if v.get("Locale") == "zh-TW" or "zh-TW" in str(v.get("SecondaryLocaleList", ""))]
     print("zh-TW 相關的聲音（%d）：" % len(rows))
     for v in rows:
@@ -170,7 +195,7 @@ def main():
         ap.print_help()
         return 1
 
-    key, region = need_env("AZURE_SPEECH_KEY"), need_env("AZURE_SPEECH_REGION")
+    key, region = load_credentials()
     if a.list_voices:
         list_voices(key, region)
     if a.trial:

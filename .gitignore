@@ -111,3 +111,4 @@ InitTestScene*.unity*
 # Azure TTS 試聽檔，不進版控
 tools/azure-trial/
 __pycache__/
+tools/azure.key
