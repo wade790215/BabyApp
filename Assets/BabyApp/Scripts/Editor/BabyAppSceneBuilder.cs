@@ -162,7 +162,16 @@ namespace BabyApp.EditorTools
             go.AddComponent<EventSystem>();
 #if ENABLE_INPUT_SYSTEM
             var module = go.AddComponent<InputSystemUIInputModule>();
-            // 用 AddComponent 加上去不會自己帶預設操作設定，沒接的話整個畫面都點不動
+            // 用 AddComponent 加上去不會自己帶預設操作設定，沒接的話整個畫面都點不動。
+            // AssignDefaultActions 把 DefaultInputActions 存在 static 欄位裡重複用，但它的 asset 是記憶體裡的
+            // ScriptableObject，上一次 BuildScene 的 NewScene 會把它一起毀掉；同一次 domain reload 內第二次重建
+            // 就會丟「must be part of an InputActionAsset」。所以先把壞掉的快取清掉再叫。
+            var cacheField = typeof(InputSystemUIInputModule).GetField("defaultActions",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            if (cacheField?.GetValue(null) is UnityEngine.InputSystem.DefaultInputActions cached && cached.asset == null)
+            {
+                cacheField.SetValue(null, null);
+            }
             module.AssignDefaultActions();
 #else
             go.AddComponent<StandaloneInputModule>();

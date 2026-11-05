@@ -24,83 +24,83 @@ MonoBehaviour:
     displayName: "\u860B\u679C"
     displayNameEn: Apple
     image: {fileID: 21300000, guid: cb76d9de65befac4b91164d5a8c1df3b, type: 3}
-    voice: {fileID: 8300000, guid: f63a36bf35307334b8c1e726359c92aa, type: 3}
-    voiceEn: {fileID: 8300000, guid: 8fb82528411ebc3458d3e679f0831e39, type: 3}
+    voice: {fileID: 8300000, guid: c62091c86849b264c80cf8a300c51a8f, type: 3}
+    voiceEn: {fileID: 8300000, guid: a2dc0ad955d3ca846aca95755d02e2ba, type: 3}
     sound: {fileID: 0}
   - id: fruit_banana
     displayName: "\u9999\u8549"
     displayNameEn: Banana
     image: {fileID: 21300000, guid: ca0b7c36e05fa49488836428bada7b5d, type: 3}
-    voice: {fileID: 8300000, guid: 7842541758e7f0248975c26effcb6fce, type: 3}
-    voiceEn: {fileID: 8300000, guid: c6588539f52b0b04db9e83a0c374df97, type: 3}
+    voice: {fileID: 8300000, guid: 5f3de8c6375c4b1428761d8854fdb8fe, type: 3}
+    voiceEn: {fileID: 8300000, guid: 60717b752ef74bd468f5e94c03df1799, type: 3}
     sound: {fileID: 0}
   - id: fruit_orange
     displayName: "\u6A58\u5B50"
     displayNameEn: Orange
     image: {fileID: 21300000, guid: 93da40917ba7dff4eb80657dc42e071a, type: 3}
-    voice: {fileID: 8300000, guid: bb8508e911d883c498f26e5e7319b7e0, type: 3}
-    voiceEn: {fileID: 8300000, guid: e5a846fe8b28e3d4b8324d075cfd0abf, type: 3}
+    voice: {fileID: 8300000, guid: 6698334430971f948bcc359c7c618e21, type: 3}
+    voiceEn: {fileID: 8300000, guid: a68df912ba6d8554cb0600b6f694ce2c, type: 3}
     sound: {fileID: 0}
   - id: fruit_grape
     displayName: "\u8461\u8404"
     displayNameEn: Grapes
     image: {fileID: 21300000, guid: 8a1c5100d1628ba41a413b41fb1c95bf, type: 3}
-    voice: {fileID: 8300000, guid: e64924c1c4df104408359a2eeb79dd05, type: 3}
-    voiceEn: {fileID: 8300000, guid: 87dbaaef2e0083644a7d0dba0452606b, type: 3}
+    voice: {fileID: 8300000, guid: fa379ce843a94fe4c8f82e0f6662fcda, type: 3}
+    voiceEn: {fileID: 8300000, guid: f1d2a8f6b74339d4f93a44e88124d2eb, type: 3}
     sound: {fileID: 0}
   - id: fruit_strawberry
     displayName: "\u8349\u8393"
     displayNameEn: Strawberry
     image: {fileID: 21300000, guid: ba225f6f30ca38e448a4e87c706e292b, type: 3}
-    voice: {fileID: 8300000, guid: 5566e32aa9c162047958284ad06b2de8, type: 3}
-    voiceEn: {fileID: 8300000, guid: 1348dc591cbecca41899711f8db3f0f4, type: 3}
+    voice: {fileID: 8300000, guid: 73a71289a67867d40881efde8bda13b3, type: 3}
+    voiceEn: {fileID: 8300000, guid: 2599bcc6ae42ff64a8f27aac9daa842f, type: 3}
     sound: {fileID: 0}
   - id: fruit_watermelon
     displayName: "\u897F\u74DC"
     displayNameEn: Watermelon
     image: {fileID: 21300000, guid: e761d3d34d6232643a72277d91b7aed0, type: 3}
-    voice: {fileID: 8300000, guid: ea28afaf5d16d7545a07ffd5585e5702, type: 3}
-    voiceEn: {fileID: 8300000, guid: 2287338e367abd94abee7e35a423cc82, type: 3}
+    voice: {fileID: 8300000, guid: 6d35e10ed439c60449fc1f1a301fa62a, type: 3}
+    voiceEn: {fileID: 8300000, guid: 39c80b83b6065a24786823f341f3c396, type: 3}
     sound: {fileID: 0}
   - id: fruit_pineapple
     displayName: "\u9CF3\u68A8"
     displayNameEn: Pineapple
     image: {fileID: 21300000, guid: 145968bd2e5703b4da915e0f5eab996e, type: 3}
-    voice: {fileID: 8300000, guid: b2a58dc81982fb44a8f968bc000ec8f7, type: 3}
-    voiceEn: {fileID: 8300000, guid: 6218c120457b63043a9cb5ac032f9061, type: 3}
+    voice: {fileID: 8300000, guid: 93c7eb80e31b7dd4397d8ea91c81bbd9, type: 3}
+    voiceEn: {fileID: 8300000, guid: 49260d935a78e484289da4a6a135d8f1, type: 3}
     sound: {fileID: 0}
   - id: fruit_pear
     displayName: "\u68A8\u5B50"
     displayNameEn: Pear
     image: {fileID: 21300000, guid: 8b538c7d4322ac74b8d96fd383a62242, type: 3}
-    voice: {fileID: 8300000, guid: 8f650af16b599134b84932851666d22f, type: 3}
-    voiceEn: {fileID: 8300000, guid: bb086af45ef86934999a66f5e28cdda5, type: 3}
+    voice: {fileID: 8300000, guid: f6a4765b5c177c349a691c761dcbe971, type: 3}
+    voiceEn: {fileID: 8300000, guid: 71e1bf0d402b8a44c95374d6081ddf6f, type: 3}
     sound: {fileID: 0}
   - id: fruit_peach
     displayName: "\u6843\u5B50"
     displayNameEn: Peach
     image: {fileID: 21300000, guid: f063f581e033053488675401f34c583d, type: 3}
-    voice: {fileID: 8300000, guid: 80b75b17430a2984b9ed58f8ca63b330, type: 3}
-    voiceEn: {fileID: 8300000, guid: 9429b49e209c460449f0cb9e456c6570, type: 3}
+    voice: {fileID: 8300000, guid: b9f2a1b2e929b2445ac879cc9b4cec95, type: 3}
+    voiceEn: {fileID: 8300000, guid: e56706acaf373ce49955a19b99033e79, type: 3}
     sound: {fileID: 0}
   - id: fruit_mango
     displayName: "\u8292\u679C"
     displayNameEn: Mango
     image: {fileID: 21300000, guid: 5867faca2c511204eaeaac1e8dd2a230, type: 3}
-    voice: {fileID: 8300000, guid: dcc8b1b0831aca944ae97bf6e753d94f, type: 3}
-    voiceEn: {fileID: 8300000, guid: 4e9019211ef0e5442bd1b17535990a46, type: 3}
+    voice: {fileID: 8300000, guid: fe3825e556dc2574a916d612107dd117, type: 3}
+    voiceEn: {fileID: 8300000, guid: 2e8bda0d2b6a65344aae60932cdcfea2, type: 3}
     sound: {fileID: 0}
   - id: fruit_lemon
     displayName: "\u6AB8\u6AAC"
     displayNameEn: Lemon
     image: {fileID: 21300000, guid: b2745407cf7f56345a9bb5b63bb09b06, type: 3}
-    voice: {fileID: 8300000, guid: b134cd78c24ddea4bbe60dd49e00c79e, type: 3}
-    voiceEn: {fileID: 8300000, guid: a03402e79f003884d991f5d4ce21f82d, type: 3}
+    voice: {fileID: 8300000, guid: 9b5781bc82ff45b409312ae4948d70e9, type: 3}
+    voiceEn: {fileID: 8300000, guid: 0a146304167e9ae4083058d57e1b4a46, type: 3}
     sound: {fileID: 0}
   - id: fruit_tomato
     displayName: "\u756A\u8304"
     displayNameEn: Tomato
     image: {fileID: 21300000, guid: ff51f06a3bc24e645826019384659faf, type: 3}
-    voice: {fileID: 8300000, guid: 9fbca9341b0565149999769507fd4a73, type: 3}
-    voiceEn: {fileID: 8300000, guid: 0e604bb45208df9488f45e3da62e6d15, type: 3}
+    voice: {fileID: 8300000, guid: e942ba625a794f84db9fd8a6f540e1d3, type: 3}
+    voiceEn: {fileID: 8300000, guid: 5f5c6ab2a4d11c649aa67fcee4b42718, type: 3}
     sound: {fileID: 0}

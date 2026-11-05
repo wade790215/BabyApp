@@ -24,55 +24,55 @@ MonoBehaviour:
     displayName: "\u7D05\u8272"
     displayNameEn: Red
     image: {fileID: 21300000, guid: 0ce9c2681664d9b46bcbb4965c94ba1b, type: 3}
-    voice: {fileID: 8300000, guid: 29a21a579f84a454492fef9cdb6dea53, type: 3}
-    voiceEn: {fileID: 8300000, guid: a26502ebb4ed4d343918c9b8cbde4b8f, type: 3}
+    voice: {fileID: 8300000, guid: 6fef4de9ae60bf244a80bdd0799de76c, type: 3}
+    voiceEn: {fileID: 8300000, guid: a6375e317eb5e8542bab3cb22092faa9, type: 3}
     sound: {fileID: 0}
   - id: color_orange
     displayName: "\u6A58\u8272"
     displayNameEn: Orange
     image: {fileID: 21300000, guid: 782b3bd3b78be68438f74bd96175c15b, type: 3}
-    voice: {fileID: 8300000, guid: f71c0a686a4460046a4d162c51370af4, type: 3}
-    voiceEn: {fileID: 8300000, guid: 0efa23b78b6ae5d4b99be62d0d51030a, type: 3}
+    voice: {fileID: 8300000, guid: c49500b575e281d4aa9abfc654673db2, type: 3}
+    voiceEn: {fileID: 8300000, guid: 3cccde8ae2cf66e498de79bfad8d28b8, type: 3}
     sound: {fileID: 0}
   - id: color_yellow
     displayName: "\u9EC3\u8272"
     displayNameEn: Yellow
     image: {fileID: 21300000, guid: 15576568858447f43a801e0045f0c3c3, type: 3}
-    voice: {fileID: 8300000, guid: b0d26b2bcfdb4ac40987835fd312032d, type: 3}
-    voiceEn: {fileID: 8300000, guid: 8dff5e1aef797e542b20da55d96095f0, type: 3}
+    voice: {fileID: 8300000, guid: 85d80f151406c4d459e8c3944a85762c, type: 3}
+    voiceEn: {fileID: 8300000, guid: b983861e5c4758d43a3fec5e32ddbc50, type: 3}
     sound: {fileID: 0}
   - id: color_green
     displayName: "\u7DA0\u8272"
     displayNameEn: Green
     image: {fileID: 21300000, guid: f02ecc5b6aa9d7747b176d576f652877, type: 3}
-    voice: {fileID: 8300000, guid: 8cc8c025753c00e409d8c1c7d5fdca57, type: 3}
-    voiceEn: {fileID: 8300000, guid: 13038d4e6921d4448bd00655d8d12a4d, type: 3}
+    voice: {fileID: 8300000, guid: fca7f603d5268c44d9aaefe1289a2485, type: 3}
+    voiceEn: {fileID: 8300000, guid: 3d462f1f5346bdc4484aebfa2a725e6c, type: 3}
     sound: {fileID: 0}
   - id: color_blue
     displayName: "\u85CD\u8272"
     displayNameEn: Blue
     image: {fileID: 21300000, guid: 947f1e6aea2811f448f77f46da9bce05, type: 3}
-    voice: {fileID: 8300000, guid: 59b3c4c6575eb6c4fbbf33fbb5d4b3ff, type: 3}
-    voiceEn: {fileID: 8300000, guid: 5c06cc4a48cc36f4b98bf84f3a716477, type: 3}
+    voice: {fileID: 8300000, guid: 9808503cb19dd08488abae8f5173b770, type: 3}
+    voiceEn: {fileID: 8300000, guid: 9c8ff5553aa7fdc42905b34c7b2f1b41, type: 3}
     sound: {fileID: 0}
   - id: color_purple
     displayName: "\u7D2B\u8272"
     displayNameEn: Purple
     image: {fileID: 21300000, guid: af9bfc85e2ee6de4b8c7cf7436f77cb4, type: 3}
-    voice: {fileID: 8300000, guid: cf0a9a34fa71d8042b72c7599c8013d9, type: 3}
-    voiceEn: {fileID: 8300000, guid: 3c3bd2b565a8715469a416aa48f3f799, type: 3}
+    voice: {fileID: 8300000, guid: 2e5eb983c938caf4282f507efa2f596b, type: 3}
+    voiceEn: {fileID: 8300000, guid: 11f5a8de871b80a4b96f0478b087f8e2, type: 3}
     sound: {fileID: 0}
   - id: color_pink
     displayName: "\u7C89\u7D05\u8272"
     displayNameEn: Pink
     image: {fileID: 21300000, guid: f6ac02eedf7c70a478d9372df012a36d, type: 3}
-    voice: {fileID: 8300000, guid: d34e4cafc60137948bf30be73c52e49a, type: 3}
-    voiceEn: {fileID: 8300000, guid: 69488f47dd7f93540902f4943b88905c, type: 3}
+    voice: {fileID: 8300000, guid: 60bdb5d2f3fc6f14a914a4dfa52a7fdc, type: 3}
+    voiceEn: {fileID: 8300000, guid: a1d524dcfbd44124ea6b04375b68e2fc, type: 3}
     sound: {fileID: 0}
   - id: color_black
     displayName: "\u9ED1\u8272"
     displayNameEn: Black
     image: {fileID: 21300000, guid: 05d1bb979556ecf448c2d9c5cbbfeed1, type: 3}
-    voice: {fileID: 8300000, guid: 9d9952ab27973e74d959689f56ee5dfa, type: 3}
-    voiceEn: {fileID: 8300000, guid: c8432a403a1472248a67a84a87361592, type: 3}
+    voice: {fileID: 8300000, guid: 6dac3fccbe829ec44af174526864dca4, type: 3}
+    voiceEn: {fileID: 8300000, guid: cc412b5c17663ba45a3232f3c7cc87c8, type: 3}
     sound: {fileID: 0}

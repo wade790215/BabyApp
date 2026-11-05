@@ -24,55 +24,55 @@ MonoBehaviour:
     displayName: "\u6316\u571F\u6A5F"
     displayNameEn: Excavator
     image: {fileID: 21300000, guid: 0f6fca86b4089464aa8fe4b8359cf823, type: 3}
-    voice: {fileID: 8300000, guid: 926893ea45aa97a4ebbf3707875a66cf, type: 3}
-    voiceEn: {fileID: 8300000, guid: c680cc023bce2b146b93af862bd18de1, type: 3}
+    voice: {fileID: 8300000, guid: 42813effcb944b94bb330c843bce46f8, type: 3}
+    voiceEn: {fileID: 8300000, guid: 0a5893d66c845e543800ff668d18403b, type: 3}
     sound: {fileID: 0}
   - id: construction_bulldozer
     displayName: "\u63A8\u571F\u6A5F"
     displayNameEn: Bulldozer
     image: {fileID: 21300000, guid: 4040fa9220f34244ba12ff9be51b81a2, type: 3}
-    voice: {fileID: 8300000, guid: 54f1805ef1d3fc244b34a3b6ade1a14e, type: 3}
-    voiceEn: {fileID: 8300000, guid: b06ae0446a81d0340b17b1958e690832, type: 3}
+    voice: {fileID: 8300000, guid: d7ba833d72b27924b87280fc728c2207, type: 3}
+    voiceEn: {fileID: 8300000, guid: 5c099eed10c1f8646abdf8ea5012f4a6, type: 3}
     sound: {fileID: 0}
   - id: construction_crane
     displayName: "\u540A\u8ECA"
     displayNameEn: Crane
     image: {fileID: 21300000, guid: 9480922c886220c499cc1dcbc106d02e, type: 3}
-    voice: {fileID: 8300000, guid: 8ef9672e17544a94bbf9eaf1a29ab014, type: 3}
-    voiceEn: {fileID: 8300000, guid: 83ad05798bb92ed45817b294f02316ea, type: 3}
+    voice: {fileID: 8300000, guid: a1e17779f99bf6c4987a71c012579a49, type: 3}
+    voiceEn: {fileID: 8300000, guid: fccf1ab0f42b65b479ad29f33c347358, type: 3}
     sound: {fileID: 0}
   - id: construction_mixer
     displayName: "\u6C34\u6CE5\u652A\u62CC\u8ECA"
     displayNameEn: Cement Mixer
     image: {fileID: 21300000, guid: e80256f6da86a3644a875facf963ca85, type: 3}
-    voice: {fileID: 8300000, guid: 54373a2150594d8408568b57d53e72d8, type: 3}
-    voiceEn: {fileID: 8300000, guid: cb86ea18521cac74a933f973bf7d6bf7, type: 3}
+    voice: {fileID: 8300000, guid: 497e00bbc9e2fd64090cbcf8987ada1f, type: 3}
+    voiceEn: {fileID: 8300000, guid: 670631b6b118ca745bdf9e4f97469a6a, type: 3}
     sound: {fileID: 0}
   - id: construction_dump
     displayName: "\u7802\u77F3\u8ECA"
     displayNameEn: Dump Truck
     image: {fileID: 21300000, guid: e77b5ae7fae50eb4fbbf19fff6036c35, type: 3}
-    voice: {fileID: 8300000, guid: aaccc60a3526ce6468de676f78f7f110, type: 3}
-    voiceEn: {fileID: 8300000, guid: 30b31deb047955e47abbca64149dc03d, type: 3}
+    voice: {fileID: 8300000, guid: c014b0835c655364e9b4379a7395750d, type: 3}
+    voiceEn: {fileID: 8300000, guid: d41c90c77cd70b84f9661a0449ccf182, type: 3}
     sound: {fileID: 0}
   - id: construction_roller
     displayName: "\u58D3\u8DEF\u6A5F"
     displayNameEn: Road Roller
     image: {fileID: 21300000, guid: e2b190a390358a649aef3e66065730e3, type: 3}
-    voice: {fileID: 8300000, guid: a43d7e093fde1554787f295ba904ecc0, type: 3}
-    voiceEn: {fileID: 8300000, guid: dfecc1eadd8a1c34baf07ff3b9bc4203, type: 3}
+    voice: {fileID: 8300000, guid: 6367028bbd6fd9b40a47f2d902647b34, type: 3}
+    voiceEn: {fileID: 8300000, guid: 2ea4a40f196894a4caa838a1f2935fe4, type: 3}
     sound: {fileID: 0}
   - id: construction_forklift
     displayName: "\u5806\u9AD8\u6A5F"
     displayNameEn: Forklift
     image: {fileID: 21300000, guid: 0e3f7d6fdda724142b7405170a6d335d, type: 3}
-    voice: {fileID: 8300000, guid: 86617705b85bb23458ce1f12ae48b9c1, type: 3}
-    voiceEn: {fileID: 8300000, guid: 9272b52459c750e42b2c92f292a0d44b, type: 3}
+    voice: {fileID: 8300000, guid: 74b89de9feb7c38408708c24bb01c7cf, type: 3}
+    voiceEn: {fileID: 8300000, guid: 375a84f6238601b4fa0d46703c66abfb, type: 3}
     sound: {fileID: 8300000, guid: c93679d6e940f4b4ab230cfced0eb6b2, type: 3}
   - id: construction_loader
     displayName: "\u93DF\u88DD\u6A5F"
     displayNameEn: Wheel Loader
     image: {fileID: 21300000, guid: 090feb4885c47314abbb80d7f2c20e65, type: 3}
-    voice: {fileID: 8300000, guid: b3ec00b2800e42f4f8efe12ecaf6b7ba, type: 3}
-    voiceEn: {fileID: 8300000, guid: 013a995ba405c454f942bb0e1455d994, type: 3}
+    voice: {fileID: 8300000, guid: cbaf8e6e78f721e44b3563182dfadeaa, type: 3}
+    voiceEn: {fileID: 8300000, guid: fdce07ba82deeab46b628ec935b7901c, type: 3}
     sound: {fileID: 0}
