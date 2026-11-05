@@ -68,28 +68,34 @@ namespace BabyApp.Core
             RenderTexture previousRt = null;
             var prevActive = RenderTexture.active;
 
-            while (w > targetW || h > targetH)
+            try
             {
-                int nextW = Mathf.Max(targetW, w / 2);
-                int nextH = Mathf.Max(targetH, h / 2);
-                var rt = RenderTexture.GetTemporary(nextW, nextH, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
-                rt.filterMode = FilterMode.Bilinear;
-                Graphics.Blit(current, rt);
-                if (previousRt != null) RenderTexture.ReleaseTemporary(previousRt);
-                previousRt = rt;
-                current = rt;
-                w = nextW; h = nextH;
+                while (w > targetW || h > targetH)
+                {
+                    int nextW = Mathf.Max(targetW, w / 2);
+                    int nextH = Mathf.Max(targetH, h / 2);
+                    var rt = RenderTexture.GetTemporary(nextW, nextH, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+                    rt.filterMode = FilterMode.Bilinear;
+                    Graphics.Blit(current, rt);
+                    if (previousRt != null) RenderTexture.ReleaseTemporary(previousRt);
+                    previousRt = rt;
+                    current = rt;
+                    w = nextW; h = nextH;
+                }
+
+                RenderTexture.active = previousRt;
+                var result = new Texture2D(w, h, TextureFormat.RGB24, false);
+                result.ReadPixels(new Rect(0, 0, w, h), 0, 0);
+                result.Apply(false, false);
+                result.wrapMode = TextureWrapMode.Clamp;
+                return result;
             }
-
-            RenderTexture.active = previousRt;
-            var result = new Texture2D(w, h, TextureFormat.RGB24, false);
-            result.ReadPixels(new Rect(0, 0, w, h), 0, 0);
-            result.Apply(false, false);
-            RenderTexture.active = prevActive;
-            if (previousRt != null) RenderTexture.ReleaseTemporary(previousRt);
-
-            result.wrapMode = TextureWrapMode.Clamp;
-            return result;
+            finally
+            {
+                // 不管中間有沒有出錯，active 要還原、暫存的 RT 要放掉
+                RenderTexture.active = prevActive;
+                if (previousRt != null) RenderTexture.ReleaseTemporary(previousRt);
+            }
         }
 
         /// <summary>

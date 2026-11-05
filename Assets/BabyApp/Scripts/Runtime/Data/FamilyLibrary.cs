@@ -138,6 +138,7 @@ namespace BabyApp.Data
             if (!InRange(i) || clip == null) return;
             Directory.CreateDirectory(Folder);
             WavFile.Save(VoicePath(i), clip);
+            ReleaseVoice(i, keep: clip);
             _voices[i] = clip;
             Bump();
         }
@@ -149,7 +150,7 @@ namespace BabyApp.Data
             if (File.Exists(PhotoPath(i))) File.Delete(PhotoPath(i));
             if (File.Exists(VoicePath(i))) File.Delete(VoicePath(i));
             ReleasePhoto(i);
-            _voices[i] = null;
+            ReleaseVoice(i, keep: null);
             RecordingStore.Delete(Ids[i]);
             Bump();
         }
@@ -163,6 +164,7 @@ namespace BabyApp.Data
             for (int i = 0; i < SlotCount; i++)
             {
                 ReleasePhoto(i);
+                ReleaseVoice(i, keep: null);
                 _photos[i] = LoadPhoto(i);
                 _voices[i] = File.Exists(VoicePath(i)) ? WavFile.Load(VoicePath(i), Ids[i]) : null;
             }
@@ -204,6 +206,15 @@ namespace BabyApp.Data
             if (sprite.texture != null) Destroy(sprite.texture);
             Destroy(sprite);
             _photos[i] = null;
+        }
+
+        /// <summary>放掉這格舊的錄音 clip（重錄或刪除時），keep 是要留下來的新 clip（可能跟舊的是同一個）。</summary>
+        private void ReleaseVoice(int i, AudioClip keep)
+        {
+            var old = _voices[i];
+            if (old == null || old == keep) return;
+            Destroy(old);
+            _voices[i] = null;
         }
 
         private CardDeck BuildDeck()
