@@ -73,6 +73,8 @@ namespace BabyApp.UI
         private IEnumerator StartAfter(float seconds)
         {
             yield return new WaitForSecondsRealtime(seconds);
+            // 小熊還沒講完就等它講完再換題，台詞長短不一，不猜秒數
+            yield return VoiceService.WaitForSpeech(0.5f);
             NewRound();
         }
 

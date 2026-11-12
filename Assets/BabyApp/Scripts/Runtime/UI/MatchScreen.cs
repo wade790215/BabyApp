@@ -100,6 +100,8 @@ namespace BabyApp.UI
         private IEnumerator StartAfter(float seconds)
         {
             yield return new WaitForSecondsRealtime(seconds);
+            // 小熊還沒講完就等它講完再換題，台詞長短不一，不猜秒數
+            yield return VoiceService.WaitForSpeech(0.5f);
             NewRound();
         }
 
@@ -219,7 +221,7 @@ namespace BabyApp.UI
                 {
                     VoiceService.Instance.PlaySparkle();
                     VoiceService.Instance.PlaySequence(PromptLibrary.Instance != null ? PromptLibrary.Instance.Correct : null,
-                        TargetSound(), TargetName());
+                        VoiceService.Sound(TargetSound()), TargetName());
                 }
                 if (mascot != null) mascot.React(Mascot.Pose.Happy, nextRoundDelay);
                 UsageStats.FindAnsweredCorrectly();
@@ -270,6 +272,7 @@ namespace BabyApp.UI
             if (sampleTile != null) sampleTile.localScale = Vector3.one;
 
             yield return new WaitForSecondsRealtime(Mathf.Max(0f, helpedRoundDelay - fade - bounce));
+            yield return VoiceService.WaitForSpeech(0.5f);
             NewRound();
         }
 

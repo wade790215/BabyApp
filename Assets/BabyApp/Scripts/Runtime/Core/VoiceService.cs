@@ -8,7 +8,9 @@ namespace BabyApp.Core
     /// 統一的播音入口。語音、音效、音樂分三軌，點卡片時語音會立刻覆蓋上一句，
     /// 不會像小孩連點時那樣疊成一團。
     ///
-    /// 語音軌一次播一串（叫聲 → 名稱，或 名稱 → 「在哪裡？」），每段最多幾秒就接下一段。
+    /// 語音軌一次播一串（叫聲 → 名稱，或 名稱 → 「在哪裡？」）。語音一定念完才接下一段；
+    /// 叫聲用 <see cref="Sound"/> 包起來，最多播 <see cref="maxClipSeconds"/> 秒就接下一段（鴨子那種 80 秒的不能讓小孩等）。
+    /// 畫面要等小熊講完再換題，用 <see cref="WaitForSpeech"/>，不要猜秒數。
     /// 三軌各自看設定裡的開關；音樂欄位留空就什麼都不會播。
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
@@ -31,8 +33,27 @@ namespace BabyApp.Core
         [SerializeField] private AudioClip musicClip;
         [SerializeField, Range(0f, 1f)] private float musicVolume = 0.3f;
 
-        [Tooltip("一段最多播幾秒就接下一段，避免太長的叫聲讓小孩等")]
+        [Tooltip("叫聲最多播幾秒就接下一段，避免太長的叫聲讓小孩等；語音不受限，一定念完")]
         [SerializeField] private float maxClipSeconds = 2.5f;
+
+        /// <summary>一串裡的一段：語音（念完為止）或叫聲（最多 maxClipSeconds 秒）。</summary>
+        public readonly struct Segment
+        {
+            public readonly AudioClip Clip;
+            public readonly bool Capped;
+
+            public Segment(AudioClip clip, bool capped)
+            {
+                Clip = clip;
+                Capped = capped;
+            }
+
+            /// <summary>沒特別說的都當語音，一定念完。</summary>
+            public static implicit operator Segment(AudioClip clip) => new Segment(clip, false);
+        }
+
+        /// <summary>把叫聲標成「最多播 maxClipSeconds 秒」，串在語音裡用：PlaySequence(Correct, Sound(bark), name)。</summary>
+        public static Segment Sound(AudioClip clip) => new Segment(clip, true);
 
         private Coroutine _sequence;
 
@@ -74,24 +95,53 @@ namespace BabyApp.Core
 
         private void OnDisable() => AppSettings.Changed -= ApplySettings;
 
-        /// <summary>播一串聲音，null 的段落自動跳過。再叫一次會從頭換成新的一串。</summary>
+        /// <summary>播一串語音，每段都念完，null 的段落自動跳過。再叫一次會從頭換成新的一串。</summary>
         public void PlaySequence(params AudioClip[] clips)
         {
-            StopSequence();
-            if (!AppSettings.VoiceEnabled || clips == null) return;
-
-            var list = new List<AudioClip>();
-            foreach (var clip in clips)
+            if (clips == null)
             {
-                if (clip != null) list.Add(clip);
+                StopSequence();
+                return;
+            }
+            var segments = new Segment[clips.Length];
+            for (int i = 0; i < clips.Length; i++) segments[i] = clips[i];
+            PlaySequence(segments);
+        }
+
+        /// <summary>播一串，裡面可以混叫聲（用 <see cref="Sound"/> 包）與語音。</summary>
+        public void PlaySequence(params Segment[] segments)
+        {
+            StopSequence();
+            if (!AppSettings.VoiceEnabled || segments == null) return;
+
+            var list = new List<Segment>();
+            foreach (var segment in segments)
+            {
+                if (segment.Clip != null) list.Add(segment);
             }
             if (list.Count == 0) return;
 
             _sequence = StartCoroutine(Sequence(list));
         }
 
-        /// <summary>播一張卡：先叫聲，再名稱。</summary>
-        public void PlayCard(AudioClip sound, AudioClip voice) => PlaySequence(sound, voice);
+        /// <summary>播一張卡：先叫聲（最多幾秒），再名稱。</summary>
+        public void PlayCard(AudioClip sound, AudioClip voice) => PlaySequence(Sound(sound), voice);
+
+        /// <summary>
+        /// 給畫面的 coroutine 用：小熊還在講就等它講完（最多 timeout 秒），講完再停 pauseAfter 秒。
+        /// 一開始就沒在講的話立刻回來，不多等。用法：yield return VoiceService.WaitForSpeech(0.5f);
+        /// </summary>
+        public static IEnumerator WaitForSpeech(float pauseAfter = 0f, float timeout = 8f)
+        {
+            if (Instance == null || !Instance.IsSpeaking) yield break;
+            float waited = 0f;
+            while (Instance != null && Instance.IsSpeaking && waited < timeout)
+            {
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            if (pauseAfter > 0f) yield return new WaitForSecondsRealtime(pauseAfter);
+        }
 
         /// <summary>只念名稱，沒有叫聲。</summary>
         public void SpeakCard(AudioClip voice) => PlaySequence(voice);
@@ -123,18 +173,19 @@ namespace BabyApp.Core
             if (!AppSettings.VoiceEnabled) StopSequence();
         }
 
-        private IEnumerator Sequence(List<AudioClip> clips)
+        private IEnumerator Sequence(List<Segment> segments)
         {
-            for (int i = 0; i < clips.Count; i++)
+            for (int i = 0; i < segments.Count; i++)
             {
-                var clip = clips[i];
+                var clip = segments[i].Clip;
                 voiceSource.Stop();
                 voiceSource.clip = clip;
                 voiceSource.Play();
 
-                bool last = i == clips.Count - 1;
-                float wait = Mathf.Min(clip.length, maxClipSeconds) + (last ? 0f : 0.12f);
-                yield return new WaitForSecondsRealtime(wait);
+                bool last = i == segments.Count - 1;
+                // 語音檔頭尾靜音都剪掉了，念多久就等多久；叫聲才砍
+                float wait = segments[i].Capped ? Mathf.Min(clip.length, maxClipSeconds) : clip.length;
+                yield return new WaitForSecondsRealtime(wait + (last ? 0f : 0.12f));
             }
             _sequence = null;
         }

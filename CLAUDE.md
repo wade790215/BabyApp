@@ -32,7 +32,7 @@
 ## 程式地圖（Assets/BabyApp/Scripts）
 
 - Runtime/Data：`FamilyLibrary`（家人相片卡：8 個槽位、persistentDataPath/family 的 jpg+wav、組出執行時的 `CardDeck`，**不進 `DeckLibrary`**，只有 `DeckPickScreen` 會多加它）、`CardEntry`（`LocalizedName/LocalizedVoice`、`HasImage`）、`CardDeck`（`PlayableCards()` 有圖優先、整組沒圖退回純文字；`fallbackSound`）、`DeckLibrary`（Resources/Decks）、`ColorPalette`（顏色卡整張填色，Editor 畫色球共用）
-- Runtime/Core：`PhotoPicker`（包 NativeGallery 從相簿挑圖＋GPU 逐半縮圖到長邊 1024；Android 設免權限模式）、`AppRoot`（畫面切換）、`AppSettings`（音效/語音/音樂/背景/語言/顯示文字）、`Strings`、`LocalizedText`、`VoiceService`（語音/音效/音樂三軌，`PlaySequence` 串播、每段最多 2.5 秒；音效：boop/swoosh/tada/sparkle/chew）、`PromptLibrary`（在哪裡／這是誰的聲音／答對了／再試試看／全部數完了／在這裡／好吃／一樣的在哪裡／來玩吧／拼好了／一～五）、`VoiceRecorder`+`WavFile`+`RecordingStore`（錄音存 persistentDataPath/recordings）、`UsageStats`、`ThemedBackground`、`SafeAreaFitter`、`HoldButton`（長按）、`Pulse`、`TapReaction`（四種隨機動畫+星星）
+- Runtime/Core：`PhotoPicker`（包 NativeGallery 從相簿挑圖＋GPU 逐半縮圖到長邊 1024；Android 設免權限模式）、`AppRoot`（畫面切換）、`AppSettings`（音效/語音/音樂/背景/語言/顯示文字）、`Strings`、`LocalizedText`、`VoiceService`（語音/音效/音樂三軌，`PlaySequence` 串播：語音一定念完、叫聲用 `VoiceService.Sound(clip)` 包才砍 2.5 秒；畫面換題前 `yield return VoiceService.WaitForSpeech(0.5f)` 等小熊講完，不猜秒數；音效：boop/swoosh/tada/sparkle/chew）、`PromptLibrary`（在哪裡／這是誰的聲音／答對了／再試試看／全部數完了／在這裡／好吃／一樣的在哪裡／來玩吧／拼好了／一～五）、`VoiceRecorder`+`WavFile`+`RecordingStore`（錄音存 persistentDataPath/recordings）、`UsageStats`、`ThemedBackground`、`SafeAreaFitter`、`HoldButton`（長按）、`Pulse`、`TapReaction`（四種隨機動畫+星星）
 - Runtime/UI：
   - 家長：`FamilyEditScreen`（家人卡 8 格 4×2，從設定頁「家人卡」進、關閉回設定頁）、`FamilySlotView`（一格：選照片／按住錄稱呼／聽／按住刪）
   - 導覽：`HomeScreen`（七格）、`DeckPickScreen`（選主題，每組一格封面）、`DeckButton`、`TileLabelToggle`、`SettingsScreen`、`ToggleRow`

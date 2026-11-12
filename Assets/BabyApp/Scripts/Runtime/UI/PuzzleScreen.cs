@@ -191,7 +191,7 @@ namespace BabyApp.UI
                 var recorded = RecordingStore.TryGet(_current.Card.id);
                 VoiceService.Instance.PlaySequence(
                     PromptLibrary.Instance != null ? PromptLibrary.Instance.Done : null,
-                    sound,
+                    VoiceService.Sound(sound),
                     recorded != null ? recorded : _current.Card.LocalizedVoice);
             }
             if (mascot != null) mascot.React(Mascot.Pose.Happy, nextRoundDelay);
@@ -239,6 +239,7 @@ namespace BabyApp.UI
             }
             if (board != null) board.localScale = Vector3.one;
             yield return new WaitForSecondsRealtime(Mathf.Max(0f, nextRoundDelay - duration - merge));
+            yield return VoiceService.WaitForSpeech(0.5f);
 
             if (ghost != null) ghost.color = ghostFrom;
             NewRound();

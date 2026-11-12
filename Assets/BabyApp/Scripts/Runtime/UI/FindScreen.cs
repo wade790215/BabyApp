@@ -109,6 +109,8 @@ namespace BabyApp.UI
         private IEnumerator StartAfter(float seconds)
         {
             yield return new WaitForSecondsRealtime(seconds);
+            // 小熊還沒講完就等它講完再換題，台詞長短不一，不猜秒數
+            yield return VoiceService.WaitForSpeech(0.5f);
             NewRound();
         }
 
@@ -189,7 +191,8 @@ namespace BabyApp.UI
 
             if (_soundMode)
             {
-                VoiceService.Instance.PlaySequence(PromptLibrary.Instance.WhoseSound, TargetSound());
+                // 先聽叫聲再問「這是誰的聲音呀？」，問完才有東西可以想
+                VoiceService.Instance.PlaySequence(VoiceService.Sound(TargetSound()), PromptLibrary.Instance.WhoseSound);
             }
             else
             {
@@ -220,7 +223,7 @@ namespace BabyApp.UI
                 {
                     VoiceService.Instance.PlaySparkle();
                     VoiceService.Instance.PlaySequence(PromptLibrary.Instance != null ? PromptLibrary.Instance.Correct : null,
-                        TargetSound(), TargetName());
+                        VoiceService.Sound(TargetSound()), TargetName());
                 }
                 if (mascot != null) mascot.React(Mascot.Pose.Happy, nextRoundDelay);
                 UsageStats.FindAnsweredCorrectly();
@@ -255,7 +258,7 @@ namespace BabyApp.UI
             if (rightFill != null) rightFill.color = Glow;
             if (VoiceService.Instance != null && PromptLibrary.Instance != null)
             {
-                VoiceService.Instance.PlaySequence(PromptLibrary.Instance.Here, TargetSound(), TargetName());
+                VoiceService.Instance.PlaySequence(PromptLibrary.Instance.Here, VoiceService.Sound(TargetSound()), TargetName());
             }
             if (mascot != null) mascot.React(Mascot.Pose.Happy, helpedRoundDelay);
 
@@ -271,6 +274,7 @@ namespace BabyApp.UI
             if (rightTile != null) rightTile.localScale = Vector3.one;
 
             yield return new WaitForSecondsRealtime(Mathf.Max(0f, helpedRoundDelay - fade - bounce));
+            yield return VoiceService.WaitForSpeech(0.5f);
             NewRound();
         }
     }
