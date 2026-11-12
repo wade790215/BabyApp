@@ -17,20 +17,31 @@
 把 `[SUBJECT]` 換成表格裡的 Subject，整段貼給圖片模型：
 
 ```
-Flat vector illustration of [SUBJECT], drawn as a flashcard for a 2-year-old child.
-Single subject only, centered, facing the viewer, entire shape visible and filling
-most of the frame. Chunky rounded forms like a wooden toy, thick bold black outlines,
-bold saturated primary colors, simple flat shading. Friendly and calm. Plain pure
-white background. No text, no letters, no props, no background scenery, no drop
-shadows, no photorealism. Square 1:1 composition, 1024x1024, sturdy toy-block style.
+Flat hand-cut paper style illustration of [SUBJECT], like a Montessori toddler app
+(Pok Pok Playroom style). Single subject, centered, whole body visible, filling most
+of the frame. Solid flat color fills, NO outlines at all, no gradients, no shading,
+no shadow, no texture. Slightly irregular hand-drawn silhouette, organic not
+geometric. Simple limited palette of a few flat saturated colors, dark slate #424c61
+for eyes, nose and tiny details. Plain pure white background, no text, square 1:1,
+1024x1024.
 ```
+
+同一個對話裡的第二張起只要貼短句：
+
+```
+Same style exactly (flat hand-cut paper, solid fills, NO outlines, no shading,
+no texture, plain white background, square). Subject: [SUBJECT], whole body
+visible, filling most of the frame.
+```
+
+（2026-11-12 之前的舊版是「Flat vector illustration… thick bold black outlines, bold saturated primary colors, simple flat shading… sturdy toy-block style」，交通工具、工程車、生活用品、身體與封面還是那一版生的。）
 
 **規格**：1024×1024 正方形、PNG、白底（透明底更好）。
 
 ### 為什麼這樣寫
 
 - **單一主體、置中、佔滿畫面** — 2～3 歲的視覺注意力很窄，畫面裡多一隻蝴蝶他就會指蝴蝶而不是狗。
-- **粗黑邊、積木感、飽和原色** — 這是為了跟 App 的「工程車工地」介面對上：深藍底、粗黑框的卡片、工程黃的按鈕。圖本身還是乾淨的單一主體，不要讓狗戴安全帽——主題在介面上，不在圖裡。
+- **無框線、平塗色塊、手撕紙的不規則邊** — 2026-11-12 定案改成 Pok Pok Playroom 那種「安靜不花俏」的畫風（研究在 docs/research/2026-11-12-PokPok風格.md）：沒有外框線、沒有漸層陰影、顏色飽和但只用幾個。圖本身還是乾淨的單一主體，不要讓狗戴安全帽——主題在介面上，不在圖裡。
 - **輪廓清楚** — 在平板上離遠一點也認得出來。
 - **白底 / 透明底** — 卡片底板是白色圓角卡，白底才不會出現一個灰色方塊。
 - **不要文字** — 圖上的英文字會干擾中文名稱，而且 AI 生成的文字幾乎都是亂碼。
@@ -173,9 +184,12 @@ shadows, no photorealism. Square 1:1 composition, 1024x1024, sturdy toy-block st
 ```
 Character sheet reference: a chubby golden-yellow honey bear cub, very round body and
 head, small round ears, big friendly black eyes, tiny smile, soft cream belly patch,
-no clothes, holding a small blue honey pot. Flat vector style, thick clean dark outlines,
-bold saturated colors, simple flat shading, plain pure white background, no text,
-square 1:1, 1024x1024, for a toddler app mascot. Keep this exact character in every image.
+no clothes, holding a small blue honey pot. Style: flat hand-cut paper illustration like a
+Montessori toddler app (Pok Pok Playroom style). Solid flat color fills, NO outlines at all,
+no gradients, no shading, no shadow, no texture. Slightly irregular hand-drawn silhouette,
+organic not geometric. Limited palette: sunny yellow #fdea69 body, cream belly, sky blue
+#29a1dd honey pot, dark slate #424c61 for eyes, nose and tiny details. Plain pure white
+background, no text, square 1:1, 1024x1024. Keep this exact character in every image.
 ```
 
 然後每一張只換動作：
@@ -196,7 +210,7 @@ python tools/knockout-white.py Assets/BabyApp/Art/Mascot/mascot_*.png
 
 它從四邊往內把白色淹掉、邊緣做半透明，不會動到圖中間的白色（眼睛反光、肚子）。卡片圖也可以用同一支去白底。
 
-**現況**：五張已經用 Google Gemini 生好、去背、放進 `Art/Mascot/` 了（2026-10-23）。想重生某一張，同名覆蓋再跑去背即可。
+**現況**：五張 2026-11-13 用上面這段（Pok Pok 風、無框線）在 Gemini 重生、去背、放進 `Art/Mascot/`；之後每張只貼「Same character and same style exactly (…). Pose: …」。「思考」那張寫 question mark 第一次回空的，改寫成 head tilted, looking up as if wondering 就過了（它還是自己加了問號）。想重生某一張，同名覆蓋再跑去背即可。
 
 ## 3.6 介面圖示（可選）
 

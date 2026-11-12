@@ -112,3 +112,6 @@ InitTestScene*.unity*
 tools/azure-trial/
 __pycache__/
 tools/azure.key
+
+# Gemini 生圖的暫存收圖資料夾（去背後才搬進 Assets）
+tools/gemini-incoming/
