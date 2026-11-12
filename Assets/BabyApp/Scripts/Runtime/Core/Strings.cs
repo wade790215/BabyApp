@@ -16,7 +16,6 @@ namespace BabyApp.Core
                 ["settings"] = ("設定", "Settings"),
                 ["sfx"] = ("音效", "Sounds"),
                 ["voice"] = ("語音", "Voice"),
-                ["music"] = ("音樂", "Music"),
                 ["background"] = ("背景", "Background"),
                 ["language"] = ("語言", "Language"),
                 ["language_name"] = ("中文", "English"),

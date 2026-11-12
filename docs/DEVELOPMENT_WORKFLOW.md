@@ -85,7 +85,7 @@ Planner 的輸出至少包含：
 **BabyApp 備註**：
 - 改版面 → 改 `BabyAppSceneBuilder`，然後自己用 `execute_menu_item` 跑「3. 重建場景」；改 CSV 或素材 → 跑「2. 匯入卡片素材」；改 `BabyAppPlayerSetup` → 跑「4. 套用播放器設定」（否則只改了程式、`ProjectSettings` 沒吃到）。跑完一定要 `read_console` 確認沒有紅字。MCP 連不上時才改成請使用者跑，並在回報裡明說要跑哪一個。
 - 新畫面要接進 `AppRoot`、`HomeScreen`（或 `DeckPickScreen`）、Builder 三處，少一處就是「有程式但進不去」。
-- 新文字一律加進 `Strings`（中英各一），新台詞加進 `tools/prompts.csv` 並跑 `make-prompts.ps1`。
+- 新文字一律加進 `Strings`（中英各一），新台詞加進 `tools/prompts.csv` 並跑 `python tools/make-voices-azure.py --voice zh-TW-HsiaoYuNeural --prompts`（**不要跑舊的 `make-prompts.ps1`**，它會用 SAPI 把全部台詞重生成、蓋掉 Azure 的聲音）。
 
 ### 4. 驗收
 

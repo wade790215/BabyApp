@@ -5,13 +5,14 @@ using UnityEngine;
 namespace BabyApp.Core
 {
     /// <summary>
-    /// 統一的播音入口。語音、音效、音樂分三軌，點卡片時語音會立刻覆蓋上一句，
+    /// 統一的播音入口。語音、音效分兩軌，點卡片時語音會立刻覆蓋上一句，
     /// 不會像小孩連點時那樣疊成一團。
     ///
     /// 語音軌一次播一串（叫聲 → 名稱，或 名稱 → 「在哪裡？」）。語音一定念完才接下一段；
     /// 叫聲用 <see cref="Sound"/> 包起來，最多播 <see cref="maxClipSeconds"/> 秒就接下一段（鴨子那種 80 秒的不能讓小孩等）。
     /// 畫面要等小熊講完再換題，用 <see cref="WaitForSpeech"/>，不要猜秒數。
-    /// 三軌各自看設定裡的開關；音樂欄位留空就什麼都不會播。
+    /// 兩軌各自看設定裡的開關。沒有背景音樂：Pok Pok 也不放配樂，而且音樂會蓋掉名稱語音。
+    /// 音效只有五個：tap（點按鈕）、page（翻卡）、door（掀蓋）、correct（答對／拼完／數完）、chew（小熊咔滋），都是低、短、圓的木頭聲。
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
     public class VoiceService : MonoBehaviour
@@ -20,18 +21,13 @@ namespace BabyApp.Core
 
         [SerializeField] private AudioSource voiceSource;
         [SerializeField] private AudioSource sfxSource;
-        [SerializeField] private AudioSource musicSource;
 
         [Header("介面音效（可留空）")]
         [SerializeField] private AudioClip tapSfx;
         [SerializeField] private AudioClip pageSfx;
         [SerializeField] private AudioClip doorSfx;
-        [SerializeField] private AudioClip sparkleSfx;
+        [SerializeField] private AudioClip correctSfx;
         [SerializeField] private AudioClip chewSfx;
-
-        [Header("背景音樂（可留空）")]
-        [SerializeField] private AudioClip musicClip;
-        [SerializeField, Range(0f, 1f)] private float musicVolume = 0.3f;
 
         [Tooltip("叫聲最多播幾秒就接下一段，避免太長的叫聲讓小孩等；語音不受限，一定念完")]
         [SerializeField] private float maxClipSeconds = 2.5f;
@@ -71,13 +67,10 @@ namespace BabyApp.Core
 
             if (voiceSource == null) voiceSource = GetComponent<AudioSource>();
             if (sfxSource == null) sfxSource = gameObject.AddComponent<AudioSource>();
-            if (musicSource == null) musicSource = gameObject.AddComponent<AudioSource>();
 
             voiceSource.playOnAwake = false;
             sfxSource.playOnAwake = false;
-            sfxSource.volume = 0.6f;
-            musicSource.playOnAwake = false;
-            musicSource.loop = true;
+            sfxSource.volume = 0.45f;
 
             // 場景裡沒有耳朵的話什麼都聽不到；自己補一個，省得場景少接一個元件就全靜音
             if (FindAnyObjectByType<AudioListener>() == null)
@@ -152,24 +145,12 @@ namespace BabyApp.Core
         public void PlayTap() => PlaySfx(tapSfx);
         public void PlayPage() => PlaySfx(pageSfx);
         public void PlayDoor() => PlaySfx(doorSfx);
-        public void PlaySparkle() => PlaySfx(sparkleSfx);
+        /// <summary>答對、拼完、數完：一聲木琴。每個畫面一回合只響一次，不要每點一下都響。</summary>
+        public void PlayCorrect() => PlaySfx(correctSfx);
         public void PlayChew() => PlaySfx(chewSfx);
 
         private void ApplySettings()
         {
-            musicSource.volume = musicVolume;
-            bool wantMusic = AppSettings.MusicEnabled && musicClip != null;
-
-            if (wantMusic && !musicSource.isPlaying)
-            {
-                musicSource.clip = musicClip;
-                musicSource.Play();
-            }
-            else if (!wantMusic && musicSource.isPlaying)
-            {
-                musicSource.Stop();
-            }
-
             if (!AppSettings.VoiceEnabled) StopSequence();
         }
 

@@ -24,11 +24,12 @@ namespace BabyApp.EditorTools
         public const string DeckButtonPrefab = Prefabs + "/DeckButton.prefab";
 
         public const string SfxFolder = Root + "/Audio/SFX";
-        public const string SfxTap = SfxFolder + "/ui_boop.wav";
-        public const string SfxPage = SfxFolder + "/ui_swoosh.wav";
-        public const string SfxDoor = SfxFolder + "/ui_tada.wav";
-        public const string SfxSparkle = SfxFolder + "/ui_sparkle.wav";
-        public const string SfxChew = SfxFolder + "/ui_chew.wav";
+        // 不帶副檔名的基底名：Generator 先找 .wav/.ogg/.mp3（丟實物錄音進來就直接用），都沒有才合成 .wav
+        public const string SfxTap = SfxFolder + "/sfx_tap";
+        public const string SfxPage = SfxFolder + "/sfx_page";
+        public const string SfxDoor = SfxFolder + "/sfx_door";
+        public const string SfxCorrect = SfxFolder + "/sfx_correct";
+        public const string SfxChew = SfxFolder + "/sfx_chew";
 
         /// <summary>吉祥物五張表情圖的檔名（放在 Art/Mascot），缺的會退回第一張卡的熊。</summary>
         public static readonly string[] MascotPoses = { "mascot_idle", "mascot_happy", "mascot_surprised", "mascot_think", "mascot_sleep" };

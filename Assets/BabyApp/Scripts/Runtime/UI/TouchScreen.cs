@@ -147,13 +147,13 @@ namespace BabyApp.UI
 
         private static IEnumerator Wiggle(RectTransform rt)
         {
-            const float duration = 0.4f;
+            const float duration = 0.6f;
             float t = 0f;
             while (t < duration && rt != null)
             {
                 t += Time.unscaledDeltaTime;
                 float p = Mathf.Clamp01(t / duration);
-                rt.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(p * Mathf.PI * 3f) * 7f * (1f - p));
+                rt.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(p * Mathf.PI * 3f) * 4f * (1f - p));
                 yield return null;
             }
             if (rt != null) rt.localRotation = Quaternion.identity;

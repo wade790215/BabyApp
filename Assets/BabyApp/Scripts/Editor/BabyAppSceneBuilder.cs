@@ -51,7 +51,7 @@ namespace BabyApp.EditorTools
         private static AudioClip _tapSfx;
         private static AudioClip _pageSfx;
         private static AudioClip _doorSfx;
-        private static AudioClip _sparkleSfx;
+        private static AudioClip _correctSfx;
         private static AudioClip _chewSfx;
 
         public static void BuildScene() => BuildScene(confirm: true);
@@ -88,7 +88,7 @@ namespace BabyApp.EditorTools
             {
                 Icons[name] = BabyAppUiSprites.EnsureIcon(name);
             }
-            (_tapSfx, _pageSfx, _doorSfx, _sparkleSfx, _chewSfx) = BabyAppSfxGenerator.EnsureAll();
+            (_tapSfx, _pageSfx, _doorSfx, _correctSfx, _chewSfx) = BabyAppSfxGenerator.EnsureAll();
             // 大圓角底圖（程式畫的，九宮格），所有方塊共用；圓形用內建的 Knob
             _rounded = BabyAppUiSprites.EnsureRoundRect();
             _circle = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
@@ -201,18 +201,16 @@ namespace BabyApp.EditorTools
             var go = new GameObject("AppRoot");
             var voiceSource = go.AddComponent<AudioSource>();
             var sfxSource = go.AddComponent<AudioSource>();
-            var musicSource = go.AddComponent<AudioSource>();
-            voiceSource.playOnAwake = sfxSource.playOnAwake = musicSource.playOnAwake = false;
+            voiceSource.playOnAwake = sfxSource.playOnAwake = false;
 
             var voice = go.AddComponent<VoiceService>();
             Wire(voice,
                 ("voiceSource", voiceSource),
                 ("sfxSource", sfxSource),
-                ("musicSource", musicSource),
                 ("tapSfx", _tapSfx),
                 ("pageSfx", _pageSfx),
                 ("doorSfx", _doorSfx),
-                ("sparkleSfx", _sparkleSfx),
+                ("correctSfx", _correctSfx),
                 ("chewSfx", _chewSfx));
 
             go.AddComponent<VoiceRecorder>();
@@ -524,7 +522,6 @@ namespace BabyApp.EditorTools
             tap.transition = Selectable.Transition.None;
 
             var reaction = root.gameObject.AddComponent<TapReaction>();
-            Wire(reaction, ("sparkSprite", _circle));
 
             var cardView = root.gameObject.AddComponent<CardView>();
 
@@ -1201,10 +1198,9 @@ namespace BabyApp.EditorTools
             Anchor(panel, new Vector2(0.08f, 0.17f), new Vector2(0.92f, 0.84f));
 
             // 每一列用面板高度的百分比定位，面板矮一點列就靠近一點，不會疊
-            var sfx = CreateToggleRow(panel, "sfx", 0.90f);
-            var voice = CreateToggleRow(panel, "voice", 0.77f);
-            var music = CreateToggleRow(panel, "music", 0.64f);
-            var labels = CreateToggleRow(panel, "labels", 0.51f);
+            var sfx = CreateToggleRow(panel, "sfx", 0.88f);
+            var voice = CreateToggleRow(panel, "voice", 0.72f);
+            var labels = CreateToggleRow(panel, "labels", 0.56f);
 
             CreateRowLabel(panel, "language", 0.37f);
             var (languageButton, languageName) = CreateTextButton("LanguageButton", panel, "language_name", Mint,
@@ -1240,7 +1236,6 @@ namespace BabyApp.EditorTools
                 ("closeButton", close),
                 ("sfxToggle", sfx),
                 ("voiceToggle", voice),
-                ("musicToggle", music),
                 ("labelsToggle", labels),
                 ("languageButton", languageButton),
                 ("languageLabel", languageName),

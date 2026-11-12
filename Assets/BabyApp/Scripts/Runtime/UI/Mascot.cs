@@ -20,16 +20,18 @@ namespace BabyApp.UI
         [SerializeField] private Sprite think;
         [SerializeField] private Sprite sleep;
 
-        [SerializeField] private float breathAmount = 0.025f;
+        [SerializeField] private float breathAmount = 0.015f;
 
-        [Tooltip("多久沒人碰螢幕就招手說「來玩吧」；0 = 不要")]
-        [SerializeField] private float idleNudgeSeconds = 20f;
+        [Tooltip("多久沒人碰螢幕就招手說「來玩吧」；0 = 不要。放到 60 秒：小孩發呆也是在玩，不要一直催")]
+        [SerializeField] private float idleNudgeSeconds = 60f;
 
         private RectTransform _rt;
         private Coroutine _hold;
         private Coroutine _jump;
         private float _breathPhase;
         private float _idle;
+        private Vector2 _jumpHome;
+        private Vector2 _jumpLastSet;
 
         private void Awake() => _rt = (RectTransform)transform;
 
@@ -43,13 +45,15 @@ namespace BabyApp.UI
         {
             StopAllCoroutines();
             _hold = null;
+            // 跳到一半被關掉，先放回地面，不然下次打開會浮在半空
+            if (_jump != null && _rt != null) _rt.anchoredPosition = _jumpHome;
             _jump = null;
         }
 
         private void Update()
         {
             // 慢慢呼吸，活著的感覺
-            _breathPhase += Time.unscaledDeltaTime * 2.2f;
+            _breathPhase += Time.unscaledDeltaTime * 1.4f;
             float s = 1f + Mathf.Sin(_breathPhase) * breathAmount;
             _rt.localScale = new Vector3(s, 1f + (s - 1f) * 0.6f, 1f);
 
@@ -93,7 +97,9 @@ namespace BabyApp.UI
         public void Jump()
         {
             _idle = 0f;
-            if (_jump != null) StopCoroutine(_jump);
+            // 落地點只在「沒在跳」的時候記，連點時在半空被再叫一次才不會越跳越高
+            if (_jump == null) _jumpHome = _rt.anchoredPosition;
+            else StopCoroutine(_jump);
             _jump = StartCoroutine(JumpRoutine());
         }
 
@@ -123,19 +129,27 @@ namespace BabyApp.UI
 
         private IEnumerator JumpRoutine()
         {
-            // 從現在的位置跳起來再回到現在的位置（牠可能被拖到別處了）
-            const float duration = 0.4f;
-            const float height = 40f;
-            var home = _rt.anchoredPosition;
+            // 從 _jumpHome 跳起來再回到 _jumpHome（牠可能被拖到別處了，所以不用固定座標）。
+            // 小幅慢跳，像點頭，不是彈跳床。
+            const float duration = 0.55f;
+            const float height = 16f;
+            _jumpLastSet = _rt.anchoredPosition;
             float t = 0f;
             while (t < duration)
             {
                 t += Time.unscaledDeltaTime;
                 float p = Mathf.Clamp01(t / duration);
-                _rt.anchoredPosition = home + Vector2.up * (Mathf.Sin(p * Mathf.PI) * height);
+                // 位置不是我們上一幀放的 → 正在被拖（DraggableWidget），放棄這一跳、不要把牠拉回原地
+                if (_rt.anchoredPosition != _jumpLastSet)
+                {
+                    _jump = null;
+                    yield break;
+                }
+                _jumpLastSet = _jumpHome + Vector2.up * (Mathf.Sin(p * Mathf.PI) * height);
+                _rt.anchoredPosition = _jumpLastSet;
                 yield return null;
             }
-            _rt.anchoredPosition = home;
+            _rt.anchoredPosition = _jumpHome;
             _jump = null;
         }
     }

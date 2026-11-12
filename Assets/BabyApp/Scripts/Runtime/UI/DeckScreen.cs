@@ -222,7 +222,6 @@ namespace BabyApp.UI
             }
 
             cardView.PlayReaction();
-            if (VoiceService.Instance != null) VoiceService.Instance.PlaySparkle();
             if (mascot != null) mascot.React(Mascot.Pose.Happy, 1.0f);
             PlayCurrentCard();
         }

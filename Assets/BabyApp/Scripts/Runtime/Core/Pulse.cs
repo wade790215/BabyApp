@@ -5,12 +5,13 @@ namespace BabyApp.Core
 {
     /// <summary>
     /// 被點到時放大再彈回來的回饋動畫。2～3 歲需要很明確的「我有按到」訊號。
+    /// 幅度小、速度慢（5%、0.4 秒）：看得出來有按到，但不跳眼。
     /// 不依賴任何動畫套件，連點時會從頭重播而不是互相打斷。
     /// </summary>
     public class Pulse : MonoBehaviour
     {
-        [SerializeField] private float scaleUp = 1.12f;
-        [SerializeField] private float duration = 0.28f;
+        [SerializeField] private float scaleUp = 1.05f;
+        [SerializeField] private float duration = 0.4f;
 
         private Coroutine _running;
         private Vector3 _baseScale = Vector3.one;

@@ -177,7 +177,6 @@ namespace BabyApp.UI
             if (_busy) return;
             _placed++;
             if (VoiceService.Instance != null) VoiceService.Instance.PlayTap();
-            if (mascot != null) mascot.Jump();
 
             if (_placed < _pieces.Count) return;
 
@@ -186,7 +185,7 @@ namespace BabyApp.UI
             UsageStats.CountRoundFinished();
             if (VoiceService.Instance != null)
             {
-                VoiceService.Instance.PlaySparkle();
+                VoiceService.Instance.PlayCorrect();
                 var sound = _current.Card.sound != null ? _current.Card.sound : (_current.Deck != null ? _current.Deck.fallbackSound : null);
                 var recorded = RecordingStore.TryGet(_current.Card.id);
                 VoiceService.Instance.PlaySequence(
@@ -228,13 +227,13 @@ namespace BabyApp.UI
             }
 
             // 整塊底盤彈一下
-            const float duration = 0.6f;
+            const float duration = 0.8f;
             t = 0f;
             while (t < duration && board != null)
             {
                 t += Time.unscaledDeltaTime;
                 float p = Mathf.Clamp01(t / duration);
-                board.localScale = Vector3.one * (1f + 0.08f * Mathf.Sin(p * Mathf.PI));
+                board.localScale = Vector3.one * (1f + 0.04f * Mathf.Sin(p * Mathf.PI));
                 yield return null;
             }
             if (board != null) board.localScale = Vector3.one;

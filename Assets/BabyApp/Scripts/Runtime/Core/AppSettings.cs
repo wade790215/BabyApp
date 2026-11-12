@@ -34,7 +34,6 @@ namespace BabyApp.Core
 
         private const string SfxKey = "babyapp.sfx";
         private const string VoiceKey = "babyapp.voice";
-        private const string MusicKey = "babyapp.music";
         private const string BackgroundKey = "babyapp.background";
         private const string LanguageKey = "babyapp.language";
         private const string LabelsKey = "babyapp.labels";
@@ -51,13 +50,6 @@ namespace BabyApp.Core
         {
             get => PlayerPrefs.GetInt(VoiceKey, 1) == 1;
             set => Set(VoiceKey, value ? 1 : 0);
-        }
-
-        /// <summary>預設關：背景音樂會蓋掉名稱語音，這個年紀語音比音樂重要。</summary>
-        public static bool MusicEnabled
-        {
-            get => PlayerPrefs.GetInt(MusicKey, 0) == 1;
-            set => Set(MusicKey, value ? 1 : 0);
         }
 
         public static int BackgroundIndex

@@ -221,7 +221,7 @@ namespace BabyApp.UI
                 if (choicePulses != null && slot < choicePulses.Length && choicePulses[slot] != null) choicePulses[slot].Play();
                 if (VoiceService.Instance != null)
                 {
-                    VoiceService.Instance.PlaySparkle();
+                    VoiceService.Instance.PlayCorrect();
                     VoiceService.Instance.PlaySequence(PromptLibrary.Instance != null ? PromptLibrary.Instance.Correct : null,
                         VoiceService.Sound(TargetSound()), TargetName());
                 }
@@ -268,7 +268,7 @@ namespace BabyApp.UI
             {
                 t += Time.unscaledDeltaTime;
                 float p = Mathf.Clamp01(t / bounce);
-                if (rightTile != null) rightTile.localScale = Vector3.one * (1f + 0.08f * Mathf.Abs(Mathf.Sin(p * Mathf.PI * 2f)));
+                if (rightTile != null) rightTile.localScale = Vector3.one * (1f + 0.05f * Mathf.Abs(Mathf.Sin(p * Mathf.PI * 2f)));
                 yield return null;
             }
             if (rightTile != null) rightTile.localScale = Vector3.one;

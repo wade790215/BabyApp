@@ -162,12 +162,12 @@ namespace BabyApp.UI
 
             if (VoiceService.Instance != null)
             {
-                VoiceService.Instance.PlaySparkle();
                 var number = PromptLibrary.Instance != null ? PromptLibrary.Instance.Number(_done) : null;
 
                 if (_done >= _total)
                 {
                     _busy = true;
+                    VoiceService.Instance.PlayCorrect();
                     VoiceService.Instance.PlaySequence(number,
                         PromptLibrary.Instance != null ? PromptLibrary.Instance.Yummy : null,
                         PromptLibrary.Instance != null ? PromptLibrary.Instance.AllCounted : null);
@@ -215,7 +215,7 @@ namespace BabyApp.UI
 
             if (item != null) item.gameObject.SetActive(false);
             if (VoiceService.Instance != null) VoiceService.Instance.PlayChew();
-            if (mascot != null && !_busy) mascot.React(Mascot.Pose.Happy, 0.7f);
+            if (mascot != null && !_busy) mascot.React(Mascot.Pose.Happy, 0.7f, jump: false);
         }
     }
 }

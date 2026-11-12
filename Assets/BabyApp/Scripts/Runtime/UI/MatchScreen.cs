@@ -194,13 +194,13 @@ namespace BabyApp.UI
 
         private IEnumerator BounceSample()
         {
-            const float duration = 0.5f;
+            const float duration = 0.6f;
             float t = 0f;
             while (t < duration && sampleTile != null)
             {
                 t += Time.unscaledDeltaTime;
                 float p = Mathf.Clamp01(t / duration);
-                sampleTile.localScale = Vector3.one * (1f + 0.06f * Mathf.Sin(p * Mathf.PI));
+                sampleTile.localScale = Vector3.one * (1f + 0.04f * Mathf.Sin(p * Mathf.PI));
                 yield return null;
             }
             if (sampleTile != null) sampleTile.localScale = Vector3.one;
@@ -219,7 +219,7 @@ namespace BabyApp.UI
                 StartCoroutine(BounceSample());
                 if (VoiceService.Instance != null)
                 {
-                    VoiceService.Instance.PlaySparkle();
+                    VoiceService.Instance.PlayCorrect();
                     VoiceService.Instance.PlaySequence(PromptLibrary.Instance != null ? PromptLibrary.Instance.Correct : null,
                         VoiceService.Sound(TargetSound()), TargetName());
                 }
@@ -263,7 +263,7 @@ namespace BabyApp.UI
             {
                 t += Time.unscaledDeltaTime;
                 float p = Mathf.Clamp01(t / bounce);
-                float s = 1f + 0.08f * Mathf.Abs(Mathf.Sin(p * Mathf.PI * 2f));
+                float s = 1f + 0.05f * Mathf.Abs(Mathf.Sin(p * Mathf.PI * 2f));
                 if (rightTile != null) rightTile.localScale = Vector3.one * s;
                 if (sampleTile != null) sampleTile.localScale = Vector3.one * s;
                 yield return null;

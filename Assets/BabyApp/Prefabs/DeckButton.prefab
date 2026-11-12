@@ -229,8 +229,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a96852c5ca2329a409521e393dc48b55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Core.Pulse
-  scaleUp: 1.12
-  duration: 0.28
+  scaleUp: 1.05
+  duration: 0.4
 --- !u!114 &1530836439025046354
 MonoBehaviour:
   m_ObjectHideFlags: 0

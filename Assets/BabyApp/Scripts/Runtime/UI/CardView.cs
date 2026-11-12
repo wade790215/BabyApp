@@ -124,7 +124,7 @@ namespace BabyApp.UI
             if (VoiceService.Instance != null) VoiceService.Instance.PlayDoor();
         }
 
-        /// <summary>播放「我被按到了」的隨機動畫與星星。</summary>
+        /// <summary>播放「我被按到了」的隨機輕微動畫。</summary>
         public void PlayReaction()
         {
             if (reaction != null) reaction.Play();
