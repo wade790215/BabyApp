@@ -12,7 +12,10 @@
 #                                                             整批產出到 Assets 底下（會蓋掉同名 .wav）
 #
 # 產出是 24kHz 16-bit mono WAV，頭尾靜音會剪掉（留 60ms），不會再有 SAPI 那種墊 1.3 秒的事。
-# 語速預設 -10%（2～3 歲聽的，慢一點點），音高不動；要調就 --rate -20% --pitch +5%。
+# 語速預設 -5%、音高 +12%（2026-11-16 使用者要「再高亢、開心、活潑一點」；之前是 -10%／+0%）；
+# 要調就 --rate -10% --pitch +0%。zh-TW 的聲音都沒有情緒風格（style），想要「cheerful」只能換成
+# 會講 zh-TW 的 multilingual 聲音：--voice zh-CN-XiaoxiaoMultilingualNeural --style cheerful
+#   python tools/make-voices-azure.py --trial-lively        五種「活潑版」各念幾句到 tools/azure-trial/lively/
 import argparse, csv, io, json, os, struct, sys, time, urllib.request, urllib.error, wave
 
 # Windows 的 console 預設 cp950，印繁中會變亂碼；sys.exit 的訊息走 stderr，兩個都要設
@@ -27,6 +30,7 @@ CARD_AUDIO = os.path.join(PROJECT, "Assets", "BabyApp", "Audio", "Cards")
 PROMPT_AUDIO = os.path.join(PROJECT, "Assets", "BabyApp", "Audio", "Prompts")
 TRIAL_DIR = os.path.join(PROJECT, "tools", "azure-trial")
 KEY_FILE = os.path.join(PROJECT, "tools", "azure.key")
+ONLY = ""   # --only 的前綴；空字串＝全部
 
 ZH_VOICES = ["zh-TW-HsiaoChenNeural", "zh-TW-HsiaoYuNeural"]
 TRIAL_VOICES = ZH_VOICES + ["zh-TW-HsiaoChen:DragonLatestNeural"]   # 曉臻新一代模型，試聽時一起比
@@ -40,6 +44,24 @@ TRIAL_LINES = [
     ("three", "三"),
     ("where", "在哪裡呀？"),
     ("correct", "答對了！好棒！"),
+]
+
+
+# 「再活潑一點」的候選：(檔名前綴, 聲音, 語速, 音高, 風格, 風格強度)
+LIVELY_VARIANTS = [
+    ("A_now",              "zh-TW-HsiaoYuNeural",               "-10%", "+0%",  None,       None),
+    ("B_yu_high",          "zh-TW-HsiaoYuNeural",               "-5%",  "+12%", None,       None),
+    ("C_yu_higher",        "zh-TW-HsiaoYuNeural",               "+0%",  "+20%", None,       None),
+    ("D_xiaoxiao_cheerful", "zh-CN-XiaoxiaoMultilingualNeural", "-5%",  "+5%",  "cheerful", "1.5"),
+    ("E_xiaoyou_child",    "zh-CN-XiaoyouMultilingualNeural",   "-5%",  "+0%",  "cheerful", "1.5"),
+]
+LIVELY_LINES = [
+    ("dog", "狗狗"),
+    ("apple", "蘋果"),
+    ("where", "在哪裡呀？"),
+    ("correct", "答對了！好棒！"),
+    ("yummy", "嗯～好好吃！"),
+    ("come_on", "來玩吧！"),
 ]
 
 
@@ -84,11 +106,17 @@ def list_voices(key, region):
         print("  %-32s %-7s %s" % (v["ShortName"], v.get("Gender", ""), v.get("LocalName", "")))
 
 
-def synthesize(key, region, voice, text, rate, pitch, lang):
-    prosody = '<prosody rate="%s" pitch="%s">%s</prosody>' % (rate, pitch, xml_escape(text))
+def synthesize(key, region, voice, text, rate, pitch, lang, style=None, degree=None):
+    body = '<prosody rate="%s" pitch="%s">%s</prosody>' % (rate, pitch, xml_escape(text))
+    # 別的語系的 multilingual 聲音要包一層 <lang> 才會用這個語系的口音念（zh-CN 的聲音念 zh-TW）
+    if not voice.startswith(lang):
+        body = '<lang xml:lang="%s">%s</lang>' % (lang, body)
+    if style:
+        body = '<mstts:express-as style="%s"%s>%s</mstts:express-as>' % (
+            style, ' styledegree="%s"' % degree if degree else "", body)
     ssml = ('<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" '
-            'xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="%s">'
-            '<voice name="%s">%s</voice></speak>') % (lang, voice, prosody)
+            'xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="%s">'
+            '<voice name="%s">%s</voice></speak>') % (lang, voice, body)
     url = "https://%s.tts.speech.microsoft.com/cognitiveservices/v1" % region
     req = urllib.request.Request(url, data=ssml.encode("utf-8"), method="POST", headers={
         "Ocp-Apim-Subscription-Key": key,
@@ -156,29 +184,50 @@ def run_trial(key, region, rate, pitch):
             print("  %5.2fs  %-28s %s" % (write_wav(path, data), os.path.basename(path), text))
 
 
-def run_cards(key, region, voice, rate, pitch, en_voice):
+def run_trial_lively(key, region):
+    folder = os.path.join(TRIAL_DIR, "lively")
+    print("活潑版試聽檔寫到 %s" % folder)
+    for prefix, voice, rate, pitch, style, degree in LIVELY_VARIANTS:
+        print("%s：%s rate=%s pitch=%s style=%s" % (prefix, voice, rate, pitch, style or "-"))
+        for tag, text in LIVELY_LINES:
+            try:
+                data = trim_silence(synthesize(key, region, voice, text, rate, pitch, "zh-TW", style, degree))
+            except SystemExit as e:
+                print("  做不出來，跳過：%s" % e)
+                break
+            path = os.path.join(folder, "%s_%s.wav" % (prefix, tag))
+            print("  %5.2fs  %-34s %s" % (write_wav(path, data), os.path.basename(path), text))
+
+
+def run_cards(key, region, voice, rate, pitch, en_voice, style=None, degree=None):
     with open(MANIFEST, encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
     made = 0
     for row in rows:
+        if not row["cardId"].startswith(ONLY):
+            continue
         folder = row["deckId"][:1].upper() + row["deckId"][1:]
         base = os.path.join(CARD_AUDIO, folder, row["cardId"])
         for suffix, text, v, lang in (("", row["cardName"], voice, "zh-TW"), ("_en", row["cardNameEn"], en_voice, "en-US")):
-            data = trim_silence(synthesize(key, region, v, text, rate, pitch, lang))
+            # 風格只套在中文那個聲音上；英文聲音（Ava）沒有風格可用
+            st = style if lang == "zh-TW" else None
+            data = trim_silence(synthesize(key, region, v, text, rate, pitch, lang, st, degree))
             secs = write_wav(base + suffix + ".wav", data)
             made += 1
             print("  %5.2fs  %s%s.wav  %s" % (secs, row["cardId"], suffix, text))
     print("卡片名稱：%d 個檔" % made)
 
 
-def run_prompts(key, region, voice, rate, pitch, en_voice):
+def run_prompts(key, region, voice, rate, pitch, en_voice, style=None, degree=None):
     with open(PROMPTS, encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
     made = 0
     for row in rows:
+        if not row["file"].startswith(ONLY):
+            continue
         en = row["lang"] == "en"
         data = trim_silence(synthesize(key, region, en_voice if en else voice, row["text"], rate, pitch,
-                                       "en-US" if en else "zh-TW"))
+                                       "en-US" if en else "zh-TW", None if en else style, degree))
         secs = write_wav(os.path.join(PROMPT_AUDIO, row["file"] + ".wav"), data)
         made += 1
         print("  %5.2fs  %s.wav  %s" % (secs, row["file"], row["text"]))
@@ -193,10 +242,16 @@ def main():
     ap.add_argument("--prompts", action="store_true", help="整批產出小熊台詞（中英）")
     ap.add_argument("--voice", default=ZH_VOICES[0], help="中文聲音，預設 %s" % ZH_VOICES[0])
     ap.add_argument("--en-voice", default=EN_VOICE)
-    ap.add_argument("--rate", default="-10%", help='語速，例如 -10%%、slow；預設 -10%%')
-    ap.add_argument("--pitch", default="+0%", help='音高，例如 +5%%；預設不動')
+    ap.add_argument("--trial-lively", action="store_true", help="五種「活潑版」各念幾句到 tools/azure-trial/lively/")
+    ap.add_argument("--only", default="", help="只做 cardId／檔名以這個開頭的（例如 shape_、prompt_feed），其他不動")
+    ap.add_argument("--rate", default="-5%", help='語速，例如 -10%%、slow；預設 -5%%')
+    ap.add_argument("--pitch", default="+12%", help='音高，例如 +5%%；預設 +12%%')
+    ap.add_argument("--style", default=None, help="情緒風格（cheerful、excited…），zh-TW 的聲音都不支援，要搭 multilingual 聲音")
+    ap.add_argument("--style-degree", default=None, help="風格強度 0.01～2，預設 1")
     a = ap.parse_args()
-    if not (a.list_voices or a.trial or a.cards or a.prompts):
+    global ONLY
+    ONLY = a.only
+    if not (a.list_voices or a.trial or a.trial_lively or a.cards or a.prompts):
         ap.print_help()
         return 1
 
@@ -205,10 +260,12 @@ def main():
         list_voices(key, region)
     if a.trial:
         run_trial(key, region, a.rate, a.pitch)
+    if a.trial_lively:
+        run_trial_lively(key, region)
     if a.cards:
-        run_cards(key, region, a.voice, a.rate, a.pitch, a.en_voice)
+        run_cards(key, region, a.voice, a.rate, a.pitch, a.en_voice, a.style, a.style_degree)
     if a.prompts:
-        run_prompts(key, region, a.voice, a.rate, a.pitch, a.en_voice)
+        run_prompts(key, region, a.voice, a.rate, a.pitch, a.en_voice, a.style, a.style_degree)
     if a.cards or a.prompts:
         print("\n接著：把同名的舊 .mp3 刪掉（不然一張卡會有兩個候選），再跑 Unity 選單「2. 匯入卡片素材」。")
     return 0

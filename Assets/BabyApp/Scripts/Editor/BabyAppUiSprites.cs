@@ -192,6 +192,86 @@ namespace BabyApp.EditorTools
             if (any) AssetDatabase.Refresh();
         }
 
+        // 形狀卡：(卡片代號, 顏色, 畫法)。Pok Pok 風的平塗色塊，一個形狀一個顏色、沒有框線。
+        // 座標 0～128、y 往上，跟圖示同一套。
+        private static readonly (string id, Color32 color, Func<float, float, bool> inside)[] ShapeCards =
+        {
+            ("shape_circle", new Color32(0xF2, 0x66, 0x4B, 0xFF), (x, y) => Inside.Circle(x, y, 64, 64, 50)),
+            ("shape_square", new Color32(0x3F, 0x8F, 0xD8, 0xFF), (x, y) => Inside.RoundRect(x, y, 18, 18, 110, 110, 5)),
+            ("shape_triangle", new Color32(0xF6, 0xC2, 0x3E, 0xFF), (x, y) => Inside.Polygon(x, y, (64, 112), (12, 22), (116, 22))),
+            ("shape_rectangle", new Color32(0x4B, 0xAF, 0x7A, 0xFF), (x, y) => Inside.RoundRect(x, y, 8, 34, 120, 94, 5)),
+            ("shape_star", new Color32(0xF5, 0x9A, 0x3C, 0xFF), (x, y) => Inside.Polygon(x, y, StarPoints)),
+            ("shape_heart", new Color32(0xEE, 0x6F, 0xA0, 0xFF), InsideHeart),
+            ("shape_oval", new Color32(0x8E, 0x6F, 0xD1, 0xFF), (x, y) =>
+            {
+                float u = (x - 64f) / 56f, v = (y - 64f) / 36f;
+                return u * u + v * v <= 1f;
+            }),
+            ("shape_diamond", new Color32(0x2F, 0xB3, 0xB0, 0xFF), (x, y) => Inside.Polygon(x, y, (64, 118), (104, 64), (64, 10), (24, 64)))
+        };
+
+        // 五角星：外圈半徑 56、內圈 23，尖端朝上
+        private static readonly (float x, float y)[] StarPoints = BuildStar(64f, 60f, 56f, 23f);
+
+        private static (float x, float y)[] BuildStar(float cx, float cy, float outer, float inner)
+        {
+            var points = new (float x, float y)[10];
+            for (int i = 0; i < 10; i++)
+            {
+                float angle = (90f + i * 36f) * Mathf.Deg2Rad;
+                float r = i % 2 == 0 ? outer : inner;
+                points[i] = (cx + Mathf.Cos(angle) * r, cy + Mathf.Sin(angle) * r);
+            }
+            return points;
+        }
+
+        // 愛心用隱函數 (u²+v²−1)³ − u²v³ ≤ 0，比兩個圓加三角形拼出來的圓滑
+        private static bool InsideHeart(float x, float y)
+        {
+            float u = (x - 64f) / 44f, v = (y - 56f) / 44f;
+            float a = u * u + v * v - 1f;
+            return a * a * a - u * u * v * v * v <= 0f;
+        }
+
+        /// <summary>形狀卡片組的八張圖與封面，存到 Art/Cards/Shapes 與 Art/Covers，檔名就是卡片代號。檔案在就不重畫。</summary>
+        public static void EnsureShapeCards()
+        {
+            string folder = BabyAppPaths.CardArt + "/Shapes";
+            Directory.CreateDirectory(folder);
+            bool any = false;
+
+            foreach (var (id, color, inside) in ShapeCards)
+            {
+                string path = folder + "/" + id + ".png";
+                if (File.Exists(path)) continue;
+
+                var canvas = new Canvas(512);
+                canvas.Fill(inside);
+                File.WriteAllBytes(path, canvas.ToPng(color));
+                any = true;
+            }
+
+            // 封面：圓、方、三角疊在一起
+            string cover = BabyAppPaths.CoverArt + "/cover_shapes.png";
+            if (!File.Exists(cover))
+            {
+                Directory.CreateDirectory(BabyAppPaths.CoverArt);
+                var square = new Canvas(512);
+                square.Fill((x, y) => Inside.RoundRect(x, y, 62, 56, 118, 112, 5));
+                var circle = new Canvas(512);
+                circle.Fill((x, y) => Inside.Circle(x, y, 42, 84, 30));
+                var triangle = new Canvas(512);
+                triangle.Fill((x, y) => Inside.Polygon(x, y, (62, 66), (22, 10), (102, 10)));
+                File.WriteAllBytes(cover, Canvas.ComposeMany(
+                    (square, ShapeCards[1].color),
+                    (circle, ShapeCards[0].color),
+                    (triangle, ShapeCards[2].color)));
+                any = true;
+            }
+
+            if (any) AssetDatabase.Refresh();
+        }
+
         // ---------- 每個圖示的畫法（座標 0～128，y 往上）----------
 
         private static void Draw(string name, Canvas c)

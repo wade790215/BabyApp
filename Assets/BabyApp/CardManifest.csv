@@ -68,3 +68,11 @@ body,身體,My Body,6,#FFB3C6,body_hands,手,Hands
 body,身體,My Body,6,#FFB3C6,body_feet,腳,Feet
 body,身體,My Body,6,#FFB3C6,body_hair,頭髮,Hair
 body,身體,My Body,6,#FFB3C6,body_tummy,肚子,Tummy
+shapes,形狀,Shapes,7,#5BC0EB,shape_circle,圓形,Circle
+shapes,形狀,Shapes,7,#5BC0EB,shape_square,正方形,Square
+shapes,形狀,Shapes,7,#5BC0EB,shape_triangle,三角形,Triangle
+shapes,形狀,Shapes,7,#5BC0EB,shape_rectangle,長方形,Rectangle
+shapes,形狀,Shapes,7,#5BC0EB,shape_star,星星,Star
+shapes,形狀,Shapes,7,#5BC0EB,shape_heart,愛心,Heart
+shapes,形狀,Shapes,7,#5BC0EB,shape_oval,橢圓形,Oval
+shapes,形狀,Shapes,7,#5BC0EB,shape_diamond,菱形,Diamond

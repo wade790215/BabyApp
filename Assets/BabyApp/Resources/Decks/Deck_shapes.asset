@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a777669fde13ff4ea83e5eca4a6fb67, type: 3}
+  m_Name: Deck_shapes
+  m_EditorClassIdentifier: Assembly-CSharp::BabyApp.Data.CardDeck
+  deckId: shapes
+  displayName: "\u5F62\u72C0"
+  displayNameEn: Shapes
+  cover: {fileID: 21300000, guid: 9600a879e3a84de489edb4f7f5a56cf2, type: 3}
+  fallbackSound: {fileID: 0}
+  themeColor: {r: 0.35686275, g: 0.7529412, b: 0.92156863, a: 1}
+  sortOrder: 7
+  cards:
+  - id: shape_circle
+    displayName: "\u5713\u5F62"
+    displayNameEn: Circle
+    image: {fileID: 21300000, guid: d2ce4d38bcbf2b14b95323933096da90, type: 3}
+    voice: {fileID: 8300000, guid: ee01992f7e76c5d4ca04515f8864b0db, type: 3}
+    voiceEn: {fileID: 8300000, guid: 91aab0c98ebb4154fbbecf33da087cf4, type: 3}
+    sound: {fileID: 0}
+  - id: shape_square
+    displayName: "\u6B63\u65B9\u5F62"
+    displayNameEn: Square
+    image: {fileID: 21300000, guid: 5c22cce10d1b8964da7b817fd047278a, type: 3}
+    voice: {fileID: 8300000, guid: 69523c0fb5f253c4f9d06ccd08e653a4, type: 3}
+    voiceEn: {fileID: 8300000, guid: e251ca3c35922c347a51d1f9f061794a, type: 3}
+    sound: {fileID: 0}
+  - id: shape_triangle
+    displayName: "\u4E09\u89D2\u5F62"
+    displayNameEn: Triangle
+    image: {fileID: 21300000, guid: 7558a92098dea6f478341ad60fd31569, type: 3}
+    voice: {fileID: 8300000, guid: 78542fcebaf3e404ca7e08721eb93ecb, type: 3}
+    voiceEn: {fileID: 8300000, guid: 1c0d9451fb401be46a59c362765644fa, type: 3}
+    sound: {fileID: 0}
+  - id: shape_rectangle
+    displayName: "\u9577\u65B9\u5F62"
+    displayNameEn: Rectangle
+    image: {fileID: 21300000, guid: 9c0f2f62e6b0a8c43a53b93b3a563845, type: 3}
+    voice: {fileID: 8300000, guid: 35fa6e989d6f92b4e9e14a086987dabb, type: 3}
+    voiceEn: {fileID: 8300000, guid: db43a1c65838b824ab293a7db18540c7, type: 3}
+    sound: {fileID: 0}
+  - id: shape_star
+    displayName: "\u661F\u661F"
+    displayNameEn: Star
+    image: {fileID: 21300000, guid: c7deb6791d8ba564b8134a38c343f625, type: 3}
+    voice: {fileID: 8300000, guid: 15cad78d7b3cdc7468de2b48c137a8e8, type: 3}
+    voiceEn: {fileID: 8300000, guid: 3371b4e74b72ef143af594f1447091ae, type: 3}
+    sound: {fileID: 0}
+  - id: shape_heart
+    displayName: "\u611B\u5FC3"
+    displayNameEn: Heart
+    image: {fileID: 21300000, guid: b3db2fed83c13ad4b83b8753742430dc, type: 3}
+    voice: {fileID: 8300000, guid: 5500c0828fa99514b8ec89113759c8e2, type: 3}
+    voiceEn: {fileID: 8300000, guid: a8d882983c98ce447805df224532fea9, type: 3}
+    sound: {fileID: 0}
+  - id: shape_oval
+    displayName: "\u6A62\u5713\u5F62"
+    displayNameEn: Oval
+    image: {fileID: 21300000, guid: 27fb8a205bbb7484c8d4174732fb4994, type: 3}
+    voice: {fileID: 8300000, guid: 6c55deec6091467408103f5b579fc17b, type: 3}
+    voiceEn: {fileID: 8300000, guid: c4939221bf5337c4290cb13c9d116ab4, type: 3}
+    sound: {fileID: 0}
+  - id: shape_diamond
+    displayName: "\u83F1\u5F62"
+    displayNameEn: Diamond
+    image: {fileID: 21300000, guid: 4a527c165dcbde9468d637ccb1d17209, type: 3}
+    voice: {fileID: 8300000, guid: 5e3a61532d9e3cc4ca835f35f5c1c21c, type: 3}
+    voiceEn: {fileID: 8300000, guid: 80560076f0cd8074cbd50491c2198d31, type: 3}
+    sound: {fileID: 0}

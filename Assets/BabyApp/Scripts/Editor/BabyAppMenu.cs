@@ -22,8 +22,9 @@ namespace BabyApp.EditorTools
         [MenuItem("BabyApp/2. 匯入卡片素材", priority = 20)]
         public static void ImportCards()
         {
-            // 顏色卡片組的圖是程式畫的，先確定它們在，匯入才接得上
+            // 顏色與形狀兩組卡片的圖是程式畫的，先確定它們在，匯入才接得上
             BabyAppUiSprites.EnsureColorCards();
+            BabyAppUiSprites.EnsureShapeCards();
             BabyAppDeckImporter.Import();
         }
 
