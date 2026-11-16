@@ -97,10 +97,27 @@ visible, filling most of the frame.
 | `vehicle_boat.png` | 船 | a small wooden boat with a white sail, side view |
 | `vehicle_bicycle.png` | 腳踏車 | a blue bicycle, side view |
 | `vehicle_motorcycle.png` | 機車 | a red scooter, side view |
-| `vehicle_firetruck.png` | 消防車 | a red fire engine with a ladder, side view |
-| `vehicle_ambulance.png` | 救護車 | a white ambulance with a red cross, side view |
-| `vehicle_police.png` | 警車 | a white and blue police car, side view |
+| `vehicle_firetruck.png` | 消防車 | a red fire engine with a ladder on top, side view |
+| `vehicle_ambulance.png` | 救護車 | a cream-white ambulance (body color warm cream #f3eedf, not pure white) with a red cross on the side and light blue windows, side view |
+| `vehicle_police.png` | 警車 | a police car, cream-white body (warm cream #f3eedf, not pure white) with a blue stripe along the side, a small blue light on the roof and light blue windows, side view |
 | `vehicle_excavator.png` | 挖土機 | a yellow excavator with its arm lowered, side view |
+
+白色的車身一定要寫成米白（`cream-white … not pure white`）：純白主體在白底上去背時會整塊被淹掉。
+
+### 工程車（8 張）— 存到 `Assets/BabyApp/Art/Cards/Construction/`
+
+2026-11-16 用這些 Subject 生的，黃橘色系為主、每台顏色錯開好分辨。
+
+| 檔名 | 中文名 | Subject |
+|---|---|---|
+| `construction_excavator.png` | 挖土機 | a yellow excavator with a digging arm and bucket on tracks, side view |
+| `construction_bulldozer.png` | 推土機 | an orange bulldozer with a big flat blade in front, on tracks, light blue window, side view |
+| `construction_crane.png` | 吊車 | a yellow mobile crane truck with a long raised boom and a hook hanging from it, light blue window, side view |
+| `construction_mixer.png` | 水泥攪拌車 | a cement mixer truck with an orange cab and a big tilted light-grey mixing drum with two orange stripes, light blue window, side view |
+| `construction_dump.png` | 砂石車 | a dump truck with a green cab and a yellow open-top tipping box filled with a heap of brown gravel, light blue window, side view |
+| `construction_roller.png` | 壓路機 | a yellow road roller with one huge dark slate roller drum in front and a big wheel at the back, small cab with light blue window, side view |
+| `construction_forklift.png` | 堆高機 | an orange forklift with a tall mast and two forks in front lifting one brown wooden crate, open cab with a roof frame, side view |
+| `construction_loader.png` | 鏟裝機 | a yellow wheel loader with four big round wheels (no tracks) and a wide scoop bucket raised in front on two arms, cab with light blue window, side view |
 
 ### 主題封面（3 張，可選）
 
