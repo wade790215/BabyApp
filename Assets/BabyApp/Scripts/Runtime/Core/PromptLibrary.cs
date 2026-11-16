@@ -4,7 +4,7 @@ namespace BabyApp.Core
 {
     /// <summary>
     /// 吉祥物說的那些話：「在哪裡？」「答對了！」「一、二、三」。中英各一套，照設定的語言拿。
-    /// 音檔在 Assets/BabyApp/Audio/Prompts/，由 tools/make-prompts.ps1 產生，想換成自己錄的同名蓋掉。
+    /// 音檔在 Assets/BabyApp/Audio/Prompts/，由 tools/make-voices-azure.py --prompts 產生（清單在 tools/prompts.csv），想換成自己錄的同名蓋掉。
     /// </summary>
     public class PromptLibrary : MonoBehaviour
     {
@@ -21,6 +21,7 @@ namespace BabyApp.Core
         [SerializeField] private AudioClip sameZh;         // 「一樣的在哪裡？」（配對）
         [SerializeField] private AudioClip comeOnZh;       // 「來玩吧！」（閒置太久）
         [SerializeField] private AudioClip doneZh;         // 「拼好了！」（拼圖）
+        [SerializeField] private AudioClip fullZh;         // 「我吃飽了！」（餵小熊）
         [SerializeField] private AudioClip[] numbersZh;    // 一～五
 
         [Header("English")]
@@ -34,6 +35,7 @@ namespace BabyApp.Core
         [SerializeField] private AudioClip sameEn;
         [SerializeField] private AudioClip comeOnEn;
         [SerializeField] private AudioClip doneEn;
+        [SerializeField] private AudioClip fullEn;
         [SerializeField] private AudioClip[] numbersEn;
 
         private void Awake()
@@ -57,6 +59,7 @@ namespace BabyApp.Core
         public AudioClip Same => En ? sameEn : sameZh;
         public AudioClip ComeOn => En ? comeOnEn : comeOnZh;
         public AudioClip Done => En ? doneEn : doneZh;
+        public AudioClip Full => En ? fullEn : fullZh;
 
         /// <summary>「狗狗在哪裡？」：中文是 名稱→在哪裡，英文是 Where is the→名稱，語序不同。</summary>
         public AudioClip[] WhereIs(AudioClip name)

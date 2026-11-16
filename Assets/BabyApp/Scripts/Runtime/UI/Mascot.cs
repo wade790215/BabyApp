@@ -22,6 +22,10 @@ namespace BabyApp.UI
 
         [SerializeField] private float breathAmount = 0.015f;
 
+        [Tooltip("嚼東西時上下壓扁的幅度與速度（餵小熊用）")]
+        [SerializeField] private float chewAmount = 0.05f;
+        [SerializeField] private float chewSpeed = 22f;
+
         [Tooltip("多久沒人碰螢幕就招手說「來玩吧」；0 = 不要。放到 60 秒：小孩發呆也是在玩，不要一直催")]
         [SerializeField] private float idleNudgeSeconds = 60f;
 
@@ -30,6 +34,7 @@ namespace BabyApp.UI
         private Coroutine _jump;
         private float _breathPhase;
         private float _idle;
+        private float _chewLeft;
         private Vector2 _jumpHome;
         private Vector2 _jumpLastSet;
 
@@ -48,6 +53,7 @@ namespace BabyApp.UI
             // 跳到一半被關掉，先放回地面，不然下次打開會浮在半空
             if (_jump != null && _rt != null) _rt.anchoredPosition = _jumpHome;
             _jump = null;
+            _chewLeft = 0f;
         }
 
         private void Update()
@@ -55,7 +61,17 @@ namespace BabyApp.UI
             // 慢慢呼吸，活著的感覺
             _breathPhase += Time.unscaledDeltaTime * 1.4f;
             float s = 1f + Mathf.Sin(_breathPhase) * breathAmount;
-            _rt.localScale = new Vector3(s, 1f + (s - 1f) * 0.6f, 1f);
+            float sx = s, sy = 1f + (s - 1f) * 0.6f;
+
+            // 嚼：上下壓扁、左右微微鼓出去。這裡每幀都會覆寫縮放，所以嚼只能併在這裡做
+            if (_chewLeft > 0f)
+            {
+                _chewLeft -= Time.unscaledDeltaTime;
+                float k = Mathf.Abs(Mathf.Sin(_chewLeft * chewSpeed)) * chewAmount;
+                sx *= 1f + k * 0.6f;
+                sy *= 1f - k;
+            }
+            _rt.localScale = new Vector3(sx, sy, 1f);
 
             // 小孩分心太久，小熊跳一下、喊一聲把他叫回來
             if (idleNudgeSeconds <= 0f) return;
@@ -92,6 +108,13 @@ namespace BabyApp.UI
             if (_hold != null) StopCoroutine(_hold);
             _hold = StartCoroutine(BackToIdle(seconds));
             if (jump) Jump();
+        }
+
+        /// <summary>嚼幾秒（咔滋咔滋）。只動縮放，不換表情，可以跟 React 一起用。</summary>
+        public void Chew(float seconds)
+        {
+            _idle = 0f;
+            _chewLeft = Mathf.Max(_chewLeft, seconds);
         }
 
         public void Jump()

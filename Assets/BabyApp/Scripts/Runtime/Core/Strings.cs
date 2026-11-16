@@ -13,6 +13,7 @@ namespace BabyApp.Core
             {
                 ["title"] = ("我會認東西", "Look and Learn"),
                 ["paint"] = ("畫畫", "Paint"),
+                ["feed"] = ("餵小熊", "Feed Bear"),
                 ["settings"] = ("設定", "Settings"),
                 ["sfx"] = ("音效", "Sounds"),
                 ["voice"] = ("語音", "Voice"),

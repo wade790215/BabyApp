@@ -166,6 +166,25 @@ namespace BabyApp.EditorTools
             return AssetDatabase.LoadAssetAtPath<Sprite>(path);
         }
 
+        /// <summary>餵小熊的盤子：白色圓盤、中間一圈淡淡的米色盤底，平塗無框線。</summary>
+        public static Sprite EnsurePlate()
+        {
+            string path = BabyAppPaths.UiArt + "/plate.png";
+            var existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (existing != null) return existing;
+
+            Directory.CreateDirectory(BabyAppPaths.UiArt);
+            var rim = new Canvas(512);
+            rim.Fill((x, y) => Inside.Circle(x, y, 64, 64, 62));
+            var well = new Canvas(512);
+            well.Fill((x, y) => Inside.Circle(x, y, 64, 64, 46));
+            File.WriteAllBytes(path, Canvas.ComposeMany(
+                (rim, Color.white),
+                (well, new Color32(0xF3, 0xEE, 0xE2, 0xFF))));
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+
         /// <summary>顏色卡片組的八顆色球，存到 Art/Cards/Colors，檔名就是卡片代號。</summary>
         public static void EnsureColorCards()
         {
@@ -376,6 +395,16 @@ namespace BabyApp.EditorTools
 
                 case "play":
                     c.Fill((x, y) => Inside.Polygon(x, y, (40, 22), (40, 106), (108, 64)));
+                    break;
+
+                case "bowl":
+                    // 一個碗，上面冒出一顆圓圓的水果和一片葉子（餵小熊）
+                    c.Fill((x, y) => Inside.Circle(x, y, 64, 64, 52));
+                    c.Cut((x, y) => Inside.Rect(x, y, 0, 60, 128, 128));              // 只留下半圓＝碗身
+                    c.Fill((x, y) => Inside.RoundRect(x, y, 8, 54, 120, 66, 6));     // 碗口
+                    c.Fill((x, y) => Inside.RoundRect(x, y, 44, 6, 84, 16, 4));      // 碗腳
+                    c.Fill((x, y) => Inside.Circle(x, y, 60, 88, 20));               // 水果
+                    c.Fill((x, y) => Inside.RotatedRect(x, y, 78, 112, 22, 10, 35f)); // 葉子
                     break;
 
                 default:

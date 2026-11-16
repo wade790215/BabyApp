@@ -14,6 +14,7 @@ prompt_yummy,zh,嗯～好好吃！
 prompt_same,zh,一樣的在哪裡呀？
 prompt_come_on,zh,來玩吧！
 prompt_done,zh,拼好了！好棒！
+prompt_full,zh,我吃飽了！
 prompt_where_en,en,Where is the
 prompt_whose_sound_en,en,Whose sound is this?
 prompt_correct_en,en,That's right! Great job!
@@ -29,6 +30,7 @@ prompt_yummy_en,en,"Mmm, yummy!"
 prompt_same_en,en,Which one is the same?
 prompt_come_on_en,en,Let's play!
 prompt_done_en,en,Yay! You did it!
+prompt_full_en,en,I'm full!
 family_dad,zh,爸爸
 family_mom,zh,媽媽
 family_grandpa,zh,阿公

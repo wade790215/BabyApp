@@ -39,6 +39,7 @@ namespace BabyApp.EditorTools
         private static readonly Color Sky = new Color32(0x6F, 0xCB, 0xFF, 0xFF);         // 找一找
         private static readonly Color Sun = new Color32(0xFF, 0xD1, 0x66, 0xFF);         // 數數
         private static readonly Color Rose = new Color32(0xFF, 0x9E, 0xC4, 0xFF);        // 摸一摸
+        private static readonly Color Lime = new Color32(0xB5, 0xE0, 0x6C, 0xFF);        // 餵小熊
         private static readonly Color ShadowColor = new Color(0f, 0f, 0f, 0.16f);
 
         // 白邊寬度，卡片與按鈕共用，整體才像同一套
@@ -84,7 +85,7 @@ namespace BabyApp.EditorTools
 
             _font = BabyAppFontSetup.EnsureFont();
             Icons.Clear();
-            foreach (var name in new[] { "arrow", "house", "mic", "eraser", "picture", "gear", "magnifier", "count", "play", "cards", "paw", "match", "puzzle" })
+            foreach (var name in new[] { "arrow", "house", "mic", "eraser", "picture", "gear", "magnifier", "count", "play", "cards", "paw", "match", "puzzle", "bowl" })
             {
                 Icons[name] = BabyAppUiSprites.EnsureIcon(name);
             }
@@ -113,13 +114,14 @@ namespace BabyApp.EditorTools
             var match = CreateMatchScreen(safeRoot);
             var puzzle = CreatePuzzleScreen(safeRoot);
             var paint = CreatePaintScreen(safeRoot);
+            var feed = CreateFeedScreen(safeRoot);
             var settings = CreateSettingsScreen(safeRoot);
             var familyEdit = CreateFamilyEditScreen(safeRoot);
 
             var deckButton = BuildDeckButtonPrefab();
             Wire(deckPick, ("buttonPrefab", deckButton));
 
-            CreateAppRoot(home, deckPick, deck, touch, find, count, match, puzzle, paint, settings, familyEdit);
+            CreateAppRoot(home, deckPick, deck, touch, find, count, match, puzzle, paint, feed, settings, familyEdit);
 
             deckPick.gameObject.SetActive(false);
             deck.gameObject.SetActive(false);
@@ -129,6 +131,7 @@ namespace BabyApp.EditorTools
             match.gameObject.SetActive(false);
             puzzle.gameObject.SetActive(false);
             paint.gameObject.SetActive(false);
+            feed.gameObject.SetActive(false);
             settings.gameObject.SetActive(false);
             familyEdit.gameObject.SetActive(false);
 
@@ -195,8 +198,8 @@ namespace BabyApp.EditorTools
         }
 
         private static void CreateAppRoot(HomeScreen home, DeckPickScreen deckPick, DeckScreen deck, TouchScreen touch,
-            FindScreen find, CountScreen count, MatchScreen match, PuzzleScreen puzzle, PaintScreen paint, SettingsScreen settings,
-            FamilyEditScreen familyEdit)
+            FindScreen find, CountScreen count, MatchScreen match, PuzzleScreen puzzle, PaintScreen paint, FeedScreen feed,
+            SettingsScreen settings, FamilyEditScreen familyEdit)
         {
             var go = new GameObject("AppRoot");
             var voiceSource = go.AddComponent<AudioSource>();
@@ -228,6 +231,7 @@ namespace BabyApp.EditorTools
                 ("sameZh", Prompt("prompt_same")),
                 ("comeOnZh", Prompt("prompt_come_on")),
                 ("doneZh", Prompt("prompt_done")),
+                ("fullZh", Prompt("prompt_full")),
                 ("whereEn", Prompt("prompt_where_en")),
                 ("whoseSoundEn", Prompt("prompt_whose_sound_en")),
                 ("correctEn", Prompt("prompt_correct_en")),
@@ -237,7 +241,8 @@ namespace BabyApp.EditorTools
                 ("yummyEn", Prompt("prompt_yummy_en")),
                 ("sameEn", Prompt("prompt_same_en")),
                 ("comeOnEn", Prompt("prompt_come_on_en")),
-                ("doneEn", Prompt("prompt_done_en")));
+                ("doneEn", Prompt("prompt_done_en")),
+                ("fullEn", Prompt("prompt_full_en")));
             WireArray(prompts, "numbersZh", Prompt("num_1"), Prompt("num_2"), Prompt("num_3"), Prompt("num_4"), Prompt("num_5"));
             WireArray(prompts, "numbersEn", Prompt("num_1_en"), Prompt("num_2_en"), Prompt("num_3_en"), Prompt("num_4_en"), Prompt("num_5_en"));
 
@@ -257,6 +262,7 @@ namespace BabyApp.EditorTools
                 ("matchScreen", match),
                 ("puzzleScreen", puzzle),
                 ("paintScreen", paint),
+                ("feedScreen", feed),
                 ("settingsScreen", settings),
                 ("familyEditScreen", familyEdit));
         }
@@ -270,7 +276,7 @@ namespace BabyApp.EditorTools
                 clip = AssetDatabase.LoadAssetAtPath<AudioClip>(BabyAppPaths.PromptAudio + "/" + name + ext);
                 if (clip != null) break;
             }
-            if (clip == null) Debug.LogWarning("[BabyApp] 找不到提示語音 " + name + "，請跑 python tools/make-voices-edge.py --prompts。");
+            if (clip == null) Debug.LogWarning("[BabyApp] 找不到提示語音 " + name + "，請跑 python tools/make-voices-azure.py --voice zh-TW-HsiaoYuNeural --prompts --only " + name + "。");
             return clip;
         }
 
@@ -282,7 +288,8 @@ namespace BabyApp.EditorTools
             var home = screen.gameObject.AddComponent<HomeScreen>();
 
             // 首頁不放標題：小孩不認字，空間留給格子
-            // 七個大格自動排 4×2：卡片、摸一摸、找一找、數數、配對、拼圖、畫畫。主題選擇在「卡片」裡面
+            // 八個大格自動排 4×2：卡片、摸一摸、找一找、數數、配對、拼圖、畫畫、餵小熊。主題選擇在「卡片」裡面
+            // 新玩法一律接在最後面：小孩已經記住前面幾格的位置，不要打亂
             var grid = CreateChild("TileGrid", screen);
             Anchor(grid, new Vector2(0.06f, 0.05f), new Vector2(0.94f, 0.9f));
             grid.gameObject.AddComponent<GridLayoutGroup>();
@@ -295,6 +302,7 @@ namespace BabyApp.EditorTools
             var matchButton = CreateFeatureTile("MatchButton", grid, "match", "match", Mint);
             var puzzleButton = CreateFeatureTile("PuzzleButton", grid, "puzzle", "puzzle", CoverYellow);
             var paintButton = CreatePaintButton(grid);
+            var feedButton = CreateFeatureTile("FeedButton", grid, "bowl", "feed", Lime);
 
             var (settingsButton, _) = CreateHoldButton("SettingsButton", screen, "gear", Mint,
                 new Vector2(1f, 1f), new Vector2(-90f, -90f), 130f);
@@ -308,6 +316,7 @@ namespace BabyApp.EditorTools
                 ("matchButton", matchButton),
                 ("puzzleButton", puzzleButton),
                 ("paintButton", paintButton),
+                ("feedButton", feedButton),
                 ("settingsButton", settingsButton),
                 ("mascot", mascot));
             return home;
@@ -829,6 +838,68 @@ namespace BabyApp.EditorTools
                 ("itemTemplate", cellButton),
                 ("numberLabel", number));
             return count;
+        }
+
+        // ---------- 餵小熊 ----------
+
+        /// <summary>
+        /// 餵小熊：左邊一隻大小熊（是目標，不能拖走），右邊三個盤子排成弧形，中間那個最靠近小熊。
+        /// 建立順序就是疊放順序：小熊 → 盤子 → Field（食物在這層，蓋在小熊上面）→ 回首頁鈕。
+        /// </summary>
+        private static FeedScreen CreateFeedScreen(Transform parent)
+        {
+            var screen = CreateScreen("FeedScreen", parent);
+            var feed = screen.gameObject.AddComponent<FeedScreen>();
+
+            var (mascot, handle) = CreateMascot(screen, new Vector2(0.5f, 0.5f), Vector2.zero, 190f);
+            var mascotRt = (RectTransform)mascot.transform;
+            Anchor(mascotRt, new Vector2(0.06f, 0.08f), new Vector2(0.50f, 0.92f));
+            Object.DestroyImmediate(handle); // 這頁的小熊是餵食的目標，被拖走就沒地方餵了
+            var mascotButton = mascot.gameObject.AddComponent<Button>();
+            mascotButton.targetGraphic = mascot.GetComponent<Image>();
+            mascotButton.transition = Selectable.Transition.None;
+
+            var slotAnchors = new[]
+            {
+                (new Vector2(0.62f, 0.68f), new Vector2(0.84f, 0.94f)),
+                (new Vector2(0.56f, 0.37f), new Vector2(0.78f, 0.63f)),
+                (new Vector2(0.62f, 0.06f), new Vector2(0.84f, 0.32f))
+            };
+            var slots = new RectTransform[slotAnchors.Length];
+            for (int i = 0; i < slots.Length; i++)
+            {
+                slots[i] = CreateChild("Slot" + i, screen);
+                Anchor(slots[i], slotAnchors[i].Item1, slotAnchors[i].Item2);
+
+                var plate = CreateImage("Plate", slots[i], BabyAppUiSprites.EnsurePlate(), Color.white);
+                plate.preserveAspect = true;
+                plate.raycastTarget = false;
+                Stretch(plate.rectTransform);
+                AddShadow(plate.gameObject);
+            }
+
+            // 食物都生在這層；它自己沒有圖，不會擋到點小熊
+            var field = CreateChild("Field", screen);
+            Stretch(field);
+
+            var food = CreateImage("FoodTemplate", field, null, Color.white);
+            food.preserveAspect = true;
+            food.raycastTarget = true;
+            Size(food.rectTransform, new Vector2(200f, 200f));
+            var foodItem = food.gameObject.AddComponent<FoodItem>();
+            Wire(foodItem, ("image", food));
+            food.gameObject.SetActive(false);
+
+            var (home, _) = CreateHomeButton(screen);
+
+            Wire(feed,
+                ("mascot", mascot),
+                ("mascotButton", mascotButton),
+                ("homeButton", home),
+                ("field", field),
+                ("foodTemplate", foodItem));
+            WireArray(feed, "slots", slots);
+            return feed;
         }
 
         // ---------- 配對 ----------

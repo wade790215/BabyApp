@@ -4,7 +4,7 @@
 
 ## 一句話
 
-單場景 Unity 6000.5 / URP / 新版 Input System 的 iPad+Android 橫向 App。首頁七格：卡片（進去再選主題）、摸一摸、找一找、數數、配對、拼圖、畫畫；角落長按「設」進家長設定。風格「軟圓淡色」（淡粉彩背景、白邊圓角方塊、柔和陰影、圓形圖示按鈕、蜂蜜小熊吉祥物）。中英文可切換。
+單場景 Unity 6000.5 / URP / 新版 Input System 的 iPad+Android 橫向 App。首頁八格：卡片（進去再選主題）、摸一摸、找一找、數數、配對、拼圖、畫畫、餵小熊（新玩法一律接在最後，不動前面幾格的位置）；角落長按「設」進家長設定。風格「軟圓淡色」（淡粉彩背景、白邊圓角方塊、柔和陰影、圓形圖示按鈕、蜂蜜小熊吉祥物）。中英文可切換。
 
 ## 鐵律
 
@@ -16,7 +16,8 @@
 - **卡片內容在 `Assets/BabyApp/CardManifest.csv`**（8 欄：deckId,deckName,deckNameEn,sortOrder,themeColor,cardId,cardName,cardNameEn）。加卡、加主題只改 CSV。
 - **版面全部用錨點百分比**，不用固定像素；`EvenStrip`（一條線平均排、太寬或太高都整條縮、子物件 SetActive 會自動重排）、`ResponsiveGrid`（正方形格子自動排）、`SafeAreaFitter`（瀏海）。**UGUI 的 Best Fit 只為寬度縮字、不管高度**：文字框的高一定要 ≥ 最大字級，不然字會撐出框疊到別的東西上（家人卡頁踩過）。
 - 介面文字走 `Strings.Get(key)` + `LocalizedText`；小熊台詞走 `PromptLibrary`（`tools/prompts.csv` → `python tools/make-voices-azure.py --voice zh-TW-HsiaoYuNeural --prompts`）；設定走 `AppSettings`（PlayerPrefs）。
-- **我（Claude）可以直接操作 Unity**：`UnityMCP` MCP server（CoplayDev MCP for Unity，套件釘在 `Packages/manifest.json` 的 `com.coplaydev.unity-mcp`）打進你開著的編輯器，不是 batchmode、不搶 lock。常用：`read_console` 看編譯錯誤、`execute_menu_item` 跑「BabyApp → 2」、重建場景用 `execute_code` 呼叫 `BabyApp.EditorTools.BabyAppSceneBuilder.BuildScene(false)`（選單 3 會跳確認框卡住 MCP；同一次 domain reload 內第二次重建曾炸在 Input System 的 `AssignDefaultActions`，`CreateEventSystem()` 已繞掉，炸了先看那裡；Play 模式中兩種都會被擋，先 `manage_editor stop`）、`manage_scene`／`manage_gameobject` 檢查 Builder 建出來的階層、`unity_reflect`／`unity_docs` 查證 Unity API（別憑記憶猜，容易幻想出不存在的 API）。
+- **父物件的 `OnEnable` 比子物件的 `Awake` 早跑**（畫面第一次被 `SetActive(true)` 時）：畫面腳本在 `OnEnable` 裡呼叫子元件的方法，子元件在 `Awake` 才設的欄位還是空的。`PaintCanvas` 就這樣在第一次進畫畫頁時丟過 NullReference；子元件要被父物件提早呼叫的方法，自己要會補抓元件。
+- **我（Claude）可以直接操作 Unity**：`UnityMCP` MCP server（CoplayDev MCP for Unity，套件釘在 `Packages/manifest.json` 的 `com.coplaydev.unity-mcp`）打進你開著的編輯器，不是 batchmode、不搶 lock。常用：`read_console` 看編譯錯誤、`execute_menu_item` 跑「BabyApp → 2」、重建場景用 `execute_code` 呼叫 `BabyApp.EditorTools.BabyAppSceneBuilder.BuildScene(false)`（選單 3 會跳確認框卡住 MCP；同一次 domain reload 內第二次重建曾炸在 Input System 的 `AssignDefaultActions`，`CreateEventSystem()` 已繞掉，炸了先看那裡；Play 模式中兩種都會被擋，先 `manage_editor stop`）、`manage_scene`／`manage_gameobject` 檢查 Builder 建出來的階層、`manage_editor play` 進 Play 後用 `execute_code` 直接呼叫畫面上的元件（`button.onClick.Invoke()`、`item.OnPointerClick(...)`）再 `read_console`，可以驗流程不會丟例外；`ScreenCapture.CaptureScreenshot` 存到 `Temp/shots/` 再用 Read 看圖能抓版面大問題（每次 MCP 呼叫來回要幾秒，抓不到一兩秒內的中間狀態；使用者可能同時在點同一個 Play 視窗）、`unity_reflect`／`unity_docs` 查證 Unity API（別憑記憶猜，容易幻想出不存在的 API）。
 - **Unity 內建的 `com.unity.ai.assistant` 已經移除**（2026-11-05）。它和 CoplayDev 的套件各起一支 relay、搶同一條路，當初 MCP 一直接不上就是這樣來的。不要「順手裝回去」——要裝回去是一個要先想清楚的決定，不是補遺漏。
 - **MCP 的前提**：Unity 要開著，且 MCP 視窗（`Window → MCP for Unity → Toggle MCP Window`，`Ctrl+Shift+M`）的本機 HTTP server 在 8080 跑著；`MCPForUnity.AutoStartOnLoad` 打開就會隨編輯器自動起。接不上時依序查：8080 有沒有人聽 → `Library/MCPForUnity/Logs/server-launch-8080.log` 有沒有 `Plugin registered: BabyApp` → `~/.claude.json` 的專案層有沒有 `"UnityMCP": {"type": "http", "url": "http://127.0.0.1:8080/mcp"}`。注意 MCP 視窗裡按 Configure 只會寫給當下選到的那個 client，選錯會把 Claude Code 的註冊清掉。
 - Unity 或 MCP 連不上時的退路：scratchpad 的 `typecheck.csproj`（netstandard2.1，參照 `D:\UnityEditor\6000.5.1f1\Editor\Data\Managed\UnityEngine\*Module.dll` + `Library/ScriptAssemblies` 的 UI/InputSystem/URP）做型別檢查，然後請使用者在 Unity 裡跑選單。
@@ -32,13 +33,13 @@
 ## 程式地圖（Assets/BabyApp/Scripts）
 
 - Runtime/Data：`FamilyLibrary`（家人相片卡：8 個槽位、persistentDataPath/family 的 jpg+wav、組出執行時的 `CardDeck`，**不進 `DeckLibrary`**，只有 `DeckPickScreen` 會多加它）、`CardEntry`（`LocalizedName/LocalizedVoice`、`HasImage`）、`CardDeck`（`PlayableCards()` 有圖優先、整組沒圖退回純文字；`fallbackSound`）、`DeckLibrary`（Resources/Decks）、`ColorPalette`（顏色卡整張填色，Editor 畫色球共用）
-- Runtime/Core：`PhotoPicker`（包 NativeGallery 從相簿挑圖＋GPU 逐半縮圖到長邊 1024；Android 設免權限模式）、`AppRoot`（畫面切換）、`AppSettings`（音效/語音/背景/語言/顯示文字；**沒有音樂**，2026-11-13 整個拿掉，Pok Pok 也不放配樂）、`Strings`、`LocalizedText`、`VoiceService`（語音/音效兩軌，`PlaySequence` 串播：語音一定念完、叫聲用 `VoiceService.Sound(clip)` 包才砍 2.5 秒；畫面換題前 `yield return VoiceService.WaitForSpeech(0.5f)` 等小熊講完，不猜秒數；音效五個 `Audio/SFX/sfx_{tap,page,door,correct,chew}`，程式合成的木頭聲（低短圓），`PlayCorrect` 一回合只響一次；要換實物錄音就丟同基底名的 .wav/.ogg/.mp3 並刪掉合成檔；想重新合成就刪 `sfx_*.wav` 再跑選單 3，檔案在就不會重做）、`PromptLibrary`（在哪裡／這是誰的聲音／答對了／再試試看／全部數完了／在這裡／好吃／一樣的在哪裡／來玩吧／拼好了／一～五）、`VoiceRecorder`+`WavFile`+`RecordingStore`（錄音存 persistentDataPath/recordings）、`UsageStats`、`ThemedBackground`、`SafeAreaFitter`、`HoldButton`（長按）、`Pulse`、`TapReaction`（三種輕微動畫隨機挑、無星星、無旋轉）
+- Runtime/Core：`PhotoPicker`（包 NativeGallery 從相簿挑圖＋GPU 逐半縮圖到長邊 1024；Android 設免權限模式）、`AppRoot`（畫面切換）、`AppSettings`（音效/語音/背景/語言/顯示文字；**沒有音樂**，2026-11-13 整個拿掉，Pok Pok 也不放配樂）、`Strings`、`LocalizedText`、`VoiceService`（語音/音效兩軌，`PlaySequence` 串播：語音一定念完、叫聲用 `VoiceService.Sound(clip)` 包才砍 2.5 秒；畫面換題前 `yield return VoiceService.WaitForSpeech(0.5f)` 等小熊講完，不猜秒數；音效五個 `Audio/SFX/sfx_{tap,page,door,correct,chew}`，程式合成的木頭聲（低短圓），`PlayCorrect` 一回合只響一次；要換實物錄音就丟同基底名的 .wav/.ogg/.mp3 並刪掉合成檔；想重新合成就刪 `sfx_*.wav` 再跑選單 3，檔案在就不會重做）、`PromptLibrary`（在哪裡／這是誰的聲音／答對了／再試試看／全部數完了／在這裡／好吃／一樣的在哪裡／來玩吧／拼好了／我吃飽了／一～五）、`VoiceRecorder`+`WavFile`+`RecordingStore`（錄音存 persistentDataPath/recordings）、`UsageStats`、`ThemedBackground`、`SafeAreaFitter`、`HoldButton`（長按）、`Pulse`、`TapReaction`（三種輕微動畫隨機挑、無星星、無旋轉）
 - Runtime/UI：
   - 家長：`FamilyEditScreen`（家人卡 8 格 4×2，從設定頁「家人卡」進、關閉回設定頁）、`FamilySlotView`（一格：選照片／按住錄稱呼／聽／按住刪）
-  - 導覽：`HomeScreen`（七格）、`DeckPickScreen`（選主題，每組一格封面）、`DeckButton`、`TileLabelToggle`、`SettingsScreen`、`ToggleRow`
+  - 導覽：`HomeScreen`（八格）、`DeckPickScreen`（選主題，每組一格封面）、`DeckButton`、`TileLabelToggle`、`SettingsScreen`、`ToggleRow`
   - 卡片：`DeckScreen`（新主題前 `coveredCardsPerDeck`=3 張蓋「？」，之後直接看；滑到底自動接下一組 `chainDecks`；拖曳換卡、錄音、自動播放）、`CardView`、`CardDoor`（蓋子，`Dismiss()` 直接不蓋）、`DraggableCard`、`RecordButton`
-  - 遊戲：`TouchScreen`（摸一摸：6 格點誰誰叫，點小熊換頁）、`FindScreen`（兩選一，名稱或叫聲出題）、`CountScreen`（點一個念一個數，東西飛進小熊嘴裡咔滋）、`MatchScreen`（左一張樣子、右三張選一樣的）、`PuzzleScreen`+`PuzzlePiece`（2×2 拼圖，前兩回合 2 片，寬鬆吸附，底下淡淡完整圖）、`PaintScreen`+`PaintCanvas`+`PictureCell`（24 色色盤、三種粗細、選底圖）
-  - 共用：`Mascot`（表情、呼吸、跳）、`DraggableWidget`（小熊可拖、點一下發 Tapped）、`EvenStrip`、`ResponsiveGrid`
+  - 遊戲：`TouchScreen`（摸一摸：6 格點誰誰叫，點小熊換頁）、`FindScreen`（兩選一，名稱或叫聲出題）、`CountScreen`（點一個念一個數，東西飛進小熊嘴裡咔滋）、`MatchScreen`（左一張樣子、右三張選一樣的）、`PuzzleScreen`+`PuzzlePiece`（2×2 拼圖，前兩回合 2 片，寬鬆吸附，底下淡淡完整圖）、`PaintScreen`+`PaintCanvas`+`PictureCell`（24 色色盤、三種粗細、選底圖）、`FeedScreen`+`FoodItem`（餵小熊，2026-11-16：左邊大小熊、右邊三盤水果，點一下或拖到小熊身上就吃掉，只有一步；吃 5 口說「我吃飽了」再重新上三盤；食物只從 `foodDeckIds`＝fruits 來；規格在 `docs/specs/2026-11-16-餵小熊.md`）
+  - 共用：`Mascot`（表情、呼吸、跳、`Chew` 嚼；`Update` 每幀覆寫縮放，要加動作只能併在那裡）、`DraggableWidget`（小熊可拖、點一下發 Tapped）、`EvenStrip`、`ResponsiveGrid`
 - Editor：`BabyAppSceneBuilder`（建場景）、`BabyAppDeckImporter`（CSV→Deck 資產）、`BabyAppUiSprites`（程式畫圖示/色球/形狀卡/圓角底圖/小熊佔位）、`BabyAppSfxGenerator`（合成介面音效）、`BabyAppFontSetup`（標楷體→發佈前換 Noto Sans TC）、`BabyAppTextureImportRules`（Art 下自動設 Sprite、roundrect 九宮格邊）、`BabyAppPlayerSetup`、`BabyAppBuilder`、`BabyAppMenu`、`BabyAppPaths`
 
 ## 素材現況（2026-11-04）
@@ -63,6 +64,10 @@
 **節奏（會咬人）**：一張 ~40～65 秒。**圖還沒出現就送下一句，前一句的回覆會變成空的**，之後那個對話就壞了（兩句都空）；所以每送一句就輪詢 `img` 數量（naturalWidth ≥ 512、排除 gstatic）確認多了一張才送下一句，一句最多等 ~2 分鐘，沒圖就重送同一句一次（2026-11-13 水果 9 張：西瓜、鳳梨各空一次、重送就有，其餘一次過）。輪詢放在頁面 JS 裡等（`await __wait(n, 38000)`），**單次 `javascript_tool` 超過 45 秒會 CDP 逾時**，所以一次最多等 38 秒、多叫幾次。每一組卡用**新對話**，第一句貼完整風格段落 + 主體，之後只貼「Same style exactly (flat hand-cut paper, solid fills, NO outlines, …). Subject: …」。**模式要是「4 Hydrogen」**（右下角模式挑選器）：額度用完後 Gemini 會自己切到「3.5 Flash-Lite」，隔天也不會切回來，Flash-Lite 畫出來是另一套（紙張紋理灰白底、細線條、淡陰影、白車身白窗戶），2026-11-14 消防車／救護車／警車就這樣重生過一次；白色主體要寫 `cream-white body (warm cream #f3eedf, not pure white)`，不然去背會把車身一起淹掉。一次 browser_batch 最多 25 個動作；視窗窄時用 `find` 拿 ref 而不是座標。**額度**：一天約 25～30 張就會開始偶爾空回覆（2026-11-16 用 Hydrogen 只生到 15 張就滿，別假設一天能做兩組以上），最後 Gemini 直接回「我的程式設計裡沒有這樣的功能」或「I can create more images as soon as your limit resets」= 今天沒了；後者下面會有一塊「已達上限」面板寫重設時間（2026-11-13 看到的是上午 6:26），等那個時間過了再來。
 
 ## 待辦 / 想法
+
+- 紙娃娃（幫小熊換裝）：使用者 2026-11-16 提出，範圍還沒定（只是一個換裝玩法，還是穿上後全 App 的小熊都換裝）。小熊現在是五張各自獨立的 Gemini 圖、姿勢都不同，衣服沒辦法直接疊，定案前要先想清楚圖怎麼分層。
+- 語音風格：使用者 2026-11-16 要更活潑，目前先套曉雨 -5%／+12%；五種候選在 `tools/azure-trial/lively/` 等使用者聽完決定要不要換。
+- 餵小熊第二階段：非水果的食物、小熊張大嘴／摸肚子的新圖、不喜歡吃的反應。
 
 - 家人相片卡第二階段：相機（NativeCamera）、家人卡進找一找／配對（要動 `DeckLibrary` 來源並做方形裁切給拼圖）、自訂槽打字取名、超過 8 格。
 - iPad 安裝路線（有 Mac 用 Xcode／沒 Mac 出 WebGL）使用者還沒定。

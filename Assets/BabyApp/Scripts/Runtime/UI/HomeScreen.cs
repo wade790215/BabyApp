@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace BabyApp.UI
 {
     /// <summary>
-    /// 首頁：七個大格——卡片、摸一摸、找一找、數數、配對、拼圖、畫畫，自動排 4×2。
+    /// 首頁：八個大格——卡片、摸一摸、找一找、數數、配對、拼圖、畫畫、餵小熊，自動排 4×2。
     /// 主題（動物／水果…）不在這裡選，按「卡片」進去再選，首頁才不會塞滿格子讓 2 歲半選擇困難。
     /// 角落一顆要長按的「設」給家長進設定，小熊在旁邊陪著。
     /// </summary>
@@ -19,6 +19,7 @@ namespace BabyApp.UI
         [SerializeField] private Button matchButton;
         [SerializeField] private Button puzzleButton;
         [SerializeField] private Button paintButton;
+        [SerializeField] private Button feedButton;
         [SerializeField] private HoldButton settingsButton;
         [SerializeField] private Mascot mascot;
 
@@ -29,6 +30,7 @@ namespace BabyApp.UI
         public event Action MatchChosen;
         public event Action PuzzleChosen;
         public event Action PaintChosen;
+        public event Action FeedChosen;
         public event Action SettingsChosen;
 
         private void Awake()
@@ -40,6 +42,7 @@ namespace BabyApp.UI
             Hook(matchButton, () => MatchChosen?.Invoke());
             Hook(puzzleButton, () => PuzzleChosen?.Invoke());
             Hook(paintButton, () => PaintChosen?.Invoke());
+            Hook(feedButton, () => FeedChosen?.Invoke());
             if (settingsButton != null) settingsButton.Triggered += () => SettingsChosen?.Invoke();
         }
 

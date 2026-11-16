@@ -96,6 +96,10 @@ namespace BabyApp.UI
         {
             if (_texture != null) return;
 
+            // 父物件（PaintScreen）的 OnEnable 會比這裡的 Awake 早跑，第一次進畫畫頁時這兩個還是空的
+            if (_raw == null) _raw = GetComponent<RawImage>();
+            if (_rt == null) _rt = (RectTransform)transform;
+
             // 畫布像素跟版面單位 1:1，在不同解析度的平板上由 Canvas 自己縮放
             var rect = _rt.rect;
             _width = Mathf.Max(8, Mathf.RoundToInt(rect.width));
