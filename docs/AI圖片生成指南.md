@@ -154,18 +154,48 @@ visible, filling most of the frame.
 
 ### 身體（8 張）— 存到 `Assets/BabyApp/Art/Cards/Body/`
 
-配合找一找「鼻子在哪裡？」。這組畫的是**部位本身**（不是整個人），所以主體要大、要簡單。
+配合找一找「鼻子在哪裡？」。這組畫的是**蜂蜜小熊指著自己的那個部位**（單獨畫一個鼻子、一隻耳朵，小孩認不出來）。八張用同一個對話連續生，角色才會一致。
 
-| 檔名 | 中文名 | Subject |
+第一句貼角色設定＋第一張的動作（2026-11-17 實際用的）：
+
+```
+Character: a chubby golden-yellow honey bear cub, very round body and head, small round
+ears with cream inner ears, round dark eyes, cream muzzle with a dark slate nose and a
+tiny smile, soft cream belly patch, no clothes, not holding anything. Style: flat hand-cut
+paper illustration like a Montessori toddler app (Pok Pok Playroom style). Solid flat color
+fills, NO outlines at all, no gradients, no shading, no shadow, no texture. Slightly
+irregular hand-drawn silhouette, organic not geometric. Limited palette: sunny yellow
+#f9d44c body, cream belly and muzzle, dark slate #424c61 for eyes, nose and tiny details.
+Arms and paws that overlap the body or head are a slightly darker honey yellow (#e9b93a)
+so they stay readable without outlines. Plain pure white background, no text, no arrows,
+square 1:1, 1024x1024. Keep this exact character in every image. First image: the honey
+bear cub touching its own nose with one paw, front view, standing, whole body visible,
+filling most of the frame.
+```
+
+「手臂用深一階的黃」那句不能省：這個風格沒有框線，黃色的手疊在黃色的臉上會整個不見。
+
+第二張起貼短句，只換動作：
+
+```
+Generate the next image. Same character, same style exactly (flat hand-cut paper, solid
+fills, NO outlines, no shading, no texture, plain white background, square, darker
+honey-yellow arms). Now: the honey bear cub [動作], front view, standing, whole body
+visible, filling most of the frame.
+```
+
+| 檔名 | 中文名 | 動作 |
 |---|---|---|
-| `body_eyes.png` | 眼睛 | a pair of big round friendly cartoon eyes with lashes, nothing else |
-| `body_nose.png` | 鼻子 | a simple round cartoon nose on a patch of skin-toned face, nothing else |
-| `body_mouth.png` | 嘴巴 | a big smiling cartoon mouth with a pink tongue, nothing else |
-| `body_ears.png` | 耳朵 | a single cartoon ear, skin tone, side view, nothing else |
-| `body_hands.png` | 手 | two open cartoon hands, palms facing the viewer, fingers spread |
-| `body_feet.png` | 腳 | a pair of bare cartoon feet, toes up, front view |
-| `body_hair.png` | 頭髮 | the top of a child's head with short dark hair, no face visible |
-| `body_tummy.png` | 肚子 | a round cartoon tummy with a belly button, nothing else |
+| `body_nose.png` | 鼻子 | touching its own nose with one paw |
+| `body_eyes.png` | 眼睛 | pointing at its own eyes with both paws, one paw beside each eye, eyes big and wide open |
+| `body_mouth.png` | 嘴巴 | with its mouth wide open in a big happy smile showing a pink tongue, one paw pointing at its mouth |
+| `body_ears.png` | 耳朵 | holding both of its round ears with its paws, arms raised, one paw on each ear |
+| `body_hands.png` | 手 | holding both paws up beside its shoulders, open palms facing the viewer, showing big cream paw pads on both palms |
+| `body_feet.png` | 腳 | sitting on the ground with both legs stretched out toward the viewer, showing two big round feet with cream foot pads, both paws reaching down to touch its feet（這張不要寫 standing） |
+| `body_hair.png` | 頭髮 | with a fluffy tuft of brown hair (warm brown #a8672e) on top of its head between the ears, one paw raised touching the hair |
+| `body_tummy.png` | 肚子 | patting its big round cream tummy with both paws, one paw on each side of the tummy, a small dark slate belly button in the middle, happy smile |
+
+去背用一般的 `knockout-white.py`，**不要加 `--holes`**。
 
 ### 首頁功能格的小圖（7 張，可選）
 
