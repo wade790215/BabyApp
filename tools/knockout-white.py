@@ -1,5 +1,7 @@
 # 把白底 PNG 的白色背景去掉（從四邊往內淹，不會動到圖中間的白色，例如眼睛反光、肚子）。
 # 純 Python，不需要 Pillow。用法：python tools/knockout-white.py 圖1.png 圖2.png ...（原檔覆蓋）
+# 加 --holes：連被主體包住的白洞也挖掉（椅背的格子縫、床欄的縫）。只給「圖裡的純白一定是背景」的圖用，
+# 有白色眼睛反光、白肚子的圖不要加；米白（#f3eedf 之類）比門檻暗，不會被挖。
 import struct, sys, zlib
 from collections import deque
 
@@ -44,7 +46,7 @@ def write_png(path, w, h, rgba):
     png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b"")
     open(path, "wb").write(png)
 
-def knockout(path, white=238, soft=170):
+def knockout(path, white=238, soft=170, holes=False, min_hole=150):
     w, h, px = read_png(path)
     def mn(i): return min(px[i*4], px[i*4+1], px[i*4+2])
     gone = bytearray(w*h); q = deque()
@@ -59,6 +61,20 @@ def knockout(path, white=238, soft=170):
         if x < w-1: q.append(i+1)
         if y > 0: q.append(i-w)
         if y < h-1: q.append(i+w)
+    if holes:
+        # 四邊淹不到的白色區塊：夠大（不是雜點）就一起當背景
+        seen = bytearray(w*h)
+        for start in range(w*h):
+            if gone[start] or seen[start] or mn(start) < white: continue
+            comp = [start]; seen[start] = 1; k = 0
+            while k < len(comp):
+                i = comp[k]; k += 1
+                x, y = i % w, i // w
+                for j in ((i-1) if x > 0 else -1, (i+1) if x < w-1 else -1, (i-w) if y > 0 else -1, (i+w) if y < h-1 else -1):
+                    if j >= 0 and not seen[j] and not gone[j] and mn(j) >= white:
+                        seen[j] = 1; comp.append(j)
+            if len(comp) >= min_hole:
+                for i in comp: gone[i] = 1
     removed = 0
     for i in range(w*h):
         if gone[i]:
@@ -74,6 +90,8 @@ def knockout(path, white=238, soft=170):
     return removed, w*h
 
 if __name__ == "__main__":
+    holes = "--holes" in sys.argv[1:]
     for p in sys.argv[1:]:
-        removed, total = knockout(p)
+        if p == "--holes": continue
+        removed, total = knockout(p, holes=holes)
         print(f"{p}: 去掉 {removed*100//total}% 的像素當背景")

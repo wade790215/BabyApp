@@ -139,16 +139,18 @@ visible, filling most of the frame.
 
 | 檔名 | 中文名 | Subject |
 |---|---|---|
-| `daily_cup.png` | 杯子 | a small sippy cup for a toddler, light blue with two handles, front view |
-| `daily_spoon.png` | 湯匙 | a short chunky toddler spoon, green handle, standing upright |
-| `daily_bowl.png` | 碗 | a round yellow bowl, slight top-down view, empty |
-| `daily_shoes.png` | 鞋子 | a pair of small red toddler sneakers, side by side |
-| `daily_hat.png` | 帽子 | a soft yellow bucket hat, front view |
-| `daily_toothbrush.png` | 牙刷 | a toddler toothbrush with a pink handle and white bristles, standing upright |
-| `daily_toilet.png` | 馬桶 | a simple white toilet with the lid up, front three-quarter view |
-| `daily_bed.png` | 床 | a small toddler bed with a blue blanket and a white pillow, side view |
-| `daily_chair.png` | 椅子 | a small wooden toddler chair, front three-quarter view |
-| `daily_ball.png` | 球 | a round rubber ball with red and blue stripes |
+| `daily_cup.png` | 杯子 | a small sippy cup for a toddler, light blue with two handles and a darker blue lid, front view |
+| `daily_spoon.png` | 湯匙 | a short chunky toddler spoon with a green handle and a light grey spoon head, standing upright |
+| `daily_bowl.png` | 碗 | a round yellow bowl, slight top-down view, empty, darker yellow inside |
+| `daily_shoes.png` | 鞋子 | a pair of small red toddler sneakers with cream soles and cream straps, side by side |
+| `daily_hat.png` | 帽子 | a soft yellow bucket hat with an orange band, front view |
+| `daily_toothbrush.png` | 牙刷 | a chunky toddler toothbrush with a pink handle and light blue bristles, standing upright |
+| `daily_toilet.png` | 馬桶 | a simple toilet with the lid up, cream-white body (warm cream #f3eedf, not pure white), light blue seat and light blue water inside, front three-quarter view |
+| `daily_bed.png` | 床 | a small wooden toddler bed with a blue blanket and a cream pillow (warm cream #f3eedf, not pure white), side view |
+| `daily_chair.png` | 椅子 | a small wooden toddler chair with a red seat cushion, front three-quarter view |
+| `daily_ball.png` | 球 | a simple round toy ball with just three wide horizontal bands: red on top, yellow in the middle, blue at the bottom. Very simple, no dots, no stitches, no small marks, no extra lines |
+
+（2026-11-17 換成 Pok Pok 風時實際用的句子。球原本寫「red and blue stripes」，畫出來是一團纏在一起的條紋，像毛線球，改成三條橫帶才乾淨。椅子和床去背要加 `--holes`，不然椅背與床欄的縫會留白。）
 
 ### 身體（8 張）— 存到 `Assets/BabyApp/Art/Cards/Body/`
 
