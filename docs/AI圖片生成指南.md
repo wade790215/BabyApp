@@ -34,7 +34,7 @@ no texture, plain white background, square). Subject: [SUBJECT], whole body
 visible, filling most of the frame.
 ```
 
-（2026-11-12 之前的舊版是「Flat vector illustration… thick bold black outlines, bold saturated primary colors, simple flat shading… sturdy toy-block style」，交通工具、工程車、生活用品、身體與封面還是那一版生的。）
+（2026-11-12 之前的舊版是「Flat vector illustration… thick bold black outlines, bold saturated primary colors, simple flat shading… sturdy toy-block style」，2026-11-17 起專案裡已經沒有那一版的圖了。）
 
 **規格**：1024×1024 正方形、PNG、白底（透明底更好）。
 
@@ -119,19 +119,20 @@ visible, filling most of the frame.
 | `construction_forklift.png` | 堆高機 | an orange forklift with a tall mast and two forks in front lifting one brown wooden crate, open cab with a roof frame, side view |
 | `construction_loader.png` | 鏟裝機 | a yellow wheel loader with four big round wheels (no tracks) and a wide scoop bucket raised in front on two arms, cab with light blue window, side view |
 
-### 主題封面（3 張，可選）
+### 主題封面（4 張，可選）
 
-首頁三個大按鈕上的圖。不做的話程式會自動拿該主題的第一張卡當封面，所以可以先跳過。
+選主題頁每一格上的圖。不做的話程式會自動拿該主題的第一張卡當封面，所以可以先跳過。（形狀的封面是程式畫的；顏色、生活用品、身體沒有封面檔，用第一張卡。）
 
-存到 `Assets/BabyApp/Art/Covers/`：
+存到 `Assets/BabyApp/Art/Covers/`。四張用同一個對話，第一句是風格段落，把 `Single subject, centered, whole body visible` 換成 `A small group, centered, all three fully visible`（2026-11-17 實際用的）：
 
 | 檔名 | Subject |
 |---|---|
-| `cover_animals.png` | a dog, a cat and a rabbit sitting together as a group |
-| `cover_fruits.png` | an apple, a banana and a bunch of grapes grouped together |
-| `cover_vehicles.png` | a car, a bus and an airplane grouped together |
+| `cover_animals.png` | a small group of three animals sitting side by side, all facing the viewer: a brown dog, an orange tabby cat and a cream-white rabbit (warm cream #f3eedf, not pure white) with pink inner ears |
+| `cover_fruits.png` | a small group of three fruits close together: a red apple with a green leaf, a yellow banana and a bunch of purple grapes |
+| `cover_vehicles.png` | a small group of three vehicles close together: a red car and a yellow bus side by side at the bottom, both in side view with light blue windows, and a blue airplane flying above them |
+| `cover_construction.png` | a small group of three construction vehicles close together, all in side view with light blue windows: a yellow excavator with a raised digging arm at the back, an orange bulldozer and a dump truck with a green cab and a yellow tipping box in front |
 
-> 封面是唯一允許多個主體的圖，所以貼風格段落時要把 `Single subject only` 那句改成 `A small group of objects`。
+> 封面去背加 `--holes`（`python tools/knockout-white.py --holes cover_*.png`），主體之間的小白縫才會透。
 
 ### 生活用品（10 張）— 存到 `Assets/BabyApp/Art/Cards/Daily/`
 

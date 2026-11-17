@@ -46,7 +46,7 @@ def write_png(path, w, h, rgba):
     png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b"")
     open(path, "wb").write(png)
 
-def knockout(path, white=238, soft=170, holes=False, min_hole=150):
+def knockout(path, white=238, soft=170, holes=False, min_hole=12):
     w, h, px = read_png(path)
     def mn(i): return min(px[i*4], px[i*4+1], px[i*4+2])
     gone = bytearray(w*h); q = deque()
