@@ -22,6 +22,7 @@ namespace BabyApp.Core
         [SerializeField] private AudioClip comeOnZh;       // 「來玩吧！」（閒置太久）
         [SerializeField] private AudioClip doneZh;         // 「拼好了！」（拼圖）
         [SerializeField] private AudioClip fullZh;         // 「我吃飽了！」（餵小熊）
+        [SerializeField] private AudioClip prettyZh;       // 「好好看！」（換裝）
         [SerializeField] private AudioClip[] numbersZh;    // 一～五
 
         [Header("English")]
@@ -36,6 +37,7 @@ namespace BabyApp.Core
         [SerializeField] private AudioClip comeOnEn;
         [SerializeField] private AudioClip doneEn;
         [SerializeField] private AudioClip fullEn;
+        [SerializeField] private AudioClip prettyEn;
         [SerializeField] private AudioClip[] numbersEn;
 
         private void Awake()
@@ -60,6 +62,7 @@ namespace BabyApp.Core
         public AudioClip ComeOn => En ? comeOnEn : comeOnZh;
         public AudioClip Done => En ? doneEn : doneZh;
         public AudioClip Full => En ? fullEn : fullZh;
+        public AudioClip Pretty => En ? prettyEn : prettyZh;
 
         /// <summary>「狗狗在哪裡？」：中文是 名稱→在哪裡，英文是 Where is the→名稱，語序不同。</summary>
         public AudioClip[] WhereIs(AudioClip name)

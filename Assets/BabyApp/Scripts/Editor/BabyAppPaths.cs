@@ -9,6 +9,7 @@ namespace BabyApp.EditorTools
         public const string CoverArt = Root + "/Art/Covers";
         public const string MascotArt = Root + "/Art/Mascot";
         public const string UiArt = Root + "/Art/UI";
+        public const string OutfitArt = Root + "/Art/Outfits";
         public const string CardAudio = Root + "/Audio/Cards";
         public const string PromptAudio = Root + "/Audio/Prompts";
         public const string Fonts = Root + "/Fonts";

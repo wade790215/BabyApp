@@ -291,6 +291,127 @@ namespace BabyApp.EditorTools
             if (any) AssetDatabase.Refresh();
         }
 
+        // ---------- 紙娃娃的配件 ----------
+
+        private static Color32 Hex(uint rgb)
+        {
+            return new Color32((byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb, 0xFF);
+        }
+
+        private static Canvas Layer(Func<float, float, bool> inside)
+        {
+            var c = new Canvas(512);
+            c.Fill(inside);
+            return c;
+        }
+
+        public static string OutfitPath(string id) => BabyAppPaths.OutfitArt + "/outfit_" + id + ".png";
+
+        /// <summary>
+        /// 小熊的配件圖（Outfit.All 的每一樣），存到 Art/Outfits/outfit_{id}.png。Pok Pok 風的平塗色塊、沒有框線，
+        /// 每張都是「配件置中、填滿自己的畫布」，戴在頭上的位置寫在 Outfit.All。
+        /// 檔案在就不重畫：想換成 AI 畫的，丟同名 PNG 進來就好；想重畫就刪掉再重建場景。
+        /// </summary>
+        public static void EnsureOutfitArt()
+        {
+            Directory.CreateDirectory(BabyAppPaths.OutfitArt);
+            bool any = false;
+            foreach (var item in BabyApp.Core.Outfit.All)
+            {
+                string path = OutfitPath(item.Id);
+                if (File.Exists(path)) continue;
+
+                var png = DrawOutfit(item.Id);
+                if (png == null)
+                {
+                    Debug.LogWarning("[BabyApp] 配件 " + item.Id + " 沒有畫法（BabyAppUiSprites.DrawOutfit），也沒有 " + path + "。");
+                    continue;
+                }
+                File.WriteAllBytes(path, png);
+                any = true;
+            }
+            if (any) AssetDatabase.Refresh();
+        }
+
+        // 座標 0～128、y 往上，跟圖示同一套
+        private static byte[] DrawOutfit(string id)
+        {
+            Color32 red = Hex(0xF2664B), pink = Hex(0xEE6FA0), blue = Hex(0x3F8FD8), yellow = Hex(0xF6C23E);
+            Color32 cream = Hex(0xF3EEDF);
+
+            switch (id)
+            {
+                case "hat":
+                {
+                    // 尖尖的派對帽：斜條紋、帽簷、頂端一顆毛球
+                    Func<float, float, bool> cone = (x, y) => Inside.Polygon(x, y, (64, 118), (24, 20), (104, 20));
+                    return Canvas.ComposeMany(
+                        (Layer(cone), pink),
+                        (Layer((x, y) => cone(x, y) && (Inside.RotatedRect(x, y, 64, 46, 140, 12, 18f) ||
+                                                        Inside.RotatedRect(x, y, 64, 80, 140, 12, 18f))), yellow),
+                        (Layer((x, y) => Inside.RoundRect(x, y, 16, 10, 112, 26, 8)), blue),
+                        (Layer((x, y) => Inside.Circle(x, y, 64, 114, 12)), cream));
+                }
+
+                case "crown":
+                    return Canvas.ComposeMany(
+                        (Layer((x, y) => Inside.Polygon(x, y, (14, 24), (114, 24), (116, 96), (90, 60), (64, 104), (38, 60), (12, 96))), Hex(0xF59A3C)),
+                        (Layer((x, y) => Inside.RoundRect(x, y, 12, 18, 116, 40, 6)), Hex(0xE07B2A)),
+                        (Layer((x, y) => Inside.Circle(x, y, 12, 98, 8) || Inside.Circle(x, y, 64, 106, 8) || Inside.Circle(x, y, 116, 98, 8)), red),
+                        (Layer((x, y) => Inside.Circle(x, y, 64, 29, 7)), Hex(0x5AA9E6)),
+                        (Layer((x, y) => Inside.Circle(x, y, 36, 29, 5) || Inside.Circle(x, y, 92, 29, 5)), cream));
+
+                case "bow":
+                    return Canvas.ComposeMany(
+                        // 兩片翅膀：往中間收的三角形，外側接一條圓角邊，角才不會尖
+                        (Layer((x, y) => Inside.Polygon(x, y, (64, 64), (16, 104), (16, 24)) ||
+                                         Inside.Polygon(x, y, (64, 64), (112, 104), (112, 24)) ||
+                                         Inside.RoundRect(x, y, 6, 24, 30, 104, 12) ||
+                                         Inside.RoundRect(x, y, 98, 24, 122, 104, 12)), red),
+                        (Layer((x, y) => Inside.RoundRect(x, y, 48, 44, 80, 84, 14)), Hex(0xD4472F)));
+
+                case "flower":
+                    return Canvas.ComposeMany(
+                        (Layer((x, y) =>
+                        {
+                            for (int i = 0; i < 5; i++)
+                            {
+                                float angle = (90f + i * 72f) * Mathf.Deg2Rad;
+                                if (Inside.Circle(x, y, 64f + Mathf.Cos(angle) * 32f, 64f + Mathf.Sin(angle) * 32f, 24f)) return true;
+                            }
+                            return false;
+                        }), pink),
+                        (Layer((x, y) => Inside.Circle(x, y, 64, 64, 19)), yellow));
+
+                case "glasses":
+                {
+                    // 兩個圓框中間一段鼻樑；鏡片不上色（試過淡白色，會把後面的眼珠蓋成灰的）
+                    var frame = new Canvas(512);
+                    frame.Fill((x, y) => Inside.Circle(x, y, 34, 64, 29) || Inside.Circle(x, y, 94, 64, 29) ||
+                                         Inside.RoundRect(x, y, 56, 62, 72, 72, 4));
+                    frame.Cut((x, y) => Inside.Circle(x, y, 34, 64, 20) || Inside.Circle(x, y, 94, 64, 20));
+                    return frame.ToPng(red);
+                }
+
+                case "sunglasses":
+                {
+                    Func<float, float, bool> lenses = (x, y) => Inside.RoundRect(x, y, 4, 40, 56, 90, 22) ||
+                                                              Inside.RoundRect(x, y, 72, 40, 124, 90, 22);
+                    // 鏡片不塗死：留一點透，底下的眼睛（笑眼、閉眼）還隱約看得到表情
+                    Color ink = new Color32(0x3A, 0x3A, 0x5A, 0xFF);
+                    Color lens = new Color(ink.r, ink.g, ink.b, 0.78f);
+                    return Canvas.ComposeMany(
+                        (Layer(lenses), lens),
+                        (Layer((x, y) => !lenses(x, y) && Inside.RoundRect(x, y, 50, 70, 78, 82, 5)), ink),
+                        (Layer((x, y) => lenses(x, y) && (Inside.RotatedRect(x, y, 22, 68, 7, 60, -35f) ||
+                                                          Inside.RotatedRect(x, y, 90, 68, 7, 60, -35f))), new Color(1f, 1f, 1f, 0.3f)));
+                }
+
+                default:
+                    return null;
+            }
+        }
+
         // ---------- 每個圖示的畫法（座標 0～128，y 往上）----------
 
         private static void Draw(string name, Canvas c)
@@ -405,6 +526,13 @@ namespace BabyApp.EditorTools
                     c.Fill((x, y) => Inside.RoundRect(x, y, 44, 6, 84, 16, 4));      // 碗腳
                     c.Fill((x, y) => Inside.Circle(x, y, 60, 88, 20));               // 水果
                     c.Fill((x, y) => Inside.RotatedRect(x, y, 78, 112, 22, 10, 35f)); // 葉子
+                    break;
+
+                case "hat":
+                    // 一頂圓頂帽：帽頂、一條帽帶的縫、寬帽簷（換裝）
+                    c.Fill((x, y) => y >= 48f && Inside.Circle(x, y, 64, 48, 42));
+                    c.Cut((x, y) => Inside.Rect(x, y, 0, 56, 128, 63));
+                    c.Fill((x, y) => Inside.RoundRect(x, y, 6, 34, 122, 51, 8));
                     break;
 
                 default:

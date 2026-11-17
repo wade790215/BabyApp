@@ -40,6 +40,7 @@ namespace BabyApp.EditorTools
         private static readonly Color Sun = new Color32(0xFF, 0xD1, 0x66, 0xFF);         // 數數
         private static readonly Color Rose = new Color32(0xFF, 0x9E, 0xC4, 0xFF);        // 摸一摸
         private static readonly Color Lime = new Color32(0xB5, 0xE0, 0x6C, 0xFF);        // 餵小熊
+        private static readonly Color Aqua = new Color32(0x6F, 0xD8, 0xD2, 0xFF);        // 換裝
         private static readonly Color ShadowColor = new Color(0f, 0f, 0f, 0.16f);
 
         // 白邊寬度，卡片與按鈕共用，整體才像同一套
@@ -85,7 +86,7 @@ namespace BabyApp.EditorTools
 
             _font = BabyAppFontSetup.EnsureFont();
             Icons.Clear();
-            foreach (var name in new[] { "arrow", "house", "mic", "eraser", "picture", "gear", "magnifier", "count", "play", "cards", "paw", "match", "puzzle", "bowl" })
+            foreach (var name in new[] { "arrow", "house", "mic", "eraser", "picture", "gear", "magnifier", "count", "play", "cards", "paw", "match", "puzzle", "bowl", "hat" })
             {
                 Icons[name] = BabyAppUiSprites.EnsureIcon(name);
             }
@@ -94,6 +95,8 @@ namespace BabyApp.EditorTools
             _rounded = BabyAppUiSprites.EnsureRoundRect();
             _circle = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
             BabyAppUiSprites.EnsureMascotPlaceholders();
+            BabyAppUiSprites.EnsureOutfitArt();
+            CheckOutfitBounds();
 
             Directory.CreateDirectory(BabyAppPaths.Scenes);
             Directory.CreateDirectory(BabyAppPaths.Prefabs);
@@ -115,13 +118,14 @@ namespace BabyApp.EditorTools
             var puzzle = CreatePuzzleScreen(safeRoot);
             var paint = CreatePaintScreen(safeRoot);
             var feed = CreateFeedScreen(safeRoot);
+            var dress = CreateDressScreen(safeRoot);
             var settings = CreateSettingsScreen(safeRoot);
             var familyEdit = CreateFamilyEditScreen(safeRoot);
 
             var deckButton = BuildDeckButtonPrefab();
             Wire(deckPick, ("buttonPrefab", deckButton));
 
-            CreateAppRoot(home, deckPick, deck, touch, find, count, match, puzzle, paint, feed, settings, familyEdit);
+            CreateAppRoot(home, deckPick, deck, touch, find, count, match, puzzle, paint, feed, dress, settings, familyEdit);
 
             deckPick.gameObject.SetActive(false);
             deck.gameObject.SetActive(false);
@@ -132,6 +136,7 @@ namespace BabyApp.EditorTools
             puzzle.gameObject.SetActive(false);
             paint.gameObject.SetActive(false);
             feed.gameObject.SetActive(false);
+            dress.gameObject.SetActive(false);
             settings.gameObject.SetActive(false);
             familyEdit.gameObject.SetActive(false);
 
@@ -199,7 +204,7 @@ namespace BabyApp.EditorTools
 
         private static void CreateAppRoot(HomeScreen home, DeckPickScreen deckPick, DeckScreen deck, TouchScreen touch,
             FindScreen find, CountScreen count, MatchScreen match, PuzzleScreen puzzle, PaintScreen paint, FeedScreen feed,
-            SettingsScreen settings, FamilyEditScreen familyEdit)
+            DressScreen dress, SettingsScreen settings, FamilyEditScreen familyEdit)
         {
             var go = new GameObject("AppRoot");
             var voiceSource = go.AddComponent<AudioSource>();
@@ -232,6 +237,7 @@ namespace BabyApp.EditorTools
                 ("comeOnZh", Prompt("prompt_come_on")),
                 ("doneZh", Prompt("prompt_done")),
                 ("fullZh", Prompt("prompt_full")),
+                ("prettyZh", Prompt("prompt_pretty")),
                 ("whereEn", Prompt("prompt_where_en")),
                 ("whoseSoundEn", Prompt("prompt_whose_sound_en")),
                 ("correctEn", Prompt("prompt_correct_en")),
@@ -242,7 +248,8 @@ namespace BabyApp.EditorTools
                 ("sameEn", Prompt("prompt_same_en")),
                 ("comeOnEn", Prompt("prompt_come_on_en")),
                 ("doneEn", Prompt("prompt_done_en")),
-                ("fullEn", Prompt("prompt_full_en")));
+                ("fullEn", Prompt("prompt_full_en")),
+                ("prettyEn", Prompt("prompt_pretty_en")));
             WireArray(prompts, "numbersZh", Prompt("num_1"), Prompt("num_2"), Prompt("num_3"), Prompt("num_4"), Prompt("num_5"));
             WireArray(prompts, "numbersEn", Prompt("num_1_en"), Prompt("num_2_en"), Prompt("num_3_en"), Prompt("num_4_en"), Prompt("num_5_en"));
 
@@ -263,6 +270,7 @@ namespace BabyApp.EditorTools
                 ("puzzleScreen", puzzle),
                 ("paintScreen", paint),
                 ("feedScreen", feed),
+                ("dressScreen", dress),
                 ("settingsScreen", settings),
                 ("familyEditScreen", familyEdit));
         }
@@ -288,7 +296,7 @@ namespace BabyApp.EditorTools
             var home = screen.gameObject.AddComponent<HomeScreen>();
 
             // 首頁不放標題：小孩不認字，空間留給格子
-            // 八個大格自動排 4×2：卡片、摸一摸、找一找、數數、配對、拼圖、畫畫、餵小熊。主題選擇在「卡片」裡面
+            // 九個大格自動排 4×3（第三排先只有一格）：卡片、摸一摸、找一找、數數、配對、拼圖、畫畫、餵小熊、換裝。主題選擇在「卡片」裡面
             // 新玩法一律接在最後面：小孩已經記住前面幾格的位置，不要打亂
             var grid = CreateChild("TileGrid", screen);
             Anchor(grid, new Vector2(0.06f, 0.05f), new Vector2(0.94f, 0.9f));
@@ -303,10 +311,13 @@ namespace BabyApp.EditorTools
             var puzzleButton = CreateFeatureTile("PuzzleButton", grid, "puzzle", "puzzle", CoverYellow);
             var paintButton = CreatePaintButton(grid);
             var feedButton = CreateFeatureTile("FeedButton", grid, "bowl", "feed", Lime);
+            var dressButton = CreateFeatureTile("DressButton", grid, "hat", "dress", Aqua);
 
             var (settingsButton, _) = CreateHoldButton("SettingsButton", screen, "gear", Mint,
                 new Vector2(1f, 1f), new Vector2(-90f, -90f), 130f);
-            var (mascot, _) = CreateMascot(screen, new Vector2(0f, 1f), new Vector2(130f, -100f), 190f);
+            // 小熊放右下角：九格排成 4×3 之後，iPad（4:3）上格子會長到左上角，原本放那裡的小熊會蓋住「卡片」格；
+            // 第三排右邊還空著，牠站那裡不擋任何一格。第三排排滿之前都可以放這裡。
+            var (mascot, _) = CreateMascot(screen, new Vector2(1f, 0f), new Vector2(-130f, 120f), 190f);
 
             Wire(home,
                 ("cardsButton", cardsButton),
@@ -317,6 +328,7 @@ namespace BabyApp.EditorTools
                 ("puzzleButton", puzzleButton),
                 ("paintButton", paintButton),
                 ("feedButton", feedButton),
+                ("dressButton", dressButton),
                 ("settingsButton", settingsButton),
                 ("mascot", mascot));
             return home;
@@ -399,7 +411,7 @@ namespace BabyApp.EditorTools
             var withMax = new Vector2(0.75f, 0.88f);
             Anchor(icon.rectTransform, withMin, withMax);
 
-            var (label, labelGroup) = CreateTileLabel(root, Strings.Get(labelKey));
+            var (label, labelGroup) = CreateTileLabel(root, Strings.Get(labelKey), 40);
             Localize(label, labelKey);
             AddLabelToggle(root, labelGroup, icon.rectTransform, withMin, withMax,
                 art != null ? new Vector2(0.1f, 0.1f) : new Vector2(0.2f, 0.2f),
@@ -438,7 +450,7 @@ namespace BabyApp.EditorTools
                 Anchor(dot.rectTransform, new Vector2(x - 0.1f, 0.33f), new Vector2(x + 0.1f, 0.67f));
             }
 
-            var (label, labelGroup) = CreateTileLabel(root, Strings.Get("paint"));
+            var (label, labelGroup) = CreateTileLabel(root, Strings.Get("paint"), 40);
             Localize(label, "paint");
             AddLabelToggle(root, labelGroup, dotsRt, withMin, withMax, new Vector2(0f, 0.1f), new Vector2(1f, 0.9f));
             return button;
@@ -448,7 +460,7 @@ namespace BabyApp.EditorTools
         /// 格子下方的名稱：白色小圓角底、深色字，字會依格子大小自動縮放。
         /// 兩個都包在一個 LabelGroup 裡，方便整塊藏起來。回傳 (文字, 整塊)。
         /// </summary>
-        private static (Text, GameObject) CreateTileLabel(Transform tile, string text)
+        private static (Text, GameObject) CreateTileLabel(Transform tile, string text, int maxSize = 64)
         {
             var group = CreateChild("LabelGroup", tile);
             Stretch(group);
@@ -458,11 +470,15 @@ namespace BabyApp.EditorTools
             pill.raycastTarget = false;
             Anchor(pill.rectTransform, new Vector2(0.1f, 0.06f), new Vector2(0.9f, 0.26f));
 
-            var label = CreateText("Label", group, text, 64, Ink);
+            // maxSize 不能超過標籤框的高（格子邊長的 18%）：Best Fit 只會為寬度縮字，字比框高就會撐出白底。
+            // 所以小格子（首頁九格約 231、換裝的配件格約 200）要傳比較小的 maxSize。
+            var label = CreateText("Label", group, text, maxSize, Ink);
             Anchor(label.rectTransform, new Vector2(0.12f, 0.07f), new Vector2(0.88f, 0.25f));
             label.resizeTextForBestFit = true;
-            label.resizeTextMinSize = 24;
-            label.resizeTextMaxSize = 64;
+            label.resizeTextMinSize = Mathf.Min(18, maxSize);
+            label.resizeTextMaxSize = maxSize;
+            // 要設成 Wrap，Best Fit 才會在寬度放不下時縮字；Overflow 的話字會直接撐出格子（「太陽眼鏡」「餵小熊」踩過）
+            label.horizontalOverflow = HorizontalWrapMode.Wrap;
             return (label, group.gameObject);
         }
 
@@ -900,6 +916,97 @@ namespace BabyApp.EditorTools
                 ("foodTemplate", foodItem));
             WireArray(feed, "slots", slots);
             return feed;
+        }
+
+        // ---------- 換裝 ----------
+
+        /// <summary>
+        /// 換裝（紙娃娃）：左邊一隻大小熊（不能拖走），右邊六格配件自動排 3×2，閃開右上角的回首頁鈕。
+        /// 建立順序就是疊放順序：小熊 → 配件格 → Field（飛行中的複製圖在這層，蓋在小熊上面）→ 回首頁鈕。
+        /// </summary>
+        private static DressScreen CreateDressScreen(Transform parent)
+        {
+            var screen = CreateScreen("DressScreen", parent);
+            var dress = screen.gameObject.AddComponent<DressScreen>();
+
+            var (mascot, handle) = CreateMascot(screen, new Vector2(0.5f, 0.5f), Vector2.zero, 190f);
+            var mascotRt = (RectTransform)mascot.transform;
+            Anchor(mascotRt, new Vector2(0.04f, 0.08f), new Vector2(0.48f, 0.92f));
+            Object.DestroyImmediate(handle); // 這頁的小熊是被打扮的對象，不能拖走
+            var mascotButton = mascot.gameObject.AddComponent<Button>();
+            mascotButton.targetGraphic = mascot.GetComponent<Image>();
+            mascotButton.transition = Selectable.Transition.None;
+
+            // 只有這一頁：小熊頭上、臉上戴的東西點得到，點了就脫掉
+            var headWearButton = MakeWearTappable(mascotRt.Find("HeadWear"));
+            var faceWearButton = MakeWearTappable(mascotRt.Find("FaceWear"));
+
+            var grid = CreateChild("OutfitGrid", screen);
+            Anchor(grid, new Vector2(0.50f, 0.06f), new Vector2(0.97f, 0.80f));
+            grid.gameObject.AddComponent<GridLayoutGroup>();
+            grid.gameObject.AddComponent<ResponsiveGrid>(); // 6 格會排成 3×2
+
+            var tiles = new Object[Outfit.All.Length];
+            var namesZh = new Object[Outfit.All.Length];
+            var namesEn = new Object[Outfit.All.Length];
+            for (int i = 0; i < tiles.Length; i++)
+            {
+                var item = Outfit.All[i];
+                tiles[i] = CreateOutfitTile(grid, item);
+                namesZh[i] = Prompt("outfit_" + item.Id);
+                namesEn[i] = Prompt("outfit_" + item.Id + "_en");
+            }
+
+            // 飛行中、被拖著的複製圖都生在這層；它自己沒有圖，不會擋到點擊
+            var field = CreateChild("Field", screen);
+            Stretch(field);
+
+            var (home, _) = CreateHomeButton(screen);
+
+            Wire(dress,
+                ("mascot", mascot),
+                ("mascotButton", mascotButton),
+                ("headWearButton", headWearButton),
+                ("faceWearButton", faceWearButton),
+                ("homeButton", home),
+                ("field", field));
+            WireArray(dress, "tiles", tiles);
+            WireArray(dress, "namesZh", namesZh);
+            WireArray(dress, "namesEn", namesEn);
+            return dress;
+        }
+
+        private static Button MakeWearTappable(Transform layer)
+        {
+            var image = layer.GetComponent<Image>();
+            image.raycastTarget = true; // 沒戴東西時這張圖是關著的，關著就不吃點擊
+            var button = layer.gameObject.AddComponent<Button>();
+            button.targetGraphic = image;
+            button.transition = Selectable.Transition.None;
+            return button;
+        }
+
+        /// <summary>換裝頁的一格配件：白色圓角方塊，中間一張配件圖；名稱跟其他格子一樣預設藏著。</summary>
+        private static OutfitTile CreateOutfitTile(Transform parent, Outfit.Item item)
+        {
+            var (root, _, _) = CreateTile("Outfit_" + item.Id, parent, new Vector2(300f, 300f), new Color32(0xFF, 0xFB, 0xF2, 0xFF));
+
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(BabyAppUiSprites.OutfitPath(item.Id));
+            var icon = CreateImage("Icon", root, sprite, Color.white);
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            var withMin = new Vector2(0.2f, 0.3f);
+            var withMax = new Vector2(0.8f, 0.9f);
+            Anchor(icon.rectTransform, withMin, withMax);
+
+            var (label, labelGroup) = CreateTileLabel(root, Strings.Get(item.LabelKey), 34);
+            Localize(label, item.LabelKey);
+            AddLabelToggle(root, labelGroup, icon.rectTransform, withMin, withMax,
+                new Vector2(0.14f, 0.14f), new Vector2(0.86f, 0.86f));
+
+            var tile = root.gameObject.AddComponent<OutfitTile>();
+            Wire(tile, ("icon", icon));
+            return tile;
         }
 
         // ---------- 配對 ----------
@@ -1483,13 +1590,19 @@ namespace BabyApp.EditorTools
             {
                 sprites[i] = AssetDatabase.LoadAssetAtPath<Sprite>(BabyAppPaths.MascotArt + "/" + BabyAppPaths.MascotPoses[i] + ".png");
             }
-            if (sprites[0] == null)
+            bool usingFallback = sprites[0] == null;
+            if (usingFallback)
             {
                 sprites[0] = fallback;
                 Debug.LogWarning("[BabyApp] 還沒有吉祥物的圖（Art/Mascot/mascot_idle.png），先用動物卡的熊頂著。生圖方式見 docs/AI圖片生成指南.md。");
             }
             image.sprite = sprites[0];
             image.enabled = sprites[0] != null;
+
+            // 紙娃娃：臉上、頭頂各一層配件圖疊在小熊圖上（先臉後頭，帽子蓋在眼鏡上面）。
+            // 位置由 Mascot 照 Outfit.All 算，平常不吃點擊（只有換裝頁那隻會另外打開）。
+            var faceWear = CreateWearLayer("FaceWear", rt);
+            var headWear = CreateWearLayer("HeadWear", rt);
 
             var mascot = rt.gameObject.AddComponent<Mascot>();
             Wire(mascot,
@@ -1498,10 +1611,55 @@ namespace BabyApp.EditorTools
                 ("happy", sprites[1]),
                 ("surprised", sprites[2]),
                 ("think", sprites[3]),
-                ("sleep", sprites[4]));
+                ("sleep", sprites[4]),
+                ("faceWear", faceWear),
+                ("headWear", headWear));
+            // 用動物卡的熊頂替時，頭的位置跟吉祥物的圖不一樣，配件會戴歪，乾脆不戴
+            if (!usingFallback) WireArray(mascot, "outfitSprites", OutfitSprites());
 
             var handle = rt.gameObject.AddComponent<DraggableWidget>();
             return (mascot, handle);
+        }
+
+        private static Image CreateWearLayer(string name, Transform mascot)
+        {
+            var layer = CreateImage(name, mascot, null, Color.white);
+            layer.preserveAspect = true;
+            layer.raycastTarget = false;
+            Size(layer.rectTransform, new Vector2(10f, 10f));
+            return layer;
+        }
+
+        /// <summary>配件的圖，順序跟 Outfit.All 一樣。</summary>
+        private static Object[] OutfitSprites()
+        {
+            var sprites = new Object[Outfit.All.Length];
+            for (int i = 0; i < sprites.Length; i++)
+            {
+                string path = BabyAppUiSprites.OutfitPath(Outfit.All[i].Id);
+                sprites[i] = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (sprites[i] == null) Debug.LogWarning("[BabyApp] 找不到配件的圖 " + path + "。");
+            }
+            return sprites;
+        }
+
+        /// <summary>
+        /// 配件整張圖（歪掉之後的四個角也算）要留在小熊圖的範圍裡：小熊貼著螢幕邊的時候，
+        /// 高出去的帽子會被螢幕切掉，DraggableWidget 也只會管小熊自己的框。容許一點點（2%）。
+        /// </summary>
+        private static void CheckOutfitBounds()
+        {
+            const float slack = 0.02f;
+            foreach (var item in Outfit.All)
+            {
+                float rad = item.Tilt * Mathf.Deg2Rad;
+                float half = item.Size * 0.5f * (Mathf.Abs(Mathf.Cos(rad)) + Mathf.Abs(Mathf.Sin(rad)));
+                if (item.Center.x - half < -slack || item.Center.x + half > 1f + slack ||
+                    item.Center.y - half < -slack || item.Center.y + half > 1f + slack)
+                {
+                    Debug.LogWarning("[BabyApp] 配件 " + item.Id + " 超出小熊圖的範圍，貼著螢幕邊的小熊會被切到。調 Outfit.All 裡它的位置或大小。");
+                }
+            }
         }
 
         // ---------- 軟圓風格的積木 ----------
